@@ -1,3 +1,7 @@
 {
-    "randomuuid": "cn.hutool.core.util.IdUtil#randomUUID"
+    "randomuuid": {
+        "method": "cn.hutool.core.util.IdUtil#randomUUID",
+        /*when this field is empty, that will be find the first method by name*/
+        "paramTypes": []
+    }
 }
