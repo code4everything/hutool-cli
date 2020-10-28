@@ -15,6 +15,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <jcommander.version>1.78</jcommander.version>
         <hutool.version>5.4.6</hutool.version>
+        <fastjson.version>1.2.74</fastjson.version>
     </properties>
 
     <dependencies>
@@ -27,6 +28,11 @@
             <groupId>cn.hutool</groupId>
             <artifactId>hutool-core</artifactId>
             <version>${hutool.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>fastjson</artifactId>
+            <version>${fastjson.version}</version>
         </dependency>
     </dependencies>
 
