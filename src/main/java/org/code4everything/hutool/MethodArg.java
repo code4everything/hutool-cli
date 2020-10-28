@@ -26,6 +26,9 @@ public class MethodArg {
     @Parameter(names = {"-p", "--param", "--parameter"}, description = "the parameter(s) of method invoking required")
     List<String> params = new ArrayList<>();
 
+    @Parameter(names = {"-r", "--run", "--command"}, description = "build in method")
+    String command;
+
     @Parameter(names = {"-d", "--debug"}, description = "enable debug mode")
     boolean debug;
 }

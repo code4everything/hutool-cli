@@ -1,0 +1,9 @@
+{
+    "str": {
+        "clazz": "cn.hutool.core.util.StrUtil",
+        "methodAliasPaths": [
+            "method-alias",
+            "str-util.json"
+        ]
+    }
+}
