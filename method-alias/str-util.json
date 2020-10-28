@@ -1,3 +1,9 @@
 {
-    "trime": "trimEnd"
+    "trim": {
+        "methodName": "trim",
+        /*when this field is empty, that will be find the first method by name*/
+        "paramTypes": [
+            "java.Lang.String"
+        ]
+    }
 }
