@@ -24,7 +24,7 @@ public class Hutool {
         JCommander commander = JCommander.newBuilder().addObject(ARG).build();
         commander.parse(args);
         debugOutput("received command line arguments: {}", Arrays.asList(args));
-        parse(ARG.className);
+        // parse(ARG.className);
     }
 
     private static void parse(String className) {
