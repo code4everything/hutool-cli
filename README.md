@@ -84,7 +84,9 @@ hutool -r random-uuid -y
 # output: 66db3ae3-7e3d-46e9-8b16-80eb22393d30
 ```
 
-支持参数
+> 在 `-r` 模式下，别名后可直接跟方法需要的参数，当然使用 `-p` 也是支持的。
+
+支持的参数
 
 ```text
 Usage: hutool-cli [options]
