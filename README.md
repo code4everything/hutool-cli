@@ -86,6 +86,38 @@ hutool -r random-uuid -y
 
 > 在 `-r` 模式下，别名后可直接跟方法需要的参数，当然使用 `-p` 也是支持的。
 
+查看有哪些别名
+
+```shell
+hutool -r alias
+
+# output:
+base32-decode     = cn.hutool.core.codec.Base32#decodeStr(java.lang.String)
+base32-encode     = cn.hutool.core.codec.Base32#encode(java.lang.String)
+base64-decode     = cn.hutool.core.codec.Base64#decodeStr(java.lang.CharSequence)
+base64-encode     = cn.hutool.core.codec.Base64#encode(java.lang.CharSequence)
+base64-encode-url = cn.hutool.core.codec.Base64#encodeUrlSafe(java.lang.CharSequence)
+random-uuid       = cn.hutool.core.util.IdUtil#randomUUID()
+```
+
+```shell
+hutool -c alias
+
+# output:
+base32 = cn.hutool.core.codec.Base32
+base64 = cn.hutool.core.codec.Base64
+str    = cn.hutool.core.util.StrUtil
+```
+
+```shell
+hutool -c base64 -m alias
+
+# output:
+decode     = decodeStr(java.lang.CharSequence)
+encode     = encode(java.lang.CharSequence)
+encode-url = encodeUrlSafe(java.lang.CharSequence)
+```
+
 支持的参数
 
 ```text
