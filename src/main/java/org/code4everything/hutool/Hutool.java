@@ -22,7 +22,13 @@ public class Hutool {
 
     public static void main(String[] args) {
         JCommander commander = JCommander.newBuilder().addObject(ARG).build();
-        commander.parse(args);
+        commander.setProgramName("hutool");
+        try {
+            commander.parse(args);
+        } catch (Exception e) {
+            commander.usage();
+            return;
+        }
         debugOutput("received command line arguments: {}", Arrays.asList(args));
         // parse(ARG.className);
     }
