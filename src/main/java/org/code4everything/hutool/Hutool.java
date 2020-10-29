@@ -9,7 +9,6 @@ import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.lang.Console;
 import cn.hutool.core.lang.Holder;
 import cn.hutool.core.swing.clipboard.ClipboardUtil;
-import cn.hutool.core.thread.ThreadUtil;
 import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.ReflectUtil;
@@ -80,14 +79,18 @@ public class Hutool {
         }
 
         debugOutput("received command line arguments: {}", Arrays.asList(args));
+        debugOutput("invoking method to get the result");
         handleResult();
+        debugOutput("invoke method success");
 
         if (Objects.isNull(result)) {
             return;
         }
         String resultString = StrUtil.toString(result);
         if (ARG.copy) {
-            ThreadUtil.execute(() -> ClipboardUtil.setStr(resultString));
+            debugOutput("copying result into clipboard");
+            ClipboardUtil.setStr(resultString);
+            debugOutput("result copied");
         }
         Console.log();
         Console.log(resultString);

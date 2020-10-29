@@ -25,7 +25,6 @@ func main() {
 	err := cmd.Run()
 	fmt.Println(out.String())
 	if err != nil {
-		fmt.Println()
 		log.Fatalf(err.Error(), stderr.String())
 	}
 }
