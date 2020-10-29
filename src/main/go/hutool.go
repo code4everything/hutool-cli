@@ -23,9 +23,9 @@ func main() {
 	cmd.Stdout = &out
 	cmd.Stderr = &stderr
 	err := cmd.Run()
-	if err == nil {
-		fmt.Println(out.String())
-	} else {
+	fmt.Println(out.String())
+	if err != nil {
+		fmt.Println()
 		log.Fatalf(err.Error(), stderr.String())
 	}
 }

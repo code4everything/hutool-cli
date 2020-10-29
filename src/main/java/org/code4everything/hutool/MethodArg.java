@@ -17,6 +17,8 @@ public class MethodArg {
 
     private static final String PARAM_DESC = "the parameter(s) of method invoking required";
 
+    private static final String EXCEPTION_DESC = "thrown an exception, only work on debug mode";
+
     // @formatter:on
 
     @Parameter(names = {"-r", "--run", "--command"}, description = "build in method", variableArity = true, order = 0)
@@ -37,6 +39,12 @@ public class MethodArg {
     @Parameter(names = {"-y", "--yank", "--copy"}, description = "copy result to clipboard", order = 5)
     boolean copy;
 
-    @Parameter(names = {"-d", "--debug"}, description = "enable debug mode", order = 6)
+    @Parameter(names = {"-v", "version"}, description = "the current version of hutool command line tool", order = 6)
+    boolean version;
+
+    @Parameter(names = {"-d", "--debug"}, description = "enable debug mode", order = 7)
     boolean debug;
+
+    @Parameter(names = {"--exception"}, description = EXCEPTION_DESC, order = 8, hidden = true)
+    boolean exception;
 }

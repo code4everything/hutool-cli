@@ -45,6 +45,8 @@ public class Hutool {
 
     private static final String CLASS_JSON = "class.json";
 
+    private static final String VERSION = "v1.0";
+
     private static JCommander commander;
 
     private static Object result;
@@ -56,13 +58,25 @@ public class Hutool {
         try {
             commander.parse(args);
         } catch (Exception e) {
-            commander.usage();
+            seeUsage();
             return;
         }
 
         if (ArrayUtil.isEmpty(args)) {
-            commander.usage();
+            seeUsage();
             return;
+        }
+
+        if (ARG.debug && ARG.exception) {
+            throw new CliException();
+        }
+
+        if (ARG.version) {
+            Console.log();
+            Console.log("hutool-cli: {}", VERSION);
+            return;
+        } else {
+            debugOutput("hutool-cli:{}", VERSION);
         }
 
         debugOutput("received command line arguments: {}", Arrays.asList(args));
@@ -119,7 +133,7 @@ public class Hutool {
 
     private static void handleResultOfClass(boolean fixName) {
         if (StrUtil.isEmpty(ARG.className)) {
-            commander.usage();
+            seeUsage();
             return;
         }
 
@@ -158,7 +172,7 @@ public class Hutool {
 
     private static void handleResultOfMethod(Class<?> clazz, boolean fixName, List<String> methodAliasPaths) {
         if (StrUtil.isEmpty(ARG.methodName)) {
-            commander.usage();
+            seeUsage();
             return;
         }
 
@@ -235,6 +249,11 @@ public class Hutool {
         }
     }
 
+    private static void seeUsage() {
+        Console.log();
+        commander.usage();
+    }
+
     private static void seeAlias(String... paths) {
         JSONObject aliasJson = getAlias(paths);
         StringJoiner joiner = new StringJoiner("\n");
@@ -281,7 +300,6 @@ public class Hutool {
     private static void debugOutput(String msg, Object... params) {
         if (ARG.debug) {
             msg = DatePattern.NORM_DATETIME_MS_FORMAT.format(DateUtil.date()) + " debug output: " + msg;
-            Console.log();
             Console.log(msg, params);
         }
     }
