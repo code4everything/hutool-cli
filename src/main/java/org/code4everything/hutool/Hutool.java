@@ -7,7 +7,9 @@ import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.exceptions.ExceptionUtil;
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.lang.Console;
+import cn.hutool.core.lang.Holder;
 import cn.hutool.core.swing.clipboard.ClipboardUtil;
+import cn.hutool.core.thread.ThreadUtil;
 import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.ReflectUtil;
@@ -33,6 +35,16 @@ public class Hutool {
 
     private static final String CLASS_PREFIX = "cn.hutool.";
 
+    private static final String ALIAS = "alias";
+
+    private static final String PARAM_KEY = "paramTypes";
+
+    private static final String CLAZZ_KEY = "clazz";
+
+    private static final String COMMAND_JSON = "command.json";
+
+    private static final String CLASS_JSON = "class.json";
+
     private static JCommander commander;
 
     private static Object result;
@@ -56,9 +68,12 @@ public class Hutool {
         debugOutput("received command line arguments: {}", Arrays.asList(args));
         handleResult();
 
+        if (Objects.isNull(result)) {
+            return;
+        }
         String resultString = StrUtil.toString(result);
         if (ARG.copy) {
-            ClipboardUtil.setStr(resultString);
+            ThreadUtil.execute(() -> ClipboardUtil.setStr(resultString));
         }
         Console.log();
         Console.log(resultString);
@@ -68,11 +83,15 @@ public class Hutool {
         boolean fixClassName = true;
 
         if (CollUtil.isNotEmpty(ARG.command)) {
-            String methodKey = "method";
-            String paramKey = "paramTypes";
-            JSONObject aliasJson = getAlias("command.json");
-
             String command = ARG.command.get(0);
+            if (ALIAS.equals(command)) {
+                seeAlias(COMMAND_JSON);
+                return;
+            }
+
+            String methodKey = "method";
+            JSONObject aliasJson = getAlias(COMMAND_JSON);
+
             JSONObject methodJson = aliasJson.getJSONObject(command);
             if (Objects.isNull(methodJson) || !methodJson.containsKey(methodKey)) {
                 Console.log("command[{}] not found!", command);
@@ -89,7 +108,7 @@ public class Hutool {
             ARG.className = classMethod.substring(0, idx);
             ARG.methodName = classMethod.substring(idx + 1);
 
-            List<String> paramTypes = methodJson.getObject(paramKey, new TypeReference<List<String>>() {});
+            List<String> paramTypes = methodJson.getObject(PARAM_KEY, new TypeReference<List<String>>() {});
             ARG.paramTypes = ObjectUtil.defaultIfNull(paramTypes, Collections.emptyList());
             ARG.params.addAll(ListUtil.sub(ARG.command, 1, ARG.command.size()));
             fixClassName = false;
@@ -104,18 +123,22 @@ public class Hutool {
             return;
         }
 
+        if (ALIAS.equals(ARG.className)) {
+            seeAlias(CLASS_JSON);
+            return;
+        }
+
         List<String> methodAliasPaths = null;
         if (fixName) {
-            String classKey = "clazz";
             String methodAliasKey = "methodAliasPaths";
-            JSONObject aliasJson = getAlias("class.json");
+            JSONObject aliasJson = getAlias(CLASS_JSON);
 
             JSONObject clazzJson = aliasJson.getJSONObject(ARG.className);
-            if (Objects.isNull(clazzJson) || !clazzJson.containsKey(classKey)) {
+            if (Objects.isNull(clazzJson) || !clazzJson.containsKey(CLAZZ_KEY)) {
                 ARG.className = StrUtil.addPrefixIfNot(ARG.className, CLASS_PREFIX);
                 fixName = false;
             } else {
-                ARG.className = clazzJson.getString(classKey);
+                ARG.className = clazzJson.getString(CLAZZ_KEY);
                 methodAliasPaths = clazzJson.getObject(methodAliasKey, new TypeReference<List<String>>() {});
             }
         }
@@ -139,9 +162,15 @@ public class Hutool {
             return;
         }
 
+        if (ALIAS.equals(ARG.methodName)) {
+            if (CollUtil.isNotEmpty(methodAliasPaths)) {
+                seeAlias(methodAliasPaths.toArray(new String[0]));
+            }
+            return;
+        }
+
         fixMethodName(fixName, methodAliasPaths);
 
-        StringJoiner paramJoiner = new StringJoiner(",");
         Class<?>[] paramTypes = new Class<?>[ARG.paramTypes.size()];
         for (int i = 0; i < ARG.paramTypes.size(); i++) {
             String paramType = ARG.paramTypes.get(i);
@@ -152,7 +181,6 @@ public class Hutool {
                 Console.log("param type not found: {}", paramType);
                 return;
             }
-            paramJoiner.add(paramType);
         }
 
         Method method;
@@ -167,7 +195,7 @@ public class Hutool {
 
         if (Objects.isNull(method)) {
             String msg = "static method not found(ignore case): {}#{}({})";
-            debugOutput(msg, clazz.getName(), ARG.methodName, paramJoiner);
+            debugOutput(msg, clazz.getName(), ARG.methodName, ArrayUtil.join(paramTypes, ","));
             ARG.methodName = StrUtil.EMPTY;
             handleResultOfMethod(clazz, fixName, methodAliasPaths);
             return;
@@ -180,7 +208,7 @@ public class Hutool {
 
         ParserConfig parserConfig = new ParserConfig();
         Object[] params = new Object[paramTypes.length];
-        paramJoiner = new StringJoiner(",");
+        StringJoiner paramJoiner = new StringJoiner(",");
         for (int i = 0; i < paramTypes.length; i++) {
             String param = ARG.params.get(i);
             paramJoiner.add(param);
@@ -193,7 +221,6 @@ public class Hutool {
     private static void fixMethodName(boolean fixName, List<String> methodAliasPaths) {
         if (fixName && CollUtil.isNotEmpty(methodAliasPaths)) {
             String methodKey = "methodName";
-            String paramKey = "paramTypes";
             JSONObject aliasJson = getAlias(methodAliasPaths.toArray(new String[0]));
 
             JSONObject methodJson = aliasJson.getJSONObject(ARG.methodName);
@@ -202,10 +229,43 @@ public class Hutool {
                 if (StrUtil.isNotBlank(methodName)) {
                     ARG.methodName = methodName;
                 }
-                List<String> paramTypes = methodJson.getObject(paramKey, new TypeReference<List<String>>() {});
+                List<String> paramTypes = methodJson.getObject(PARAM_KEY, new TypeReference<List<String>>() {});
                 ARG.paramTypes = ObjectUtil.defaultIfNull(paramTypes, Collections.emptyList());
             }
         }
+    }
+
+    private static void seeAlias(String... paths) {
+        JSONObject aliasJson = getAlias(paths);
+        StringJoiner joiner = new StringJoiner("\n");
+        Holder<Integer> maxLength = Holder.of(0);
+        Map<String, String> map = new TreeMap<>();
+
+        aliasJson.keySet().forEach(k -> {
+            int length = k.length();
+            if (length > maxLength.get()) {
+                maxLength.set(length);
+            }
+
+            JSONObject json = aliasJson.getJSONObject(k);
+            if (json.containsKey(CLAZZ_KEY)) {
+                // class alias
+                map.put(k, json.getString(CLAZZ_KEY));
+            } else {
+                // method alias
+                String methodName = json.getString("method");
+                if (StrUtil.isEmpty(methodName)) {
+                    methodName = json.getString("methodName");
+                }
+                List<String> paramTypes = json.getObject(PARAM_KEY, new TypeReference<List<String>>() {});
+                paramTypes = ObjectUtil.defaultIfNull(paramTypes, Collections.emptyList());
+                String typeString = ArrayUtil.join(paramTypes.toArray(new String[0]), ",");
+                map.put(k, StrUtil.format("{}({})", methodName, typeString));
+            }
+        });
+
+        map.forEach((k, v) -> joiner.add(StrUtil.padAfter(k, maxLength.get(), ' ') + " = " + v));
+        result = joiner;
     }
 
     private static JSONObject getAlias(String... paths) {

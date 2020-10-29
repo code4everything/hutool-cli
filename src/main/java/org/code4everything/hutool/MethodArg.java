@@ -15,26 +15,28 @@ public class MethodArg {
 
     private static final String CLASS_DESC = "the hutool class name, here will add prefix 'cn.hutool.' automatically if missed";
 
+    private static final String PARAM_DESC = "the parameter(s) of method invoking required";
+
     // @formatter:on
 
-    @Parameter(names = {"-c", "--class"}, description = CLASS_DESC, help = true)
-    String className;
-
-    @Parameter(names = {"-m", "--method"}, description = "the static method name(ignore case)", help = true)
-    String methodName;
-
-    @Parameter(names = {"-p", "--param", "--parameter"}, description = "the parameter(s) of method invoking required")
-    List<String> params = new ArrayList<>();
-
-    @Parameter(names = {"-t", "--type"}, description = "the class type of parameter(not required)")
-    List<String> paramTypes = new ArrayList<>();
-
-    @Parameter(names = {"-r", "--run", "--command"}, description = "build in method", variableArity = true)
+    @Parameter(names = {"-r", "--run", "--command"}, description = "build in method", variableArity = true, order = 0)
     List<String> command;
 
-    @Parameter(names = {"-y", "--yank", "--copy"}, description = "copy result in clipboard")
+    @Parameter(names = {"-c", "--class"}, description = CLASS_DESC, help = true, order = 1)
+    String className;
+
+    @Parameter(names = {"-m", "--method"}, description = "the static method name(ignore case)", help = true, order = 2)
+    String methodName;
+
+    @Parameter(names = {"-t", "--type"}, description = "the class type of parameter(not required)", order = 3)
+    List<String> paramTypes = new ArrayList<>();
+
+    @Parameter(names = {"-p", "--param", "--parameter"}, description = PARAM_DESC, order = 4)
+    List<String> params = new ArrayList<>();
+
+    @Parameter(names = {"-y", "--yank", "--copy"}, description = "copy result to clipboard", order = 5)
     boolean copy;
 
-    @Parameter(names = {"-d", "--debug"}, description = "enable debug mode")
+    @Parameter(names = {"-d", "--debug"}, description = "enable debug mode", order = 6)
     boolean debug;
 }
