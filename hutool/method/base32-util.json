@@ -1,0 +1,14 @@
+{
+    "encode": {
+        "methodName": "encode",
+        "paramTypes": [
+            "java.lang.String"
+        ]
+    },
+    "decode": {
+        "methodName": "decodeStr",
+        "paramTypes": [
+            "java.lang.String"
+        ]
+    }
+}

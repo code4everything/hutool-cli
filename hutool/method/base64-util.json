@@ -1,0 +1,20 @@
+{
+    "encode": {
+        "methodName": "encode",
+        "paramTypes": [
+            "java.lang.CharSequence"
+        ]
+    },
+    "decode": {
+        "methodName": "decodeStr",
+        "paramTypes": [
+            "java.lang.CharSequence"
+        ]
+    },
+    "encode-url": {
+        "methodName": "encodeUrlSafe",
+        "paramTypes": [
+            "java.lang.CharSequence"
+        ]
+    }
+}

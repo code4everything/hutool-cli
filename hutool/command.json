@@ -1,7 +1,35 @@
 {
-    "randomuuid": {
-        "method": "cn.hutool.core.util.IdUtil#randomUUID",
-        /*when this field is empty, that will be find the first method by name*/
-        "paramTypes": []
+    "base32-encode": {
+        "method": "cn.hutool.core.codec.Base32#encode",
+        "paramTypes": [
+            "java.lang.String"
+        ]
+    },
+    "base32-decode": {
+        "method": "cn.hutool.core.codec.Base32#decodeStr",
+        "paramTypes": [
+            "java.lang.String"
+        ]
+    },
+    "base64-encode": {
+        "method": "cn.hutool.core.codec.Base64#encode",
+        "paramTypes": [
+            "java.lang.CharSequence"
+        ]
+    },
+    "base64-decode": {
+        "method": "cn.hutool.core.codec.Base64#decodeStr",
+        "paramTypes": [
+            "java.lang.CharSequence"
+        ]
+    },
+    "base64-encode-url": {
+        "method": "cn.hutool.core.codec.Base64#encodeUrlSafe",
+        "paramTypes": [
+            "java.lang.CharSequence"
+        ]
+    },
+    "random-uuid": {
+        "method": "cn.hutool.core.util.IdUtil#randomUUID"
     }
 }

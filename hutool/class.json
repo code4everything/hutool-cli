@@ -1,4 +1,18 @@
 {
+    "base32": {
+        "clazz": "cn.hutool.core.codec.Base32",
+        "methodAliasPaths": [
+            "method",
+            "base32-util.json"
+        ]
+    },
+    "base64": {
+        "clazz": "cn.hutool.core.codec.Base64",
+        "methodAliasPaths": [
+            "method",
+            "base64-util.json"
+        ]
+    },
     "str": {
         "clazz": "cn.hutool.core.util.StrUtil",
         "methodAliasPaths": [

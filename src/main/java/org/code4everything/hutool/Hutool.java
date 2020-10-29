@@ -1,6 +1,9 @@
 package org.code4everything.hutool;
 
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.collection.ListUtil;
+import cn.hutool.core.date.DatePattern;
+import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.exceptions.ExceptionUtil;
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.lang.Console;
@@ -57,6 +60,7 @@ public class Hutool {
         if (ARG.copy) {
             ClipboardUtil.setStr(resultString);
         }
+        Console.log();
         Console.log(resultString);
     }
 
@@ -87,7 +91,7 @@ public class Hutool {
 
             List<String> paramTypes = methodJson.getObject(paramKey, new TypeReference<List<String>>() {});
             ARG.paramTypes = ObjectUtil.defaultIfNull(paramTypes, Collections.emptyList());
-            ARG.params.addAll(ARG.command.subList(0, ARG.command.size()));
+            ARG.params.addAll(ListUtil.sub(ARG.command, 1, ARG.command.size()));
             fixClassName = false;
         }
 
@@ -176,9 +180,13 @@ public class Hutool {
 
         ParserConfig parserConfig = new ParserConfig();
         Object[] params = new Object[paramTypes.length];
+        paramJoiner = new StringJoiner(",");
         for (int i = 0; i < paramTypes.length; i++) {
-            params[i] = TypeUtils.cast(ARG.params.get(i), paramTypes[i], parserConfig);
+            String param = ARG.params.get(i);
+            paramJoiner.add(param);
+            params[i] = TypeUtils.cast(param, paramTypes[i], parserConfig);
         }
+        debugOutput("invoke method: {}#{}({})", ARG.className, method.getName(), paramJoiner);
         result = ReflectUtil.invokeStatic(method, params);
     }
 
@@ -212,8 +220,9 @@ public class Hutool {
 
     private static void debugOutput(String msg, Object... params) {
         if (ARG.debug) {
-            Console.log(msg, params);
+            msg = DatePattern.NORM_DATETIME_MS_FORMAT.format(DateUtil.date()) + " debug output: " + msg;
             Console.log();
+            Console.log(msg, params);
         }
     }
 }
