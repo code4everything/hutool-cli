@@ -6,9 +6,9 @@
 
 但是如果我们想要快速的获取一个方法的返回结果，或者是调试一些方法，亦或者是想利用一些工具方法生成一些内容并复制它到其他应用程序，那我们就得写个测试类，然后调一下对应的方法，但这未免显得过于费劲。
 
-hutool-cli就是为了解决这个问题，顾名思义，这是一个可以在终端执行的hutool
+hutool-cli 就是为了解决这个问题而问世的，顾名思义，这就是一个可以在终端执行的hutool。
 
-比如我们想生成一个随机UUID，现在只需要打开终端执行以下命令：
+比如我们想生成一个随机UUID，现在只需要打开终端执行下面命令：
 
 ```shell
 hutool -r random-uuid
@@ -148,3 +148,5 @@ Usage: hutool-cli [options]
 - 类名称别名参考 [class.json](/hutool/class.json)
 
 - 方法名称别名参考 [base64-util.json](/hutool/method/base64-util.json)
+
+自定义你的别名后，你还可以 pr 到本仓库哦，让更多人享受 hutool 带来的便捷吧。
