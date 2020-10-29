@@ -78,6 +78,10 @@ public class Hutool {
             debugOutput("hutool-cli:{}", VERSION);
         }
 
+        if (ARG.paramFromClipboard) {
+            ARG.params.add(ClipboardUtil.getStr());
+        }
+
         debugOutput("received command line arguments: {}", Arrays.asList(args));
         debugOutput("invoking method to get the result");
         handleResult();

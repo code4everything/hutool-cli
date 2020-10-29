@@ -39,12 +39,15 @@ public class MethodArg {
     @Parameter(names = {"-y", "--yank", "--copy"}, description = "copy result to clipboard", order = 5)
     boolean copy;
 
-    @Parameter(names = {"-v", "version"}, description = "the current version of hutool command line tool", order = 6)
+    @Parameter(names = {"-a", "--auto-param"}, description = "clipboard string into a parameter", order = 6)
+    boolean paramFromClipboard;
+
+    @Parameter(names = {"-v", "version"}, description = "the current version of hutool command line tool", order = 7)
     boolean version;
 
-    @Parameter(names = {"-d", "--debug"}, description = "enable debug mode", order = 7)
+    @Parameter(names = {"-d", "--debug"}, description = "enable debug mode", order = 8)
     boolean debug;
 
-    @Parameter(names = {"--exception"}, description = EXCEPTION_DESC, order = 8, hidden = true)
+    @Parameter(names = {"--exception"}, description = EXCEPTION_DESC, order = 9, hidden = true)
     boolean exception;
 }
