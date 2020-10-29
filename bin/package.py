@@ -22,4 +22,6 @@ print(os.popen('go build hutool.go').read())
 os.chdir('../../..')
 filename = './hutool/bin/hutool.exe'
 remove(filename)
+if not os.path.exists('./hutool/bin'):
+        os.makedirs('./hutool/bin')
 os.rename('./src/main/go/hutool.exe', filename)

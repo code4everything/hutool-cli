@@ -26,8 +26,14 @@ public class MethodArg {
     @Parameter(names = {"-p", "--param", "--parameter"}, description = "the parameter(s) of method invoking required")
     List<String> params = new ArrayList<>();
 
+    @Parameter(names = {"-t", "--type"}, description = "the class type of parameter(not required)")
+    List<String> paramTypes = new ArrayList<>();
+
     @Parameter(names = {"-r", "--run", "--command"}, description = "build in method", variableArity = true)
     List<String> command;
+
+    @Parameter(names = {"-y", "--yank", "--copy"}, description = "copy result in clipboard")
+    boolean copy;
 
     @Parameter(names = {"-d", "--debug"}, description = "enable debug mode")
     boolean debug;

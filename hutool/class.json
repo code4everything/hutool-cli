@@ -2,7 +2,7 @@
     "str": {
         "clazz": "cn.hutool.core.util.StrUtil",
         "methodAliasPaths": [
-            "method-alias",
+            "method",
             "str-util.json"
         ]
     }
