@@ -37,7 +37,7 @@ git clone https://gitee.com/code4everything/hutool-cli.git
 
 ```shell
 cd bin
-py package.py
+python package.py
 ```
 
 ### 配置环境变量
@@ -70,9 +70,9 @@ hutool -v
 hutool -c cn.hutool.core.util.IdUtil -m randomUUID
 # output: 3214683f-55c1-412e-8b7a-454c57468d99
 
-hutool -c core.codec.Base64 -m encode -p hutool-cli
+hutool -r core.codec.Base64#encode -p hutool-cli -t java.lang.CharSequence
 # output: aHV0b29sLWNsaQ==
-# 说明：类名自动补前缀'cn.hutool.'
+# 说明：类名自动补前缀'cn.hutool.'，并且命令模式支持组合类名和方法名称
 ```
 
 通过别名执行
@@ -130,7 +130,7 @@ encode-url = encodeUrlSafe(java.lang.CharSequence)
 Usage: hutool-cli [options]
   Options:
     -r, --run, --command
-      内建的快捷命令
+      命令模式
     -c, --class
       类名称（自动加前缀：cn.hutool.）
     -m, --method
@@ -151,7 +151,7 @@ Usage: hutool-cli [options]
 
 ### 自定义别名
 
-- 快捷命令别名参考 [command.json](/hutool/command.json)
+- 命令别名参考 [command.json](/hutool/command.json)
 
 - 类名称别名参考 [class.json](/hutool/class.json)
 

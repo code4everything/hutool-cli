@@ -110,6 +110,17 @@ public class Hutool {
                 return;
             }
 
+            ARG.params.addAll(ListUtil.sub(ARG.command, 1, ARG.command.size()));
+
+            char sharp = '#';
+            int idx = command.indexOf(sharp);
+            if (idx > 0) {
+                ARG.className = command.substring(0, idx);
+                ARG.methodName = command.substring(idx + 1);
+                handleResultOfClass(true);
+                return;
+            }
+
             String methodKey = "method";
             JSONObject aliasJson = getAlias(COMMAND_JSON);
 
@@ -120,18 +131,17 @@ public class Hutool {
             }
 
             String classMethod = methodJson.getString(methodKey);
-            if (!classMethod.contains("#")) {
+            idx = classMethod.lastIndexOf(sharp);
+            if (idx < 1) {
                 Console.log("method[{}] format error, required: com.example.Main#main", classMethod);
                 return;
             }
 
-            int idx = classMethod.lastIndexOf('#');
             ARG.className = classMethod.substring(0, idx);
             ARG.methodName = classMethod.substring(idx + 1);
 
             List<String> paramTypes = methodJson.getObject(PARAM_KEY, new TypeReference<List<String>>() {});
             ARG.paramTypes = ObjectUtil.defaultIfNull(paramTypes, Collections.emptyList());
-            ARG.params.addAll(ListUtil.sub(ARG.command, 1, ARG.command.size()));
             fixClassName = false;
         }
 
@@ -209,6 +219,10 @@ public class Hutool {
             method = ReflectUtil.getMethodByNameIgnoreCase(clazz, ARG.methodName);
             if (Objects.nonNull(method)) {
                 paramTypes = method.getParameterTypes();
+                for (Class<?> paramType : paramTypes) {
+                    ARG.paramTypes.add(paramType.getName());
+                }
+                ARG.paramTypes.clear();
             }
         } else {
             method = ReflectUtil.getMethod(clazz, true, ARG.methodName, paramTypes);
@@ -216,14 +230,16 @@ public class Hutool {
 
         if (Objects.isNull(method)) {
             String msg = "static method not found(ignore case): {}#{}({})";
-            debugOutput(msg, clazz.getName(), ARG.methodName, ArrayUtil.join(paramTypes, ","));
+            String[] paramTypeArray = ARG.paramTypes.toArray(new String[0]);
+            debugOutput(msg, clazz.getName(), ARG.methodName, ArrayUtil.join(paramTypeArray, ","));
             ARG.methodName = StrUtil.EMPTY;
             handleResultOfMethod(clazz, fixName, methodAliasPaths);
             return;
         }
 
         if (ARG.params.size() < paramTypes.length) {
-            Console.log("parameter error, required: {}", Arrays.asList(paramTypes));
+            String[] paramTypeArray = ARG.paramTypes.toArray(new String[0]);
+            Console.log("parameter error, required: {}", ArrayUtil.join(paramTypeArray, ",", "[", "]"));
             return;
         }
 
