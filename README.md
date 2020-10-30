@@ -124,6 +124,12 @@ encode     = encode(java.lang.CharSequence)
 encode-url = encodeUrlSafe(java.lang.CharSequence)
 ```
 
+```shell
+hutool -r date#alias
+```
+
+> 我们可以通过关键字 `alias` 来查看命令、类名、方法名已有的别名
+
 支持的参数
 
 ```text

@@ -28,7 +28,7 @@ import java.util.*;
  * @author pantao
  * @since 2020/10/27
  */
-public class Hutool {
+public final class Hutool {
 
     private static final MethodArg ARG = new MethodArg();
 
@@ -49,6 +49,8 @@ public class Hutool {
     private static JCommander commander;
 
     private static Object result;
+
+    private Hutool() {}
 
     public static void main(String[] args) {
         commander = JCommander.newBuilder().addObject(ARG).build();

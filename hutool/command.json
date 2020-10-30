@@ -29,6 +29,46 @@
             "java.lang.CharSequence"
         ]
     },
+    "now": {
+        "method": "cn.hutool.core.date.DateUtil#now",
+        "paramTypes": []
+    },
+    "curr-sec": {
+        "method": "cn.hutool.core.date.DateUtil#currentSeconds",
+        "paramTypes": []
+    },
+    "week": {
+        "method": "cn.hutool.core.date.DateUtil#dayOfWeekEnum",
+        "paramTypes": [
+            "java.util.Date"
+        ]
+    },
+    "week-end": {
+        "method": "cn.hutool.core.date.DateUtil#endOfWeek",
+        "paramTypes": [
+            "java.util.Date"
+        ]
+    },
+    "date-between": {
+        "method": "cn.hutool.core.date.DateUtil#between",
+        "paramTypes": [
+            "java.util.Date",
+            "java.util.Date",
+            "cn.hutool.core.date.DateUnit"
+        ]
+    },
+    "ms2date": {
+        "method": "cn.hutool.core.date.DateUtil#date",
+        "paramTypes": [
+            "java.util.Date"
+        ]
+    },
+    "date2ms": {
+        "method": "org.code4everything.hutool.Utils#date2Millis",
+        "paramTypes": [
+            "java.util.Date"
+        ]
+    },
     "random-uuid": {
         "method": "cn.hutool.core.util.IdUtil#randomUUID"
     }

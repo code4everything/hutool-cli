@@ -1,0 +1,36 @@
+{
+    "now": {
+        "methodName": "now",
+        "paramTypes": []
+    },
+    "curr-sec": {
+        "methodName": "currentSeconds",
+        "paramTypes": []
+    },
+    "week": {
+        "methodName": "dayOfWeekEnum",
+        "paramTypes": [
+            "java.util.Date"
+        ]
+    },
+    "week-end": {
+        "methodName": "endOfWeek",
+        "paramTypes": [
+            "java.util.Date"
+        ]
+    },
+    "between": {
+        "methodName": "between",
+        "paramTypes": [
+            "java.util.Date",
+            "java.util.Date",
+            "cn.hutool.core.date.DateUnit"
+        ]
+    },
+    "ms2datetime": {
+        "methodName": "date",
+        "paramTypes": [
+            "java.util.Date"
+        ]
+    }
+}

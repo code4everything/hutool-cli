@@ -13,6 +13,20 @@
             "base64-util.json"
         ]
     },
+    "caesar": {
+        "clazz": "cn.hutool.core.codec.Caesar",
+        "methodAliasPaths": [
+            "method",
+            "caesar.json"
+        ]
+    },
+    "date": {
+        "clazz": "cn.hutool.core.date.DateUtil",
+        "methodAliasPaths": [
+            "method",
+            "date-util.json"
+        ]
+    },
     "str": {
         "clazz": "cn.hutool.core.util.StrUtil",
         "methodAliasPaths": [
