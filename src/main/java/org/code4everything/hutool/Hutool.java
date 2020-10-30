@@ -218,11 +218,11 @@ public class Hutool {
         if (ArrayUtil.isEmpty(paramTypes)) {
             method = ReflectUtil.getMethodByNameIgnoreCase(clazz, ARG.methodName);
             if (Objects.nonNull(method)) {
+                ARG.paramTypes.clear();
                 paramTypes = method.getParameterTypes();
                 for (Class<?> paramType : paramTypes) {
                     ARG.paramTypes.add(paramType.getName());
                 }
-                ARG.paramTypes.clear();
             }
         } else {
             method = ReflectUtil.getMethod(clazz, true, ARG.methodName, paramTypes);
@@ -239,7 +239,7 @@ public class Hutool {
 
         if (ARG.params.size() < paramTypes.length) {
             String[] paramTypeArray = ARG.paramTypes.toArray(new String[0]);
-            Console.log("parameter error, required: {}", ArrayUtil.join(paramTypeArray, ",", "[", "]"));
+            Console.log("parameter error, required: ({})", ArrayUtil.join(paramTypeArray, ","));
             return;
         }
 
