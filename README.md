@@ -2,14 +2,14 @@
 
 ### 简介
 
-顾名思义，这就是一个可以在终端执行的 hutool。
+顾名思义，这是一个可以在终端执行的 hutool。
 
-那hutool-cli 可以做什么呢？
+那 hutool-cli 可以做什么呢？
 
-首先Hutool是一个非常好用的Java工具库，提供了非常多的静态工具方法供大家使用，极大的提高了我们日常的开发效率；
-但是如果我们想要快速的知道一个方法的运行效果，或者是调试一些方法，亦或者是想利用一些工具方法生成一些内容并复制它到其他应用程序，那我们就不得不写个测试类，然后再调一下对应的方法，但这未免显得过于费劲。
+首先Hutool是一个非常好用的Java工具库，提供了非常多地静态工具方法供大家使用，极大地提高了我们日常的开发效率；
+但是如果我们想要快速的知道一个方法的运行效果，或者是调试一些方法，亦或者是想利用一些工具方法生成一些内容并复制它到其他应用程序，那我们就不得不写个测试类，然后再调一下对应的方法，最后查看执行结果，但这未免显得过于费劲。
 
-于是 hutool-cli 就将 hutool 打包到了终端中去，让我们可以直接通过命令去执行一个静态的工具方法，让我们开发变得更有效率。
+于是 hutool-cli 就将 hutool 打包到了终端中去，让我们可以直接通过命令去执行一个静态的工具方法，让日常的开发变得更有效率。
 
 比如我们想生成一个随机UUID，现在只需要打开终端执行下面命令：
 
@@ -70,7 +70,7 @@ hutool -v
 hutool -c cn.hutool.core.util.IdUtil -m randomUUID
 # output: 3214683f-55c1-412e-8b7a-454c57468d99
 
-hutool -r core.codec.Base64#encode -p hutool-cli -t java.lang.CharSequence
+hutool -r core.codec.Base64#encode -t java.lang.CharSequence -p hutool-cli
 # output: aHV0b29sLWNsaQ==
 # 说明：类名自动补前缀'cn.hutool.'，并且命令模式支持组合类名和方法名称
 ```
@@ -150,6 +150,21 @@ Usage: hutool-cli [options]
 ```
 
 ### 自定义别名
+
+别名可以用来快速的指向一个类或一个静态方法，格式大致如下，key将作为别名，value包括了别名对应的类名、方法名以及方法所需的参数类型。
+
+```json
+{
+    "base64-encode-url": {
+        "method": "cn.hutool.core.codec.Base64#encodeUrlSafe",
+        "paramTypes": [
+            "java.lang.CharSequence"
+        ]
+    }
+}
+```
+
+hutool-cli 已经提供了大量常用的别名，参考下面文件：
 
 - 命令别名参考 [command.json](/hutool/command.json)
 
