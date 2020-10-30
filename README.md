@@ -80,10 +80,15 @@ hutool -c core.codec.Base64 -m encode -p hutool-cli
 hutool -c base64 -m encode -p 'sky is blue'
 # output: c2t5IGlzIGJsdWU=
 
-hutool -r base64-encode 'sky is blue'
+hutool -r base64-encode 'sky is blue' -y
 # output: c2t5IGlzIGJsdWU=
+# 说明：-y 表示将输出结果复制到剪贴板
 
-hutool -r random-uuid -y
+hutool -r base64-decode -a
+# output: sky is blue
+# 说明：-a 表示将剪贴板内容作为参数输入
+
+hutool -r random-uuid
 # output: 66db3ae3-7e3d-46e9-8b16-80eb22393d30
 ```
 
@@ -138,6 +143,8 @@ Usage: hutool-cli [options]
       方法需要的参数
     -y, --yank, --copy
       是否将结果复制到剪贴板
+    -a, --auto-param
+      是否将剪贴板内容作为参数输入
     -v, version
       查看当前版本
     -d, --debug
