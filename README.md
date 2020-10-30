@@ -135,6 +135,7 @@ encode-url = encodeUrlSafe(java.lang.CharSequence)
 ```shell
 hutool -r date#alias
 
+# output:
 between     = between(java.util.Date,java.util.Date,cn.hutool.core.date.DateUnit)
 curr-sec    = currentSeconds()
 ms2datetime = date(java.util.Date)
