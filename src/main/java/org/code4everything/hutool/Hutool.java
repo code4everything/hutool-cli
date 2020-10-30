@@ -148,7 +148,7 @@ public final class Hutool {
 
             List<String> paramTypes = methodJson.getObject(PARAM_KEY, new TypeReference<List<String>>() {});
             ARG.paramTypes = ObjectUtil.defaultIfNull(paramTypes, Collections.emptyList());
-            fixClassName = false;
+            fixClassName = methodJson.getBooleanValue("allowAlias");
         }
 
         handleResultOfClass(fixClassName);
