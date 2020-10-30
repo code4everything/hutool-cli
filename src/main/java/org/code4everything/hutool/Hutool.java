@@ -75,7 +75,7 @@ public class Hutool {
             Console.log("hutool-cli: {}", VERSION);
             return;
         } else {
-            debugOutput("hutool-cli:{}", VERSION);
+            debugOutput("hutool-cli: {}", VERSION);
         }
 
         if (ARG.paramFromClipboard) {
