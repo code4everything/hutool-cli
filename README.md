@@ -121,7 +121,7 @@ date   = cn.hutool.core.date.DateUtil
 str    = cn.hutool.core.util.StrUtil
 ```
 
-查看类别名下方法别名，有一下两种方式：
+查看类别名下方法别名，有以下两种方式：
 
 ```shell
 hutool -c base64 -m alias
