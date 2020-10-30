@@ -83,9 +83,9 @@ public class Hutool {
         }
 
         debugOutput("received command line arguments: {}", Arrays.asList(args));
-        debugOutput("invoking method to get the result");
+        debugOutput("handling result");
         handleResult();
-        debugOutput("invoke method success");
+        debugOutput("result handled success");
 
         if (Objects.isNull(result)) {
             return;
@@ -105,6 +105,7 @@ public class Hutool {
 
         if (CollUtil.isNotEmpty(ARG.command)) {
             String command = ARG.command.get(0);
+            debugOutput("get command: {}", command);
             if (ALIAS.equals(command)) {
                 seeAlias(COMMAND_JSON);
                 return;
@@ -115,6 +116,7 @@ public class Hutool {
             char sharp = '#';
             int idx = command.indexOf(sharp);
             if (idx > 0) {
+                debugOutput("invoke use class name and method name combined in command mode");
                 ARG.className = command.substring(0, idx);
                 ARG.methodName = command.substring(idx + 1);
                 handleResultOfClass(true);
@@ -131,12 +133,14 @@ public class Hutool {
             }
 
             String classMethod = methodJson.getString(methodKey);
+            debugOutput("get method: {}", classMethod);
             idx = classMethod.lastIndexOf(sharp);
             if (idx < 1) {
                 Console.log("method[{}] format error, required: com.example.Main#main", classMethod);
                 return;
             }
 
+            debugOutput("parse method to class name and method name");
             ARG.className = classMethod.substring(0, idx);
             ARG.methodName = classMethod.substring(idx + 1);
 
@@ -170,11 +174,13 @@ public class Hutool {
                 fixName = false;
             } else {
                 ARG.className = clazzJson.getString(CLAZZ_KEY);
+                debugOutput("find class alias: {}", ARG.className);
                 methodAliasPaths = clazzJson.getObject(methodAliasKey, new TypeReference<List<String>>() {});
             }
         }
 
         Class<?> clazz;
+        debugOutput("loading class: {}", ARG.className);
         try {
             clazz = Class.forName(ARG.className);
         } catch (ClassNotFoundException e) {
@@ -184,6 +190,7 @@ public class Hutool {
             return;
         }
 
+        debugOutput("load class success");
         handleResultOfMethod(clazz, fixName, methodAliasPaths);
     }
 
@@ -202,6 +209,7 @@ public class Hutool {
 
         fixMethodName(fixName, methodAliasPaths);
 
+        debugOutput("parsing parameter types");
         Class<?>[] paramTypes = new Class<?>[ARG.paramTypes.size()];
         for (int i = 0; i < ARG.paramTypes.size(); i++) {
             String paramType = ARG.paramTypes.get(i);
@@ -213,9 +221,11 @@ public class Hutool {
                 return;
             }
         }
+        debugOutput("parse parameter types success");
 
         Method method;
         if (ArrayUtil.isEmpty(paramTypes)) {
+            debugOutput("getting method ignore case by method name");
             method = ReflectUtil.getMethodByNameIgnoreCase(clazz, ARG.methodName);
             if (Objects.nonNull(method)) {
                 ARG.paramTypes.clear();
@@ -225,9 +235,9 @@ public class Hutool {
                 }
             }
         } else {
+            debugOutput("getting method ignore case by method name and param types");
             method = ReflectUtil.getMethod(clazz, true, ARG.methodName, paramTypes);
         }
-
         if (Objects.isNull(method)) {
             String msg = "static method not found(ignore case): {}#{}({})";
             String[] paramTypeArray = ARG.paramTypes.toArray(new String[0]);
@@ -236,6 +246,7 @@ public class Hutool {
             handleResultOfMethod(clazz, fixName, methodAliasPaths);
             return;
         }
+        debugOutput("get method success");
 
         if (ARG.params.size() < paramTypes.length) {
             String[] paramTypeArray = ARG.paramTypes.toArray(new String[0]);
@@ -243,6 +254,7 @@ public class Hutool {
             return;
         }
 
+        debugOutput("casting parameter to class type");
         ParserConfig parserConfig = new ParserConfig();
         Object[] params = new Object[paramTypes.length];
         StringJoiner paramJoiner = new StringJoiner(",");
@@ -251,8 +263,10 @@ public class Hutool {
             paramJoiner.add(param);
             params[i] = TypeUtils.cast(param, paramTypes[i], parserConfig);
         }
-        debugOutput("invoke method: {}#{}({})", ARG.className, method.getName(), paramJoiner);
+        debugOutput("cast parameter success");
+        debugOutput("invoking method: {}#{}({})", ARG.className, method.getName(), paramJoiner);
         result = ReflectUtil.invokeStatic(method, params);
+        debugOutput("invoke method success");
     }
 
     private static void fixMethodName(boolean fixName, List<String> methodAliasPaths) {
@@ -266,6 +280,7 @@ public class Hutool {
                 if (StrUtil.isNotBlank(methodName)) {
                     ARG.methodName = methodName;
                 }
+                debugOutput("get method name: {}", ARG.methodName);
                 List<String> paramTypes = methodJson.getObject(PARAM_KEY, new TypeReference<List<String>>() {});
                 ARG.paramTypes = ObjectUtil.defaultIfNull(paramTypes, Collections.emptyList());
             }
@@ -306,12 +321,14 @@ public class Hutool {
             }
         });
 
+        debugOutput("max length: {}", maxLength.get());
         map.forEach((k, v) -> joiner.add(StrUtil.padAfter(k, maxLength.get(), ' ') + " = " + v));
         result = joiner;
     }
 
     private static JSONObject getAlias(String... paths) {
         String path = Paths.get(".", paths).toAbsolutePath().normalize().toString();
+        debugOutput("alias json file path: {}", path);
         String json = null;
         if (FileUtil.exist(path)) {
             json = FileUtil.readUtf8String(path);
