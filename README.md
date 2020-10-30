@@ -4,7 +4,7 @@
 
 顾名思义，这就是一个可以在终端执行的 hutool。
 
-hutool-cli 可以做什么呢？
+那hutool-cli 可以做什么呢？
 
 首先Hutool是一个非常好用的Java工具库，提供了非常多的静态工具方法供大家使用，极大的提高了我们日常的开发效率；
 但是如果我们想要快速的知道一个方法的运行效果，或者是调试一些方法，亦或者是想利用一些工具方法生成一些内容并复制它到其他应用程序，那我们就不得不写个测试类，然后再调一下对应的方法，但这未免显得过于费劲。
@@ -36,6 +36,7 @@ git clone https://gitee.com/code4everything/hutool-cli.git
 构建
 
 ```shell
+cd bin
 py package.py
 ```
 
@@ -87,9 +88,6 @@ hutool -r base64-encode 'sky is blue' -y
 hutool -r base64-decode -a
 # output: sky is blue
 # 说明：-a 表示将剪贴板内容作为参数输入
-
-hutool -r random-uuid
-# output: 66db3ae3-7e3d-46e9-8b16-80eb22393d30
 ```
 
 > 在 `-r` 模式下，别名后可直接跟方法需要的参数，当然使用 `-p` 也是支持的。
