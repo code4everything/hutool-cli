@@ -92,7 +92,9 @@ hutool -r base64-decode -a
 
 > 在 `-r` 模式下，别名后可直接跟方法需要的参数，当然使用 `-p` 也是支持的。
 
-查看有哪些别名
+### 别名查看
+
+查看有哪些命令别名（命令可以精确定位到方法）
 
 ```shell
 hutool -r alias
@@ -106,14 +108,20 @@ base64-encode-url = cn.hutool.core.codec.Base64#encodeUrlSafe(java.lang.CharSequ
 random-uuid       = cn.hutool.core.util.IdUtil#randomUUID()
 ```
 
+查看类名称别名
+
 ```shell
 hutool -c alias
 
 # output:
 base32 = cn.hutool.core.codec.Base32
 base64 = cn.hutool.core.codec.Base64
+caesar = cn.hutool.core.codec.Caesar
+date   = cn.hutool.core.date.DateUtil
 str    = cn.hutool.core.util.StrUtil
 ```
+
+查看类别名下方法别名，有一下两种方式：
 
 ```shell
 hutool -c base64 -m alias
@@ -126,6 +134,13 @@ encode-url = encodeUrlSafe(java.lang.CharSequence)
 
 ```shell
 hutool -r date#alias
+
+between     = between(java.util.Date,java.util.Date,cn.hutool.core.date.DateUnit)
+curr-sec    = currentSeconds()
+ms2datetime = date(java.util.Date)
+now         = now()
+week        = dayOfWeekEnum(java.util.Date)
+week-end    = endOfWeek(java.util.Date)
 ```
 
 > 我们可以通过关键字 `alias` 来查看命令、类名、方法名已有的别名
@@ -178,4 +193,4 @@ hutool-cli 已经提供了大量常用的别名，参考下面文件：
 
 - 方法名称别名参考 [base64-util.json](/hutool/method/base64-util.json)
 
-自定义你的别名后，你还可以 pr 到本仓库哦，让更多人享受 hutool 带来的便捷吧。
+自定义你的别名后，你还可以 pr 到本仓库哦，让更多人享受到 hutool 带来的便捷吧。
