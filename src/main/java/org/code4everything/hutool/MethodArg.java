@@ -20,6 +20,9 @@ public class MethodArg {
     private static final String EXCEPTION_DESC = "thrown an exception, only work on debug mode";
 
     private static final String COMMAND_DESC = "build in method(can miss '-r')";
+
+    private static final String NON_ARG_DESC = "system specify a method when param type is empty";
+
     // @formatter:on
 
     @Parameter(names = {"-r", "--run", "--command"}, description = COMMAND_DESC, variableArity = true, order = 0)
@@ -55,6 +58,9 @@ public class MethodArg {
     @Parameter(names = {"--exception"}, description = EXCEPTION_DESC, hidden = true, order = 10)
     boolean exception;
 
-    @Parameter(description = "for command missing", variableArity = true, hidden = true, order = 11)
+    @Parameter(names = {"-n", "--non-args"}, description = NON_ARG_DESC, order = 11)
+    boolean nonArgs;
+
+    @Parameter(description = "for command missing", variableArity = true, hidden = true, order = 12)
     List<String> main = new ArrayList<>();
 }

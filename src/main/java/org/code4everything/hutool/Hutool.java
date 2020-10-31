@@ -232,11 +232,11 @@ public final class Hutool {
         debugOutput("parse parameter types success");
 
         Method method;
-        if (ArrayUtil.isEmpty(paramTypes)) {
+        if (ARG.nonArgs && ArrayUtil.isEmpty(paramTypes)) {
             debugOutput("getting method ignore case by method name");
             method = ReflectUtil.getMethodByNameIgnoreCase(clazz, ARG.methodName);
             if (Objects.nonNull(method)) {
-                ARG.paramTypes.clear();
+                ARG.paramTypes = new ArrayList<>();
                 paramTypes = method.getParameterTypes();
                 for (Class<?> paramType : paramTypes) {
                     ARG.paramTypes.add(paramType.getName());
