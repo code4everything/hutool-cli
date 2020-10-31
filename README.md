@@ -46,7 +46,7 @@ python package.py
 
 ```text
 ├─bin
-│  └─hutool.exe
+│  └─hutool(.exe)
 ├─method
 ├─class.json
 ├─command.json

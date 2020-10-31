@@ -1,0 +1,16 @@
+{
+    "arrangement-count": {
+        "methodName": "arrangementCount",
+        "paramTypes": [
+            "java.lang.Integer",
+            "java.lang.Integer"
+        ]
+    },
+    "combination-count": {
+        "methodName": "combinationCount",
+        "paramTypes": [
+            "java.lang.Integer",
+            "java.lang.Integer"
+        ]
+    }
+}

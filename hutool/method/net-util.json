@@ -1,0 +1,6 @@
+{
+    "usable-port": {
+        "methodName": "getUsableLocalPort",
+        "paramTypes": []
+    }
+}

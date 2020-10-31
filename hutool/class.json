@@ -27,6 +27,34 @@
             "date-util.json"
         ]
     },
+    "file": {
+        "clazz": "cn.hutool.core.io.FileUtil",
+        "methodAliasPaths": [
+            "method",
+            "file-util.json"
+        ]
+    },
+    "math": {
+        "clazz": "cn.hutool.core.math.MathUtil",
+        "methodAliasPaths": [
+            "method",
+            "math-util.json"
+        ]
+    },
+    "net": {
+        "clazz": "cn.hutool.core.net.NetUtil",
+        "methodAliasPaths": [
+            "method",
+            "net-util.json"
+        ]
+    },
+    "unicode": {
+        "clazz": "cn.hutool.core.text.UnicodeUtil",
+        "methodAliasPaths": [
+            "method",
+            "unicode-util.json"
+        ]
+    },
     "str": {
         "clazz": "cn.hutool.core.util.StrUtil",
         "methodAliasPaths": [

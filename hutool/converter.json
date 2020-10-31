@@ -1,3 +1,4 @@
 {
-    "cn.hutool.core.date.Week": "org.code4everything.hutool.converter.WeekConverter"
+    "cn.hutool.core.date.Week": "org.code4everything.hutool.converter.WeekConverter",
+    "java.io.File": "org.code4everything.hutool.converter.FileConverter"
 }

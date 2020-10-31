@@ -69,6 +69,30 @@
             "java.util.Date"
         ]
     },
+    "file-type": {
+        "method": "cn.hutool.core.io.FileUtil#getType",
+        "paramTypes": [
+            "java.io.File"
+        ]
+    },
+    "file-read": {
+        "method": "cn.hutool.core.io.FileUtil#readUtf8String",
+        "paramTypes": [
+            "java.lang.String"
+        ]
+    },
+    "unicode2string": {
+        "method": "cn.hutool.core.text.UnicodeUtil#toString",
+        "paramTypes": [
+            "java.lang.String"
+        ]
+    },
+    "string2unicode": {
+        "method": "cn.hutool.core.text.UnicodeUtil#toUnicode",
+        "paramTypes": [
+            "java.lang.String"
+        ]
+    },
     "random-uuid": {
         "method": "cn.hutool.core.util.IdUtil#randomUUID"
     }

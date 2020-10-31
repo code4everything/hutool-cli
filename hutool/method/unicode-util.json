@@ -1,0 +1,21 @@
+{
+    "2string": {
+        "methodName": "toString",
+        "paramTypes": [
+            "java.lang.String"
+        ]
+    },
+    "2unicode": {
+        "methodName": "toUnicode",
+        "paramTypes": [
+            "java.lang.String"
+        ]
+    },
+    "2unicode-p2": {
+        "methodName": "toUnicode",
+        "paramTypes": [
+            "java.lang.String",
+            "java.lang.Boolean"
+        ]
+    }
+}
