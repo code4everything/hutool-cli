@@ -6,7 +6,7 @@
 
     <groupId>org.code4everything</groupId>
     <artifactId>hutool-cli</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0</version>
 
     <properties>
         <java.veresion>8</java.veresion>

@@ -3,6 +3,15 @@
 import os
 import shutil
 
+os.chdir('..')
+print(os.popen('git pull').read())
+print(os.popen('mvn clean package').read())
+
+with open('./pom.xml', 'r', encoding='utf-8') as fr:
+    res = re.search('<version>(.*?)</version>',
+                    fr.read(), re.M | re.I)
+    version = res.group(1)
+
 
 def build_go(os_name, arch):
     print('build hutool on os[%s] for arch[%s]' % (os_name, arch))
@@ -15,11 +24,7 @@ def build_go(os_name, arch):
         name += '.exe'
     shutil.move(name, folder+'/bin')
     shutil.copy('../../../target/hutool.jar', folder)
-
-
-os.chdir('..')
-print(os.popen('git pull').read())
-print(os.popen('mvn clean package').read())
+    print(os.popen('zip -r ../../../target/%s-%s.zip %s' % (os_name, version, folder).read())
 
 os.chdir('./src/main/go')
 
