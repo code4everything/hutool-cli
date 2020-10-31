@@ -18,7 +18,7 @@ remove(filename)
 os.rename('./target/hutool.jar', filename)
 
 os.chdir('./src/main/go')
-print(os.popen('go build hutool.go').read())
+os.system('go build hutool.go')
 
 os.chdir('../../..')
 bin_folder = './hutool/bin'
