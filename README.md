@@ -14,7 +14,7 @@
 比如我们想生成一个随机UUID，现在只需要打开终端执行下面命令：
 
 ```shell
-hutool -r random-uuid
+hutool random-uuid
 # output: 483cc7fc-4b22-4188-8f1c-dc1ce4b6d3ee
 ```
 
@@ -90,7 +90,7 @@ hutool -r base64-decode -a
 # 说明：-a 表示将剪贴板内容作为参数输入
 ```
 
-> 在 `-r` 模式下，别名后可直接跟方法需要的参数，当然使用 `-p` 也是支持的。
+> 在 `-r` 模式下，别名后可直接跟方法需要的参数，当然使用 `-p` 也是支持的，并且 `-r` 是可以省略的，如最上面生成随机UUID的例子。
 
 ### 别名查看
 
@@ -152,7 +152,7 @@ week-end    = endOfWeek(java.util.Date)
 Usage: hutool-cli [options]
   Options:
     -r, --run, --command
-      命令模式
+      命令模式，-r指令可缺省
     -c, --class
       类名称（自动加前缀：cn.hutool.）
     -m, --method

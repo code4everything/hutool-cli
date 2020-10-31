@@ -19,10 +19,11 @@ public class MethodArg {
 
     private static final String EXCEPTION_DESC = "thrown an exception, only work on debug mode";
 
+    private static final String COMMAND_DESC = "build in method(can miss '-r')";
     // @formatter:on
 
-    @Parameter(names = {"-r", "--run", "--command"}, description = "build in method", variableArity = true, order = 0)
-    List<String> command;
+    @Parameter(names = {"-r", "--run", "--command"}, description = COMMAND_DESC, variableArity = true, order = 0)
+    List<String> command = new ArrayList<>();
 
     @Parameter(names = {"-c", "--class"}, description = CLASS_DESC, help = true, order = 1)
     String className;
@@ -48,6 +49,9 @@ public class MethodArg {
     @Parameter(names = {"-d", "--debug"}, description = "enable debug mode", order = 8)
     boolean debug;
 
-    @Parameter(names = {"--exception"}, description = EXCEPTION_DESC, order = 9, hidden = true)
+    @Parameter(names = {"--exception"}, description = EXCEPTION_DESC, hidden = true, order = 9)
     boolean exception;
+
+    @Parameter(description = "for command missing", variableArity = true, hidden = true, order = 10)
+    List<String> main = new ArrayList<>();
 }

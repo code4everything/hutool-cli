@@ -86,6 +86,7 @@ public final class Hutool {
 
         debugOutput("received command line arguments: {}", Arrays.asList(args));
         debugOutput("handling result");
+        ARG.command.addAll(ARG.main);
         handleResult();
         debugOutput("result handled success");
 
