@@ -26,7 +26,7 @@ def build_go(os_name, arch):
     shutil.move(name, folder+'/bin')
     shutil.copy('../../../target/hutool.jar', folder)
     print(os.popen('zip -r ../../../target/%s-%s.zip %s' %
-                   (os_name, version, folder).read()))
+                   (os_name, version, folder)).read())
 
 
 os.chdir('./src/main/go')
