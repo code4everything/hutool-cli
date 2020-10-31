@@ -2,5 +2,7 @@
     "cn.hutool.core.date.Week": "org.code4everything.hutool.converter.WeekConverter",
     "java.io.File": "org.code4everything.hutool.converter.FileConverter",
     "java.nio.charset.Charset": "org.code4everything.hutool.converter.CharsetConverter",
-    "cn.hutool.core.util.IdcardUtil$Idcard": "org.code4everything.hutool.converter.JsonObjectConverter"
+    "cn.hutool.core.util.IdcardUtil$Idcard": "org.code4everything.hutool.converter.JsonObjectConverter",
+    "java.lang.Class": "org.code4everything.hutool.converter.ClassConverter",
+    "java.util.regex.Pattern": "org.code4everything.hutool.converter.ClassConverter.PatternConverter"
 }

@@ -1,0 +1,16 @@
+{
+    "groups": {
+        "methodName": "getAllGroups",
+        "paramTypes": [
+            "java.util.regex.Pattern",
+            "java.lang.CharSequence"
+        ]
+    },
+    "match": {
+        "methodName": "isMatch",
+        "paramTypes": [
+            "java.lang.String",
+            "java.lang.CharSequence"
+        ]
+    }
+}

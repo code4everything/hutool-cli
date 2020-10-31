@@ -139,5 +139,25 @@
     },
     "random-color": {
         "method": "cn.hutool.core.img.ImgUtil#randomColor"
+    },
+    "methods": {
+        "method": "cn.hutool.core.util.ReflectUtil#getMethodNames",
+        "paramTypes": [
+            "java.lang.Class"
+        ]
+    },
+    "regex-match": {
+        "method": "cn.hutool.core.util.ReUtil#isMatch",
+        "paramTypes": [
+            "java.lang.String",
+            "java.lang.CharSequence"
+        ]
+    },
+    "test": {
+        "method": "cn.hutool.core.util.ReUtil#isMatch",
+        "paramTypes": [
+            "java.lang.String",
+            "java.lang.CharSequence"
+        ]
     }
 }

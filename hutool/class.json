@@ -81,6 +81,16 @@
     "random": {
         "clazz": "cn.hutool.core.util.RandomUtil"
     },
+    "reflect": {
+        "clazz": "cn.hutool.core.util.ReflectUtil"
+    },
+    "regex": {
+        "clazz": "cn.hutool.core.util.ReUtil",
+        "methodAliasPaths": [
+            "method",
+            "re-util.json"
+        ]
+    },
     "str": {
         "clazz": "cn.hutool.core.util.StrUtil",
         "methodAliasPaths": [

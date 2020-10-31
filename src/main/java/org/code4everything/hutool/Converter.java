@@ -9,7 +9,7 @@ public interface Converter<T> {
     /**
      * convert string to java type
      */
-    T string2Object(String string);
+    T string2Object(String string) throws Exception;
 
     /**
      * convert java object to string

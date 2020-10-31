@@ -30,6 +30,12 @@ import java.util.*;
  */
 public final class Hutool {
 
+    public static final String CLASS_JSON = "class.json";
+
+    public static final String CONVERTER_JSON = "converter.json";
+
+    public static final String CLAZZ_KEY = "clazz";
+
     private static final MethodArg ARG = new MethodArg();
 
     private static final String CLASS_PREFIX = "cn.hutool.";
@@ -38,17 +44,13 @@ public final class Hutool {
 
     private static final String PARAM_KEY = "paramTypes";
 
-    private static final String CLAZZ_KEY = "clazz";
-
     private static final String COMMAND_JSON = "command.json";
-
-    private static final String CLASS_JSON = "class.json";
-
-    private static final String CONVERTER_JSON = "converter.json";
 
     private static final String VERSION = "v1.0";
 
     static String workDir = ".";
+
+    private static boolean nonParamType = true;
 
     private static JCommander commander;
 
@@ -98,7 +100,7 @@ public final class Hutool {
             return;
         }
         convertResult();
-        String resultString = StrUtil.toString(result);
+        String resultString = ObjectUtil.toString(result);
         if (ARG.copy) {
             debugOutput("copying result into clipboard");
             ClipboardUtil.setStr(resultString);
@@ -155,6 +157,7 @@ public final class Hutool {
             List<String> paramTypes = methodJson.getObject(PARAM_KEY, new TypeReference<List<String>>() {});
             ARG.paramTypes = ObjectUtil.defaultIfNull(paramTypes, Collections.emptyList());
             fixClassName = methodJson.getBooleanValue("allowAlias");
+            nonParamType = false;
         }
 
         handleResultOfClass(fixClassName);
@@ -232,7 +235,7 @@ public final class Hutool {
         debugOutput("parse parameter types success");
 
         Method method;
-        if (ARG.nonArgs && ArrayUtil.isEmpty(paramTypes)) {
+        if (nonParamType && ArrayUtil.isEmpty(paramTypes)) {
             debugOutput("getting method ignore case by method name");
             method = ReflectUtil.getMethodByNameIgnoreCase(clazz, ARG.methodName);
             if (Objects.nonNull(method)) {
@@ -309,6 +312,7 @@ public final class Hutool {
                 debugOutput("get method name: {}", ARG.methodName);
                 List<String> paramTypes = methodJson.getObject(PARAM_KEY, new TypeReference<List<String>>() {});
                 ARG.paramTypes = ObjectUtil.defaultIfNull(paramTypes, Collections.emptyList());
+                nonParamType = false;
             }
         }
     }
@@ -377,7 +381,7 @@ public final class Hutool {
         }
     }
 
-    private static JSONObject getAlias(String... paths) {
+    public static JSONObject getAlias(String... paths) {
         String path = Paths.get(workDir, paths).toAbsolutePath().normalize().toString();
         debugOutput("alias json file path: {}", path);
         String json = null;
