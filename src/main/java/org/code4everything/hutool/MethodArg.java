@@ -43,15 +43,18 @@ public class MethodArg {
     @Parameter(names = {"-a", "--auto-param"}, description = "clipboard string into a parameter", order = 6)
     boolean paramFromClipboard;
 
-    @Parameter(names = {"-v", "version"}, description = "the current version of hutool command line tool", order = 7)
+    @Parameter(names = {"-o", "--output-format"}, description = "output use converter", order = 7)
+    boolean formatOutput;
+
+    @Parameter(names = {"-v", "version"}, description = "the current version of hutool command line tool", order = 8)
     boolean version;
 
-    @Parameter(names = {"-d", "--debug"}, description = "enable debug mode", order = 8)
+    @Parameter(names = {"-d", "--debug"}, description = "enable debug mode", order = 9)
     boolean debug;
 
-    @Parameter(names = {"--exception"}, description = EXCEPTION_DESC, hidden = true, order = 9)
+    @Parameter(names = {"--exception"}, description = EXCEPTION_DESC, hidden = true, order = 10)
     boolean exception;
 
-    @Parameter(description = "for command missing", variableArity = true, hidden = true, order = 10)
+    @Parameter(description = "for command missing", variableArity = true, hidden = true, order = 11)
     List<String> main = new ArrayList<>();
 }

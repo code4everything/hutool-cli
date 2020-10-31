@@ -44,6 +44,8 @@ public final class Hutool {
 
     private static final String CLASS_JSON = "class.json";
 
+    private static final String CONVERTER_JSON = "converter.json";
+
     private static final String VERSION = "v1.0";
 
     private static JCommander commander;
@@ -93,6 +95,7 @@ public final class Hutool {
         if (Objects.isNull(result)) {
             return;
         }
+        convertResult();
         String resultString = StrUtil.toString(result);
         if (ARG.copy) {
             debugOutput("copying result into clipboard");
@@ -261,15 +264,20 @@ public final class Hutool {
         ParserConfig parserConfig = new ParserConfig();
         Object[] params = new Object[paramTypes.length];
         StringJoiner paramJoiner = new StringJoiner(",");
+        JSONObject converterJson = getAlias(CONVERTER_JSON);
         for (int i = 0; i < paramTypes.length; i++) {
             String param = ARG.params.get(i);
             paramJoiner.add(param);
-            params[i] = TypeUtils.cast(param, paramTypes[i], parserConfig);
+            params[i] = castObj(converterJson, parserConfig, param, paramTypes[i]);
         }
         debugOutput("cast parameter success");
         debugOutput("invoking method: {}#{}({})", ARG.className, method.getName(), paramJoiner);
         result = ReflectUtil.invokeStatic(method, params);
         debugOutput("invoke method success");
+    }
+
+    private static Object castObj(JSONObject convertJson, ParserConfig parserConfig, String param, Class<?> type) {
+        return TypeUtils.cast(param, type, parserConfig);
     }
 
     private static void fixMethodName(boolean fixName, List<String> methodAliasPaths) {
@@ -327,6 +335,31 @@ public final class Hutool {
         debugOutput("max length: {}", maxLength.get());
         map.forEach((k, v) -> joiner.add(StrUtil.padAfter(k, maxLength.get(), ' ') + " = " + v));
         result = joiner;
+    }
+
+    @SuppressWarnings("rawtypes")
+    private static void convertResult() {
+        if (Objects.isNull(result) || !ARG.formatOutput) {
+            return;
+        }
+
+        String name = result.getClass().getName();
+        JSONObject converterJson = getAlias(CONVERTER_JSON);
+        String converterName = converterJson.getString(name);
+
+        if (StrUtil.isEmpty(converterName)) {
+            return;
+        }
+
+        try {
+            Class<?> converterClz = Class.forName(converterName);
+            Converter<?> converter = (Converter) ReflectUtil.newInstance(converterClz);
+            debugOutput("converting result");
+            result = converter.object2String(result);
+            debugOutput("result convert success");
+        } catch (Exception e) {
+            debugOutput("converter[{}] not found!", converterName);
+        }
     }
 
     private static JSONObject getAlias(String... paths) {
