@@ -2,6 +2,7 @@
 
 import os
 import shutil
+import re
 
 os.chdir('..')
 print(os.popen('git pull').read())
@@ -24,7 +25,9 @@ def build_go(os_name, arch):
         name += '.exe'
     shutil.move(name, folder+'/bin')
     shutil.copy('../../../target/hutool.jar', folder)
-    print(os.popen('zip -r ../../../target/%s-%s.zip %s' % (os_name, version, folder).read())
+    print(os.popen('zip -r ../../../target/%s-%s.zip %s' %
+                   (os_name, version, folder).read()))
+
 
 os.chdir('./src/main/go')
 
