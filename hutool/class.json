@@ -55,6 +55,32 @@
             "unicode-util.json"
         ]
     },
+    "charset": {
+        "clazz": "cn.hutool.core.util.CharsetUtil",
+        "methodAliasPaths": [
+            "method",
+            "charset-util.json"
+        ]
+    },
+    "hash": {
+        "clazz": "cn.hutool.core.util.HashUtil"
+    },
+    "hex": {
+        "clazz": "cn.hutool.core.util.HexUtil",
+        "methodAliasPaths": [
+            "method",
+            "hex-util.json"
+        ]
+    },
+    "id": {
+        "clazz": "cn.hutool.core.util.IdUtil"
+    },
+    "phone": {
+        "clazz": "cn.hutool.core.util.PhoneUtil"
+    },
+    "random": {
+        "clazz": "cn.hutool.core.util.RandomUtil"
+    },
     "str": {
         "clazz": "cn.hutool.core.util.StrUtil",
         "methodAliasPaths": [

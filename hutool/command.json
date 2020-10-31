@@ -81,19 +81,63 @@
             "java.lang.String"
         ]
     },
-    "unicode2string": {
+    "unicode2str": {
         "method": "cn.hutool.core.text.UnicodeUtil#toString",
         "paramTypes": [
             "java.lang.String"
         ]
     },
-    "string2unicode": {
+    "str2unicode": {
         "method": "cn.hutool.core.text.UnicodeUtil#toUnicode",
         "paramTypes": [
             "java.lang.String"
         ]
     },
+    "convert-charset": {
+        "method": "cn.hutool.core.util.CharsetUtil#convert",
+        "paramTypes": [
+            "java.io.File",
+            "java.nio.charset.Charset",
+            "java.nio.charset.Charset"
+        ]
+    },
+    "2hex": {
+        "method": "cn.hutool.core.util.HexUtil#encodeHexStr",
+        "paramTypes": [
+            "java.lang.String"
+        ]
+    },
+    "idcard": {
+        "method": "cn.hutool.core.util.IdcardUtil#getIdcardInfo",
+        "paramTypes": [
+            "java.lang.String"
+        ]
+    },
+    "random-credit-code": {
+        "method": "cn.hutool.core.util.CreditCodeUtil#randomCreditCode"
+    },
     "random-uuid": {
         "method": "cn.hutool.core.util.IdUtil#randomUUID"
+    },
+    "simple-uuid": {
+        "method": "cn.hutool.core.util.IdUtil#simpleUUID"
+    },
+    "object-id": {
+        "method": "cn.hutool.core.util.IdUtil#objectId"
+    },
+    "random": {
+        "method": "cn.hutool.core.util.RandomUtil#randomLong"
+    },
+    "random-double": {
+        "method": "cn.hutool.core.util.RandomUtil#randomDouble"
+    },
+    "random-str": {
+        "method": "cn.hutool.core.util.RandomUtil#randomString",
+        "paramTypes": [
+            "java.lang.Integer"
+        ]
+    },
+    "random-color": {
+        "method": "cn.hutool.core.img.ImgUtil#randomColor"
     }
 }

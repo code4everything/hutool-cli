@@ -1,0 +1,10 @@
+{
+    "convert": {
+        "methodName": "convert",
+        "paramTypes": [
+            "java.io.File",
+            "java.nio.charset.Charset",
+            "java.nio.charset.Charset"
+        ]
+    }
+}

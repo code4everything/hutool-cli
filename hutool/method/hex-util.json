@@ -1,0 +1,14 @@
+{
+    "encode": {
+        "methodName": "encodeHexStr",
+        "paramTypes": [
+            "java.lang.String"
+        ]
+    },
+    "decode": {
+        "methodName": "decodeHexStr",
+        "paramTypes": [
+            "java.lang.String"
+        ]
+    }
+}

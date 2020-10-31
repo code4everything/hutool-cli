@@ -1,5 +1,5 @@
 {
-    "2string": {
+    "2str": {
         "methodName": "toString",
         "paramTypes": [
             "java.lang.String"
