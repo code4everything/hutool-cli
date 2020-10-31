@@ -48,6 +48,8 @@ public final class Hutool {
 
     private static final String VERSION = "v1.0";
 
+    static String workDir = ".";
+
     private static JCommander commander;
 
     private static Object result;
@@ -268,7 +270,7 @@ public final class Hutool {
         for (int i = 0; i < paramTypes.length; i++) {
             String param = ARG.params.get(i);
             paramJoiner.add(param);
-            params[i] = castObj(converterJson, parserConfig, param, paramTypes[i]);
+            params[i] = castParam2JavaType(converterJson, parserConfig, param, paramTypes[i]);
         }
         debugOutput("cast parameter success");
         debugOutput("invoking method: {}#{}({})", ARG.className, method.getName(), paramJoiner);
@@ -276,7 +278,20 @@ public final class Hutool {
         debugOutput("invoke method success");
     }
 
-    private static Object castObj(JSONObject convertJson, ParserConfig parserConfig, String param, Class<?> type) {
+    @SuppressWarnings("rawtypes")
+    private static Object castParam2JavaType(JSONObject convertJson, ParserConfig parserConfig, String param,
+                                             Class<?> type) {
+        String converterName = convertJson.getString(type.getName());
+        if (StrUtil.isNotEmpty(converterName)) {
+            try {
+                Class<?> converterClass = Class.forName(converterName);
+                Converter<?> converter = (Converter) ReflectUtil.newInstance(converterClass);
+                return converter.string2Object(param);
+            } catch (Exception e) {
+                debugOutput("cast param[{}] to type[{}] using converter[{}] failed: {}", param, type.getName(),
+                        converterName, ExceptionUtil.stacktraceToString(e, Integer.MAX_VALUE));
+            }
+        }
         return TypeUtils.cast(param, type, parserConfig);
     }
 
@@ -363,7 +378,7 @@ public final class Hutool {
     }
 
     private static JSONObject getAlias(String... paths) {
-        String path = Paths.get(".", paths).toAbsolutePath().normalize().toString();
+        String path = Paths.get(workDir, paths).toAbsolutePath().normalize().toString();
         debugOutput("alias json file path: {}", path);
         String json = null;
         if (FileUtil.exist(path)) {
