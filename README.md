@@ -77,6 +77,34 @@ python package.py
 
 ### 如何使用
 
+查看支持的参数
+
+```shell
+hutool
+
+# output:
+Usage: hutool-cli [options]
+  Options:
+    -r, --run, --command
+      命令模式，命令可以精确的定位到静态方法，-r指令可缺省
+    -c, --class
+      类名称（自动加前缀：cn.hutool.）
+    -m, --method
+      方法名
+    -t, --type
+      参数类型（非必须，缺失时可能导致无法精确的定位方法）
+    -p, --param, --parameter
+      方法需要的参数
+    -y, --yank, --copy
+      是否将结果复制到剪贴板
+    -a, --auto-param
+      是否将剪贴板内容作为参数输入
+    -v, --version
+      查看当前版本
+    -d, --debug
+      是否开启调试模式
+```
+
 查看版本
 
 ```shell
@@ -172,31 +200,6 @@ week-end    = endOfWeek(java.util.Date)
 ```
 
 > 我们可以通过关键字 `alias` 来查看命令、类名、方法名已有的别名
-
-支持的参数
-
-```text
-Usage: hutool-cli [options]
-  Options:
-    -r, --run, --command
-      命令模式，命令可以精确的定位到静态方法，-r指令可缺省
-    -c, --class
-      类名称（自动加前缀：cn.hutool.）
-    -m, --method
-      方法名
-    -t, --type
-      参数类型（非必须，缺失时可能导致无法精确的定位方法）
-    -p, --param, --parameter
-      方法需要的参数
-    -y, --yank, --copy
-      是否将结果复制到剪贴板
-    -a, --auto-param
-      是否将剪贴板内容作为参数输入
-    -v, --version
-      查看当前版本
-    -d, --debug
-      是否开启调试模式
-```
 
 ### 自定义别名
 
