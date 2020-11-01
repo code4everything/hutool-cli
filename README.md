@@ -18,6 +18,26 @@ hutool random-uuid
 # output: 483cc7fc-4b22-4188-8f1c-dc1ce4b6d3ee
 ```
 
+### ZIP包安装
+
+所需环境
+
+- java8
+
+下载本项目
+
+```shell
+git clone https://gitee.com/code4everything/hutool-cli.git
+```
+
+下载对应的ZIP包
+
+- [windows](http://share.qiniu.easepan.xyz/tool/hutool/windows-1.0.zip)
+- [linux](http://share.qiniu.easepan.xyz/tool/hutool/linux-1.0.zip)
+- [macos](http://share.qiniu.easepan.xyz/tool/hutool/darwin-1.0.zip)
+
+下载完成后解压ZIP包，并将 hutool.jar 和 bin目录移动到 hutool-cli/hutool 目录下
+
 ### 手动安装
 
 所需环境
@@ -159,7 +179,7 @@ week-end    = endOfWeek(java.util.Date)
 Usage: hutool-cli [options]
   Options:
     -r, --run, --command
-      命令模式，-r指令可缺省
+      命令模式，命令可以精确的定位到静态方法，-r指令可缺省
     -c, --class
       类名称（自动加前缀：cn.hutool.）
     -m, --method
@@ -172,7 +192,7 @@ Usage: hutool-cli [options]
       是否将结果复制到剪贴板
     -a, --auto-param
       是否将剪贴板内容作为参数输入
-    -v, version
+    -v, --version
       查看当前版本
     -d, --debug
       是否开启调试模式
@@ -205,4 +225,8 @@ hutool-cli 已经提供了大量常用的别名，参考下面文件：
 
 ### 已知问题
 
-由于GO默认是UTF8编码，而Windows是GBK，所以在Windows平台下中文会乱码，暂时没想到更好的解决办法（因为我也不会go :joy: ）
+由于GO默认是UTF8编码，而Windows是GBK，所以在Windows平台下中文会乱码，暂时没想到更好的解决办法（因为我也不会go :joy: ），希望大佬提供帮助。
+
+### 最后
+
+如果你觉得项目还不错，打个星星呗，欢迎 pr。
