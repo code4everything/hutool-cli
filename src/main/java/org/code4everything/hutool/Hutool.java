@@ -252,7 +252,7 @@ public final class Hutool {
         if (Objects.isNull(method)) {
             String msg = "static method not found(ignore case): {}#{}({})";
             String[] paramTypeArray = ARG.paramTypes.toArray(new String[0]);
-            debugOutput(msg, clazz.getName(), ARG.methodName, ArrayUtil.join(paramTypeArray, ","));
+            debugOutput(msg, clazz.getName(), ARG.methodName, ArrayUtil.join(paramTypeArray, ", "));
             ARG.methodName = StrUtil.EMPTY;
             handleResultOfMethod(clazz, fixName, methodAliasPaths);
             return;
@@ -261,14 +261,14 @@ public final class Hutool {
 
         if (ARG.params.size() < paramTypes.length) {
             String[] paramTypeArray = ARG.paramTypes.toArray(new String[0]);
-            Console.log("parameter error, required: ({})", ArrayUtil.join(paramTypeArray, ","));
+            Console.log("parameter error, required: ({})", ArrayUtil.join(paramTypeArray, ", "));
             return;
         }
 
         debugOutput("casting parameter to class type");
         ParserConfig parserConfig = new ParserConfig();
         Object[] params = new Object[paramTypes.length];
-        StringJoiner paramJoiner = new StringJoiner(",");
+        StringJoiner paramJoiner = new StringJoiner(", ");
         JSONObject converterJson = getAlias(CONVERTER_JSON);
         for (int i = 0; i < paramTypes.length; i++) {
             String param = ARG.params.get(i);
@@ -346,7 +346,7 @@ public final class Hutool {
                 }
                 List<String> paramTypes = json.getObject(PARAM_KEY, new TypeReference<List<String>>() {});
                 paramTypes = ObjectUtil.defaultIfNull(paramTypes, Collections.emptyList());
-                String typeString = ArrayUtil.join(paramTypes.toArray(new String[0]), ",");
+                String typeString = ArrayUtil.join(paramTypes.toArray(new String[0]), ", ");
                 map.put(k, StrUtil.format("{}({})", methodName, typeString));
             }
         });

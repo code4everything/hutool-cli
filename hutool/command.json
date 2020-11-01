@@ -141,7 +141,7 @@
         "method": "cn.hutool.core.img.ImgUtil#randomColor"
     },
     "methods": {
-        "method": "cn.hutool.core.util.ReflectUtil#getMethodNames",
+        "method": "org.code4everything.hutool.Utils#outputPublicStaticMethods",
         "paramTypes": [
             "java.lang.Class"
         ]
@@ -158,6 +158,18 @@
         "paramTypes": [
             "java.lang.String",
             "java.lang.CharSequence"
+        ]
+    },
+    "upper": {
+        "method": "org.code4everything.hutool.Utils#toUpperCase",
+        "paramTypes": [
+            "java.lang.String"
+        ]
+    },
+    "lower": {
+        "method": "org.code4everything.hutool.Utils#toLowerCase",
+        "paramTypes": [
+            "java.lang.String"
         ]
     }
 }
