@@ -217,5 +217,11 @@
             "java.lang.String",
             "java.lang.String"
         ]
+    },
+    "eval": {
+        "method": "cn.hutool.script.ScriptUtil#eval",
+        "paramTypes": [
+            "java.lang.String"
+        ]
     }
 }

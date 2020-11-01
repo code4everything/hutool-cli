@@ -110,5 +110,8 @@
     },
     "http": {
         "clazz": "cn.hutool.http.HttpUtil"
+    },
+    "script": {
+        "clazz": "cn.hutool.script.ScriptUtil"
     }
 }
