@@ -19,6 +19,7 @@ import com.alibaba.fastjson.TypeReference;
 import com.alibaba.fastjson.parser.ParserConfig;
 import com.alibaba.fastjson.util.TypeUtils;
 import com.beust.jcommander.JCommander;
+import org.code4everything.hutool.converter.ObjectPropertyConverter;
 
 import java.lang.reflect.Method;
 import java.nio.file.Paths;
@@ -376,8 +377,13 @@ public final class Hutool {
                     }
                 }
             }
-            Class<?> converterClz = Class.forName(converterName);
-            Converter<?> converter = (Converter) ReflectUtil.newInstance(converterClz);
+            Converter<?> converter;
+            if (StrUtil.isEmpty(converterName)) {
+                converter = new ObjectPropertyConverter();
+            } else {
+                Class<?> converterClz = Class.forName(converterName);
+                converter = (Converter) ReflectUtil.newInstance(converterClz);
+            }
             debugOutput("converting result");
             result = converter.object2String(result);
             debugOutput("result convert success");

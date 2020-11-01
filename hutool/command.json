@@ -172,7 +172,19 @@
             "java.lang.String"
         ]
     },
-    "systeminfo": {
+    "javainfo": {
         "method": "cn.hutool.system.SystemUtil#props"
+    },
+    "systeminfo": {
+        "method": "cn.hutool.system.oshi.OshiUtil#getSystem"
+    },
+    "hardware": {
+        "method": "cn.hutool.system.oshi.OshiUtil#getHardware"
+    },
+    "processor": {
+        "method": "cn.hutool.system.oshi.OshiUtil#getProcessor"
+    },
+    "cpuinfo": {
+        "method": "cn.hutool.system.oshi.OshiUtil#getCpuInfo"
     }
 }
