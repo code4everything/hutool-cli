@@ -1,9 +1,19 @@
 {
+    /*"java.io.Serializable": "org.code4everything.hutool.converter.ObjectPropertyConverter",*/
     "cn.hutool.core.date.Week": "org.code4everything.hutool.converter.WeekConverter",
     "java.io.File": "org.code4everything.hutool.converter.FileConverter",
     "java.nio.charset.Charset": "org.code4everything.hutool.converter.CharsetConverter",
     "cn.hutool.core.util.IdcardUtil$Idcard": "org.code4everything.hutool.converter.JsonObjectConverter",
     "java.lang.Class": "org.code4everything.hutool.converter.ClassConverter",
     "java.util.regex.Pattern": "org.code4everything.hutool.converter.PatternConverter",
-    "java.util.Properties": "org.code4everything.hutool.converter.MapConverter"
+    "java.util.Map": "org.code4everything.hutool.converter.MapConverter",
+    "java.lang.management.ClassLoadingMXBean": "org.code4everything.hutool.converter.ObjectPropertyConverter",
+    "java.lang.management.CompilationMXBean": "org.code4everything.hutool.converter.ObjectPropertyConverter",
+    "java.lang.management.GarbageCollectorMXBean": "org.code4everything.hutool.converter.ObjectPropertyConverter",
+    "java.lang.management.MemoryMXBean": "org.code4everything.hutool.converter.ObjectPropertyConverter",
+    "java.lang.management.MemoryManagerMXBean": "org.code4everything.hutool.converter.ObjectPropertyConverter",
+    "java.lang.management.MemoryPoolMXBean": "org.code4everything.hutool.converter.ObjectPropertyConverter",
+    "java.lang.management.OperatingSystemMXBean": "org.code4everything.hutool.converter.ObjectPropertyConverter",
+    "java.lang.management.RuntimeMXBean": "org.code4everything.hutool.converter.ObjectPropertyConverter",
+    "java.lang.management.ThreadMXBean": "org.code4everything.hutool.converter.ObjectPropertyConverter"
 }

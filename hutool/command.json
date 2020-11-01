@@ -171,5 +171,8 @@
         "paramTypes": [
             "java.lang.String"
         ]
+    },
+    "systeminfo": {
+        "method": "cn.hutool.system.SystemUtil#props"
     }
 }

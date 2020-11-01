@@ -2,11 +2,22 @@
     "props": {
         "methodName": "props"
     },
-    "match": {
-        "methodName": "isMatch",
-        "paramTypes": [
-            "java.lang.String",
-            "java.lang.CharSequence"
-        ]
+    "class-loading": {
+        "methodName": "getClassLoadingMXBean"
+    },
+    "memory": {
+        "methodName": "getMemoryMXBean"
+    },
+    "thread": {
+        "methodName": "getThreadMXBean"
+    },
+    "runtime": {
+        "methodName": "getRuntimeMXBean"
+    },
+    "compilation": {
+        "methodName": "getCompilationMXBean"
+    },
+    "os": {
+        "methodName": "getOperatingSystemMXBean"
     }
 }

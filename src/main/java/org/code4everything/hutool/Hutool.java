@@ -366,11 +366,16 @@ public final class Hutool {
         JSONObject converterJson = getAlias(CONVERTER_JSON);
         String converterName = converterJson.getString(name);
 
-        if (StrUtil.isEmpty(converterName)) {
-            return;
-        }
-
         try {
+            if (StrUtil.isEmpty(converterName)) {
+                for (Map.Entry<String, Object> entry : converterJson.entrySet()) {
+                    Class<?> clazz = Class.forName(entry.getKey());
+                    if (clazz.isAssignableFrom(result.getClass())) {
+                        converterName = entry.getValue().toString();
+                        break;
+                    }
+                }
+            }
             Class<?> converterClz = Class.forName(converterName);
             Converter<?> converter = (Converter) ReflectUtil.newInstance(converterClz);
             debugOutput("converting result");
