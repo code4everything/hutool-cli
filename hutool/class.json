@@ -97,5 +97,12 @@
             "method",
             "str-util.json"
         ]
+    },
+    "system": {
+        "clazz": "cn.hutool.system.SystemUtil",
+        "methodAliasPaths": [
+            "method",
+            "system-util.json"
+        ]
     }
 }

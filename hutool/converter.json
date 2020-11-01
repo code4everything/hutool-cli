@@ -4,5 +4,6 @@
     "java.nio.charset.Charset": "org.code4everything.hutool.converter.CharsetConverter",
     "cn.hutool.core.util.IdcardUtil$Idcard": "org.code4everything.hutool.converter.JsonObjectConverter",
     "java.lang.Class": "org.code4everything.hutool.converter.ClassConverter",
-    "java.util.regex.Pattern": "org.code4everything.hutool.converter.ClassConverter.PatternConverter"
+    "java.util.regex.Pattern": "org.code4everything.hutool.converter.PatternConverter",
+    "java.util.Properties": "org.code4everything.hutool.converter.MapConverter"
 }
