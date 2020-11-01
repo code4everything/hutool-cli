@@ -104,5 +104,11 @@
             "method",
             "system-util.json"
         ]
+    },
+    "secure": {
+        "clazz": "cn.hutool.crypto.SecureUtil"
+    },
+    "http": {
+        "clazz": "cn.hutool.http.HttpUtil"
     }
 }
