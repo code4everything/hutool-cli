@@ -223,5 +223,26 @@
         "paramTypes": [
             "java.lang.String"
         ]
+    },
+    "pinyin": {
+        "method": "cn.hutool.extra.pinyin.PinyinUtil#getPinyin",
+        "paramTypes": [
+            "java.lang.String"
+        ]
+    },
+    "qrcode-encode": {
+        "method": "cn.hutool.extra.qrcode.QrCodeUtil#generate",
+        "paramTypes": [
+            "java.lang.String",
+            "java.lang.Integer",
+            "java.lang.Integer",
+            "java.io.File"
+        ]
+    },
+    "qrcode-decode": {
+        "method": "cn.hutool.extra.qrcode.QrCodeUtil#decode",
+        "paramTypes": [
+            "java.io.File"
+        ]
     }
 }

@@ -202,3 +202,7 @@ hutool-cli 已经提供了大量常用的别名，参考下面文件：
 - 方法名称别名参考 [base64-util.json](/hutool/method/base64-util.json)
 
 自定义你的别名后，你还可以 pr 到本仓库哦，让更多人享受到 hutool 带来的便捷吧。
+
+### 已知问题
+
+由于GO默认是UTF8编码，而Windows是GBK，所以在Windows平台下中文会乱码，暂时没想到更好的解决办法（因为我也不会go :joy: ）

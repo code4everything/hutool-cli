@@ -25,12 +25,18 @@ public class MapConverter implements Converter<Map<Object, Object>> {
             if (StrUtil.isEmpty(token)) {
                 continue;
             }
-            List<String> kvs = StrUtil.splitTrim(token, '=');
-            String key = kvs.get(0);
+
+            int idx = token.indexOf('=');
+            String key;
             String value = "";
-            if (kvs.size() > 1) {
-                value = kvs.get(1);
+
+            if (idx < 1) {
+                key = token;
+            } else {
+                key = StrUtil.sub(token, 0, idx).trim();
+                value = StrUtil.sub(token, idx + 1, token.length()).trim();
             }
+
             map.put(key, value);
         }
         return map;

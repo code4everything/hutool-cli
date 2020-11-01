@@ -47,7 +47,7 @@ public class MethodArg {
     @Parameter(names = {"-o", "--output-format"}, description = "output use converter", order = 7)
     boolean formatOutput;
 
-    @Parameter(names = {"-v", "version"}, description = "the current version of hutool command line tool", order = 8)
+    @Parameter(names = {"-v", "--version"}, description = "the current version of hutool command line tool", order = 8)
     boolean version;
 
     @Parameter(names = {"-d", "--debug"}, description = "enable debug mode", order = 9)

@@ -12,7 +12,7 @@ import java.util.regex.Pattern;
 public class PatternConverter implements Converter<Pattern> {
 
     @Override
-    public Pattern string2Object(String string) throws Exception {
+    public Pattern string2Object(String string) {
         return Pattern.compile(string);
     }
 

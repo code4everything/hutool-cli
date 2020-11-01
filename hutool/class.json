@@ -113,5 +113,14 @@
     },
     "script": {
         "clazz": "cn.hutool.script.ScriptUtil"
+    },
+    "emoji": {
+        "clazz": "cn.hutool.extra.emoji.EmojiUtil"
+    },
+    "qrcode": {
+        "clazz": "cn.hutool.extra.qrcode.QrCodeUtil"
+    },
+    "pinyin": {
+        "clazz": "cn.hutool.extra.pinyin.PinyinUtil"
     }
 }
