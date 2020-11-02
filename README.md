@@ -147,6 +147,53 @@ hutool eval 5+6+3+22+9999
 # output: 10035
 ```
 
+### 查看类有哪些可执行静态方法
+
+```shell
+hutool methods regex
+
+# regex 是类 cn.hutool.core.util.ReUtil 的别名
+# output:
+get(java.util.regex.Pattern, java.lang.CharSequence, int)
+get(java.lang.String, java.lang.CharSequence, int)
+count(java.util.regex.Pattern, java.lang.CharSequence)
+count(java.lang.String, java.lang.CharSequence)
+contains(java.lang.String, java.lang.CharSequence)
+contains(java.util.regex.Pattern, java.lang.CharSequence)
+replaceAll(java.lang.CharSequence, java.util.regex.Pattern, cn.hutool.core.lang.func.Func1)
+replaceAll(java.lang.CharSequence, java.lang.String, cn.hutool.core.lang.func.Func1)
+replaceAll(java.lang.CharSequence, java.util.regex.Pattern, java.lang.String)
+replaceAll(java.lang.CharSequence, java.lang.String, java.lang.String)
+findAll(java.lang.String, java.lang.CharSequence, int)
+findAll(java.util.regex.Pattern, java.lang.CharSequence, int)
+findAll(java.util.regex.Pattern, java.lang.CharSequence, int, java.util.Collection)
+findAll(java.lang.String, java.lang.CharSequence, int, java.util.Collection)
+escape(char)
+escape(java.lang.CharSequence)
+extractMultiAndDelPre(java.lang.String, cn.hutool.core.lang.Holder, java.lang.String)
+extractMultiAndDelPre(java.util.regex.Pattern, cn.hutool.core.lang.Holder, java.lang.String)
+getGroup0(java.util.regex.Pattern, java.lang.CharSequence)
+getGroup0(java.lang.String, java.lang.CharSequence)
+getGroup1(java.lang.String, java.lang.CharSequence)
+getGroup1(java.util.regex.Pattern, java.lang.CharSequence)
+extractMulti(java.util.regex.Pattern, java.lang.CharSequence, java.lang.String)
+extractMulti(java.lang.String, java.lang.CharSequence, java.lang.String)
+findAllGroup1(java.lang.String, java.lang.CharSequence)
+findAllGroup1(java.util.regex.Pattern, java.lang.CharSequence)
+getAllGroups(java.util.regex.Pattern, java.lang.CharSequence)
+getAllGroups(java.util.regex.Pattern, java.lang.CharSequence, boolean)
+delPre(java.lang.String, java.lang.CharSequence)
+findAllGroup0(java.lang.String, java.lang.CharSequence)
+findAllGroup0(java.util.regex.Pattern, java.lang.CharSequence)
+isMatch(java.util.regex.Pattern, java.lang.CharSequence)
+isMatch(java.lang.String, java.lang.CharSequence)
+delFirst(java.util.regex.Pattern, java.lang.CharSequence)
+delFirst(java.lang.String, java.lang.CharSequence)
+getFirstNumber(java.lang.CharSequence)
+delAll(java.util.regex.Pattern, java.lang.CharSequence)
+delAll(java.lang.String, java.lang.CharSequence)
+```
+
 ### 别名查看
 
 查看有哪些命令别名（命令可以精确定位到方法）
@@ -154,6 +201,7 @@ hutool eval 5+6+3+22+9999
 ```shell
 hutool -r alias
 
+# 或者 hutool alias
 # output:
 base32-decode     = cn.hutool.core.codec.Base32#decodeStr(java.lang.String)
 base32-encode     = cn.hutool.core.codec.Base32#encode(java.lang.String)
@@ -216,7 +264,7 @@ week-end    = endOfWeek(java.util.Date)
 }
 ```
 
-hutool-cli 已经提供了大量常用的别名，参考下面文件：
+hutool-cli 提供了很多常用的别名，参考下面文件：
 
 - 命令别名参考 [command.json](/hutool/command.json)
 
