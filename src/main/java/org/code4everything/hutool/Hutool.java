@@ -354,12 +354,12 @@ public final class Hutool {
 
         debugOutput("max length: {}", maxLength.get());
         map.forEach((k, v) -> joiner.add(StrUtil.padAfter(k, maxLength.get(), ' ') + " = " + v));
-        result = joiner;
+        result = joiner.toString();
     }
 
     @SuppressWarnings("rawtypes")
     private static void convertResult() {
-        if (Objects.isNull(result) || !ARG.formatOutput) {
+        if (Objects.isNull(result) || !ARG.formatOutput || result instanceof CharSequence) {
             return;
         }
 
