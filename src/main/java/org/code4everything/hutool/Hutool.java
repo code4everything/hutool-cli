@@ -22,6 +22,7 @@ import com.beust.jcommander.JCommander;
 import org.code4everything.hutool.converter.ObjectPropertyConverter;
 
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.nio.file.Paths;
 import java.util.*;
 
@@ -237,15 +238,8 @@ public final class Hutool {
 
         Method method;
         if (nonParamType && ArrayUtil.isEmpty(paramTypes)) {
-            debugOutput("getting method ignore case by method name");
-            method = ReflectUtil.getMethodByNameIgnoreCase(clazz, ARG.methodName);
-            if (Objects.nonNull(method)) {
-                ARG.paramTypes = new ArrayList<>();
-                paramTypes = method.getParameterTypes();
-                for (Class<?> paramType : paramTypes) {
-                    ARG.paramTypes.add(paramType.getName());
-                }
-            }
+            debugOutput("getting method ignore case by method name and param count");
+            method = autoMatchMethod(clazz);
         } else {
             debugOutput("getting method ignore case by method name and param types");
             method = ReflectUtil.getMethod(clazz, true, ARG.methodName, paramTypes);
@@ -258,6 +252,7 @@ public final class Hutool {
             handleResultOfMethod(clazz, fixName, methodAliasPaths);
             return;
         }
+        paramTypes = method.getParameterTypes();
         debugOutput("get method success");
 
         if (ARG.params.size() < paramTypes.length) {
@@ -280,6 +275,46 @@ public final class Hutool {
         debugOutput("invoking method: {}#{}({})", ARG.className, method.getName(), paramJoiner);
         result = ReflectUtil.invokeStatic(method, params);
         debugOutput("invoke method success");
+    }
+
+    private static Method autoMatchMethod(Class<?> clazz) {
+        Method[] methods = clazz.getMethods();
+        List<Method> fuzzyList = new ArrayList<>();
+        for (Method method : methods) {
+            int modifiers = method.getModifiers();
+            if (!Modifier.isPublic(modifiers) || !Modifier.isStatic(modifiers)) {
+                continue;
+            }
+            if (method.getName().equalsIgnoreCase(ARG.methodName)) {
+                fuzzyList.add(method);
+            }
+        }
+
+        if (CollUtil.isEmpty(fuzzyList)) {
+            return null;
+        }
+
+        // 找到离参数个数最相近的方法
+        int paramSize = ARG.params.size();
+        fuzzyList.sort(Comparator.comparingInt(Method::getParameterCount));
+        Method method = null;
+        for (Method m : fuzzyList) {
+            if (Objects.isNull(method)) {
+                method = m;
+            }
+            if (m.getParameterCount() > paramSize) {
+                break;
+            }
+            method = m;
+        }
+
+        if (Objects.nonNull(method)) {
+            ARG.paramTypes = new ArrayList<>();
+            for (Class<?> paramType : method.getParameterTypes()) {
+                ARG.paramTypes.add(paramType.getName());
+            }
+        }
+        return method;
     }
 
     @SuppressWarnings("rawtypes")
