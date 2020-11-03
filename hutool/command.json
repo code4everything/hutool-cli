@@ -230,7 +230,7 @@
             "java.lang.String"
         ]
     },
-    "qrcode-encode": {
+    "qrcode-generate": {
         "method": "cn.hutool.extra.qrcode.QrCodeUtil#generate",
         "paramTypes": [
             "java.lang.String",
