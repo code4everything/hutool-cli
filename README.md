@@ -22,6 +22,7 @@ hutool random-uuid
 
 所需环境
 
+- git
 - java8
 
 下载本项目
@@ -42,6 +43,7 @@ git clone https://gitee.com/code4everything/hutool-cli.git
 
 所需环境
 
+- git
 - java8
 - maven
 - python
