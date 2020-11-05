@@ -249,6 +249,37 @@ week-end    = endOfWeek(java.util.Date)
 
 > 我们可以通过关键字 `alias` 来查看命令、类名、方法名已有的别名
 
+### 默认值
+
+我们可以在别名文件中定义参数默认值，执行方法时默认值要么都缺省，要么都填上。
+
+举个例子，如生成二维码图片：
+
+查看生成二维码的命令
+
+```shell
+hutool alias | grep qrcode
+
+# output:
+
+qrcode-decode      = cn.hutool.extra.qrcode.QrCodeUtil#decode(java.io.File)
+qrcode-generate    = cn.hutool.extra.qrcode.QrCodeUtil#generate(java.lang.String, java.lang.Integer=1000, java.lang.Integer=1000, java.io.File)
+```
+
+然后执行
+
+```shell
+# 该方法有默认值，默认值可全缺省
+hutool qrcode-generate 'qrcode test' /home/test.png
+```
+
+或者不使用默认值
+
+```shell
+# 虽然该方法有默认值，但我们可以不使用
+hutool qrcode-generate 'qrcode test' 600 600 /home/test.png
+```
+
 ### 自定义别名
 
 别名可以用来快速的指向一个类或一个静态方法，格式大致如下，json中的key将作为别名，value包括了别名对应的类名、方法名以及方法所需的参数类型。
