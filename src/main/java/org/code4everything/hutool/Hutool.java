@@ -224,8 +224,10 @@ public final class Hutool {
 
         debugOutput("parsing parameter types");
         Class<?>[] paramTypes = new Class<?>[ARG.paramTypes.size()];
+        boolean parseDefaultValue = ARG.params.size() < paramTypes.length;
         for (int i = 0; i < ARG.paramTypes.size(); i++) {
-            String paramType = ARG.paramTypes.get(i);
+            String paramType = parseParamType(i, ARG.paramTypes.get(i), parseDefaultValue);
+            // 解析默认值，默认值要么都填写，要么都不填写
             try {
                 paramTypes[i] = Class.forName(paramType);
             } catch (ClassNotFoundException e) {
@@ -275,6 +277,22 @@ public final class Hutool {
         debugOutput("invoking method: {}#{}({})", ARG.className, method.getName(), paramJoiner);
         result = ReflectUtil.invokeStatic(method, params);
         debugOutput("invoke method success");
+    }
+
+    private static String parseParamType(int index, String paramType, boolean parseDefaultValue) {
+        int idx = paramType.indexOf('=');
+        if (idx < 1) {
+            return paramType;
+        }
+
+        String type = paramType.substring(0, idx);
+
+        if (parseDefaultValue) {
+            String param = paramType.substring(idx + 1);
+            ARG.params.add(Math.min(index, ARG.params.size()), param);
+        }
+
+        return type;
     }
 
     private static Method autoMatchMethod(Class<?> clazz) {

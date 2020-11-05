@@ -11,11 +11,11 @@
             "java.lang.String"
         ]
     },
-    "2unicode-p2": {
+    "all2unicode": {
         "methodName": "toUnicode",
         "paramTypes": [
             "java.lang.String",
-            "java.lang.Boolean"
+            "java.lang.Boolean=false"
         ]
     }
 }
