@@ -98,7 +98,7 @@ Usage: hutool-cli [options]
     -y, --yank, --copy
       是否将结果复制到剪贴板
     -a, --auto-param
-      是否将剪贴板内容作为参数输入
+      将剪贴板字符串内容注入指定索引位置的参数
     -v, --version
       查看当前版本
     -d, --debug
@@ -133,9 +133,9 @@ hutool -r base64-encode 'sky is blue' -y
 # output: c2t5IGlzIGJsdWU=
 # 说明：-y 表示将输出结果复制到剪贴板
 
-hutool -r base64-decode -a
+hutool -r base64-decode -a:0
 # output: sky is blue
-# 说明：-a 表示将剪贴板内容作为参数输入
+# 说明：-a:0 表示将剪贴板字符串内容注入到索引位置是0的参数中
 ```
 
 > 在 `-r` 模式下，别名后可直接跟方法需要的参数，当然使用 `-p` 也是支持的，并且 -r 是可以省略的，如最上面生成随机UUID的例子。

@@ -88,10 +88,6 @@ public final class Hutool {
             debugOutput("hutool-cli: {}", VERSION);
         }
 
-        if (ARG.paramFromClipboard) {
-            ARG.params.add(ClipboardUtil.getStr());
-        }
-
         debugOutput("received command line arguments: {}", Arrays.asList(args));
         debugOutput("handling result");
         ARG.command.addAll(ARG.main);
@@ -221,6 +217,10 @@ public final class Hutool {
         }
 
         fixMethodName(fixName, methodAliasPaths);
+
+        if (ARG.paramIdxFromClipboard >= 0) {
+            ARG.params.add(Math.min(ARG.params.size(), ARG.paramIdxFromClipboard), ClipboardUtil.getStr());
+        }
 
         debugOutput("parsing parameter types");
         Class<?>[] paramTypes = new Class<?>[ARG.paramTypes.size()];

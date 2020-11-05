@@ -1,6 +1,7 @@
 package org.code4everything.hutool;
 
 import com.beust.jcommander.Parameter;
+import com.beust.jcommander.Parameters;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,6 +10,7 @@ import java.util.List;
  * @author pantao
  * @since 2020/10/28
  */
+@Parameters(separators = ": ")
 public class MethodArg {
 
     // @formatter:off
@@ -41,8 +43,8 @@ public class MethodArg {
     @Parameter(names = {"-y", "--yank", "--copy"}, description = "copy result to clipboard", order = 5)
     boolean copy;
 
-    @Parameter(names = {"-a", "--auto-param"}, description = "clipboard string into a parameter", order = 6)
-    boolean paramFromClipboard;
+    @Parameter(names = {"-a", "--auto-param"}, description = "clipboard string into indexed parameter", order = 6)
+    int paramIdxFromClipboard = -1;
 
     @Parameter(names = {"-o", "--output-format"}, description = "output use converter", order = 7)
     boolean formatOutput;
