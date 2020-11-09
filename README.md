@@ -33,9 +33,9 @@ git clone https://gitee.com/code4everything/hutool-cli.git
 
 下载对应的ZIP包
 
-- [windows](http://share.qiniu.easepan.xyz/tool/hutool/windows-1.0.zip)
-- [linux](http://share.qiniu.easepan.xyz/tool/hutool/linux-1.0.zip)
-- [macos](http://share.qiniu.easepan.xyz/tool/hutool/darwin-1.0.zip)
+- [windows](http://share.qiniu.easepan.xyz/tool/hutool/windows-1.1.zip)
+- [linux](http://share.qiniu.easepan.xyz/tool/hutool/linux-1.1.zip)
+- [macos](http://share.qiniu.easepan.xyz/tool/hutool/darwin-1.1.zip)
 
 下载完成后解压ZIP包，并将 hutool.jar 和 bin目录移动到 hutool-cli/hutool 目录下
 
