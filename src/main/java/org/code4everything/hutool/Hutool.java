@@ -48,7 +48,7 @@ public final class Hutool {
 
     private static final String COMMAND_JSON = "command.json";
 
-    private static final String VERSION = "v1.0";
+    private static final String VERSION = "v1.1";
 
     static String workDir = ".";
 
