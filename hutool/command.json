@@ -244,5 +244,11 @@
         "paramTypes": [
             "java.io.File"
         ]
+    },
+    "lunar": {
+        "method": "org.code4everything.hutool.Utils#lunar",
+        "paramTypes": [
+            "java.util.Date"
+        ]
     }
 }

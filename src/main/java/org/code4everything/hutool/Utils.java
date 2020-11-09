@@ -1,5 +1,6 @@
 package org.code4everything.hutool;
 
+import cn.hutool.core.date.ChineseDate;
 import cn.hutool.core.util.StrUtil;
 
 import java.lang.reflect.Method;
@@ -15,6 +16,10 @@ import java.util.StringJoiner;
 public final class Utils {
 
     private Utils() {}
+
+    public static String lunar(Date date) {
+        return new ChineseDate(date).toString();
+    }
 
     public static long date2Millis(Date date) {
         return Objects.isNull(date) ? 0 : date.getTime();
