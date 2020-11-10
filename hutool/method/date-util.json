@@ -24,7 +24,7 @@
         "paramTypes": [
             "java.util.Date",
             "java.util.Date",
-            "cn.hutool.core.date.DateUnit"
+            "cn.hutool.core.date.DateUnit=day"
         ]
     },
     "ms2datetime": {

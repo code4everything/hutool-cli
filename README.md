@@ -22,6 +22,7 @@ hutool random-uuid
 
 所需环境
 
+- git
 - java8
 
 下载本项目
@@ -32,9 +33,9 @@ git clone https://gitee.com/code4everything/hutool-cli.git
 
 下载对应的ZIP包
 
-- [windows](http://share.qiniu.easepan.xyz/tool/hutool/windows-1.0.zip)
-- [linux](http://share.qiniu.easepan.xyz/tool/hutool/linux-1.0.zip)
-- [macos](http://share.qiniu.easepan.xyz/tool/hutool/darwin-1.0.zip)
+- [windows](http://share.qiniu.easepan.xyz/tool/hutool/windows-1.1.zip)
+- [linux](http://share.qiniu.easepan.xyz/tool/hutool/linux-1.1.zip)
+- [macos](http://share.qiniu.easepan.xyz/tool/hutool/darwin-1.1.zip)
 
 下载完成后解压ZIP包，并将 hutool.jar 和 bin目录移动到 hutool-cli/hutool 目录下
 
@@ -42,6 +43,7 @@ git clone https://gitee.com/code4everything/hutool-cli.git
 
 所需环境
 
+- git
 - java8
 - maven
 - python
@@ -98,7 +100,7 @@ Usage: hutool-cli [options]
     -y, --yank, --copy
       是否将结果复制到剪贴板
     -a, --auto-param
-      是否将剪贴板内容作为参数输入
+      将剪贴板字符串内容注入指定索引位置的参数
     -v, --version
       查看当前版本
     -d, --debug
@@ -133,9 +135,9 @@ hutool -r base64-encode 'sky is blue' -y
 # output: c2t5IGlzIGJsdWU=
 # 说明：-y 表示将输出结果复制到剪贴板
 
-hutool -r base64-decode -a
+hutool -r base64-decode -a:0
 # output: sky is blue
-# 说明：-a 表示将剪贴板内容作为参数输入
+# 说明：-a:0 表示将剪贴板字符串内容注入到索引位置是0的参数中
 ```
 
 > 在 `-r` 模式下，别名后可直接跟方法需要的参数，当然使用 `-p` 也是支持的，并且 -r 是可以省略的，如最上面生成随机UUID的例子。
@@ -147,6 +149,53 @@ hutool eval 5+6+3+22+9999
 # output: 10035
 ```
 
+### 查看类有哪些可执行静态方法
+
+```shell
+hutool methods regex
+
+# regex 是类 cn.hutool.core.util.ReUtil 的别名
+# output:
+get(java.util.regex.Pattern, java.lang.CharSequence, int)
+get(java.lang.String, java.lang.CharSequence, int)
+count(java.util.regex.Pattern, java.lang.CharSequence)
+count(java.lang.String, java.lang.CharSequence)
+contains(java.lang.String, java.lang.CharSequence)
+contains(java.util.regex.Pattern, java.lang.CharSequence)
+replaceAll(java.lang.CharSequence, java.util.regex.Pattern, cn.hutool.core.lang.func.Func1)
+replaceAll(java.lang.CharSequence, java.lang.String, cn.hutool.core.lang.func.Func1)
+replaceAll(java.lang.CharSequence, java.util.regex.Pattern, java.lang.String)
+replaceAll(java.lang.CharSequence, java.lang.String, java.lang.String)
+findAll(java.lang.String, java.lang.CharSequence, int)
+findAll(java.util.regex.Pattern, java.lang.CharSequence, int)
+findAll(java.util.regex.Pattern, java.lang.CharSequence, int, java.util.Collection)
+findAll(java.lang.String, java.lang.CharSequence, int, java.util.Collection)
+escape(char)
+escape(java.lang.CharSequence)
+extractMultiAndDelPre(java.lang.String, cn.hutool.core.lang.Holder, java.lang.String)
+extractMultiAndDelPre(java.util.regex.Pattern, cn.hutool.core.lang.Holder, java.lang.String)
+getGroup0(java.util.regex.Pattern, java.lang.CharSequence)
+getGroup0(java.lang.String, java.lang.CharSequence)
+getGroup1(java.lang.String, java.lang.CharSequence)
+getGroup1(java.util.regex.Pattern, java.lang.CharSequence)
+extractMulti(java.util.regex.Pattern, java.lang.CharSequence, java.lang.String)
+extractMulti(java.lang.String, java.lang.CharSequence, java.lang.String)
+findAllGroup1(java.lang.String, java.lang.CharSequence)
+findAllGroup1(java.util.regex.Pattern, java.lang.CharSequence)
+getAllGroups(java.util.regex.Pattern, java.lang.CharSequence)
+getAllGroups(java.util.regex.Pattern, java.lang.CharSequence, boolean)
+delPre(java.lang.String, java.lang.CharSequence)
+findAllGroup0(java.lang.String, java.lang.CharSequence)
+findAllGroup0(java.util.regex.Pattern, java.lang.CharSequence)
+isMatch(java.util.regex.Pattern, java.lang.CharSequence)
+isMatch(java.lang.String, java.lang.CharSequence)
+delFirst(java.util.regex.Pattern, java.lang.CharSequence)
+delFirst(java.lang.String, java.lang.CharSequence)
+getFirstNumber(java.lang.CharSequence)
+delAll(java.util.regex.Pattern, java.lang.CharSequence)
+delAll(java.lang.String, java.lang.CharSequence)
+```
+
 ### 别名查看
 
 查看有哪些命令别名（命令可以精确定位到方法）
@@ -154,6 +203,7 @@ hutool eval 5+6+3+22+9999
 ```shell
 hutool -r alias
 
+# 或者 hutool alias
 # output:
 base32-decode     = cn.hutool.core.codec.Base32#decodeStr(java.lang.String)
 base32-encode     = cn.hutool.core.codec.Base32#encode(java.lang.String)
@@ -201,6 +251,37 @@ week-end    = endOfWeek(java.util.Date)
 
 > 我们可以通过关键字 `alias` 来查看命令、类名、方法名已有的别名
 
+### 默认值
+
+我们可以在别名文件中定义参数默认值，执行方法时默认值要么都缺省，要么都填上。
+
+举个例子，如生成二维码图片：
+
+查看生成二维码的命令
+
+```shell
+hutool alias | grep qrcode
+
+# output:
+
+qrcode-decode      = cn.hutool.extra.qrcode.QrCodeUtil#decode(java.io.File)
+qrcode-generate    = cn.hutool.extra.qrcode.QrCodeUtil#generate(java.lang.String, java.lang.Integer=1000, java.lang.Integer=1000, java.io.File)
+```
+
+然后执行
+
+```shell
+# 该方法有默认值，默认值可全缺省
+hutool qrcode-generate 'qrcode test' /home/test.png
+```
+
+或者不使用默认值
+
+```shell
+# 虽然该方法有默认值，但我们可以不使用
+hutool qrcode-generate 'qrcode test' 600 600 /home/test.png
+```
+
 ### 自定义别名
 
 别名可以用来快速的指向一个类或一个静态方法，格式大致如下，json中的key将作为别名，value包括了别名对应的类名、方法名以及方法所需的参数类型。
@@ -216,7 +297,7 @@ week-end    = endOfWeek(java.util.Date)
 }
 ```
 
-hutool-cli 已经提供了大量常用的别名，参考下面文件：
+hutool-cli 提供了很多常用的别名，参考下面文件：
 
 - 命令别名参考 [command.json](/hutool/command.json)
 
@@ -225,10 +306,6 @@ hutool-cli 已经提供了大量常用的别名，参考下面文件：
 - 方法名称别名参考 [base64-util.json](/hutool/method/base64-util.json)
 
 自定义你的别名后，你还可以 pr 到本仓库哦，让更多人享受到 hutool 带来的便捷吧。
-
-### 已知问题
-
-由于GO默认是UTF8编码，而Windows是GBK，所以在Windows平台下中文会乱码，暂时没想到更好的解决办法（因为我也不会go :joy: ），希望大佬提供帮助。
 
 ### 最后
 

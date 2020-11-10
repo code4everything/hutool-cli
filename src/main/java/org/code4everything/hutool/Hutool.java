@@ -22,6 +22,7 @@ import com.beust.jcommander.JCommander;
 import org.code4everything.hutool.converter.ObjectPropertyConverter;
 
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.nio.file.Paths;
 import java.util.*;
 
@@ -47,7 +48,7 @@ public final class Hutool {
 
     private static final String COMMAND_JSON = "command.json";
 
-    private static final String VERSION = "v1.0";
+    private static final String VERSION = "v1.1";
 
     static String workDir = ".";
 
@@ -85,10 +86,6 @@ public final class Hutool {
             return;
         } else {
             debugOutput("hutool-cli: {}", VERSION);
-        }
-
-        if (ARG.paramFromClipboard) {
-            ARG.params.add(ClipboardUtil.getStr());
         }
 
         debugOutput("received command line arguments: {}", Arrays.asList(args));
@@ -221,10 +218,16 @@ public final class Hutool {
 
         fixMethodName(fixName, methodAliasPaths);
 
+        if (ARG.paramIdxFromClipboard >= 0) {
+            ARG.params.add(Math.min(ARG.params.size(), ARG.paramIdxFromClipboard), ClipboardUtil.getStr());
+        }
+
         debugOutput("parsing parameter types");
         Class<?>[] paramTypes = new Class<?>[ARG.paramTypes.size()];
+        boolean parseDefaultValue = ARG.params.size() < paramTypes.length;
         for (int i = 0; i < ARG.paramTypes.size(); i++) {
-            String paramType = ARG.paramTypes.get(i);
+            String paramType = parseParamType(i, ARG.paramTypes.get(i), parseDefaultValue);
+            // 解析默认值，默认值要么都填写，要么都不填写
             try {
                 paramTypes[i] = Class.forName(paramType);
             } catch (ClassNotFoundException e) {
@@ -237,15 +240,8 @@ public final class Hutool {
 
         Method method;
         if (nonParamType && ArrayUtil.isEmpty(paramTypes)) {
-            debugOutput("getting method ignore case by method name");
-            method = ReflectUtil.getMethodByNameIgnoreCase(clazz, ARG.methodName);
-            if (Objects.nonNull(method)) {
-                ARG.paramTypes = new ArrayList<>();
-                paramTypes = method.getParameterTypes();
-                for (Class<?> paramType : paramTypes) {
-                    ARG.paramTypes.add(paramType.getName());
-                }
-            }
+            debugOutput("getting method ignore case by method name and param count");
+            method = autoMatchMethod(clazz);
         } else {
             debugOutput("getting method ignore case by method name and param types");
             method = ReflectUtil.getMethod(clazz, true, ARG.methodName, paramTypes);
@@ -258,6 +254,7 @@ public final class Hutool {
             handleResultOfMethod(clazz, fixName, methodAliasPaths);
             return;
         }
+        paramTypes = method.getParameterTypes();
         debugOutput("get method success");
 
         if (ARG.params.size() < paramTypes.length) {
@@ -280,6 +277,62 @@ public final class Hutool {
         debugOutput("invoking method: {}#{}({})", ARG.className, method.getName(), paramJoiner);
         result = ReflectUtil.invokeStatic(method, params);
         debugOutput("invoke method success");
+    }
+
+    private static String parseParamType(int index, String paramType, boolean parseDefaultValue) {
+        int idx = paramType.indexOf('=');
+        if (idx < 1) {
+            return paramType;
+        }
+
+        String type = paramType.substring(0, idx);
+
+        if (parseDefaultValue) {
+            String param = paramType.substring(idx + 1);
+            ARG.params.add(Math.min(index, ARG.params.size()), param);
+        }
+
+        return type;
+    }
+
+    private static Method autoMatchMethod(Class<?> clazz) {
+        Method[] methods = clazz.getMethods();
+        List<Method> fuzzyList = new ArrayList<>();
+        for (Method method : methods) {
+            int modifiers = method.getModifiers();
+            if (!Modifier.isPublic(modifiers) || !Modifier.isStatic(modifiers)) {
+                continue;
+            }
+            if (method.getName().equalsIgnoreCase(ARG.methodName)) {
+                fuzzyList.add(method);
+            }
+        }
+
+        if (CollUtil.isEmpty(fuzzyList)) {
+            return null;
+        }
+
+        // 找到离参数个数最相近的方法
+        int paramSize = ARG.params.size();
+        fuzzyList.sort(Comparator.comparingInt(Method::getParameterCount));
+        Method method = null;
+        for (Method m : fuzzyList) {
+            if (Objects.isNull(method)) {
+                method = m;
+            }
+            if (m.getParameterCount() > paramSize) {
+                break;
+            }
+            method = m;
+        }
+
+        if (Objects.nonNull(method)) {
+            ARG.paramTypes = new ArrayList<>();
+            for (Class<?> paramType : method.getParameterTypes()) {
+                ARG.paramTypes.add(paramType.getName());
+            }
+        }
+        return method;
     }
 
     @SuppressWarnings("rawtypes")
@@ -354,12 +407,12 @@ public final class Hutool {
 
         debugOutput("max length: {}", maxLength.get());
         map.forEach((k, v) -> joiner.add(StrUtil.padAfter(k, maxLength.get(), ' ') + " = " + v));
-        result = joiner;
+        result = joiner.toString();
     }
 
     @SuppressWarnings("rawtypes")
     private static void convertResult() {
-        if (Objects.isNull(result) || !ARG.formatOutput) {
+        if (Objects.isNull(result) || !ARG.formatOutput || result instanceof CharSequence) {
             return;
         }
 

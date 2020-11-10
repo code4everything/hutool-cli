@@ -54,7 +54,7 @@
         "paramTypes": [
             "java.util.Date",
             "java.util.Date",
-            "cn.hutool.core.date.DateUnit"
+            "cn.hutool.core.date.DateUnit=day"
         ]
     },
     "ms2date": {
@@ -215,7 +215,7 @@
         "method": "cn.hutool.http.HttpUtil#post",
         "paramTypes": [
             "java.lang.String",
-            "java.lang.String"
+            "java.lang.String={}"
         ]
     },
     "eval": {
@@ -230,12 +230,12 @@
             "java.lang.String"
         ]
     },
-    "qrcode-encode": {
+    "qrcode-generate": {
         "method": "cn.hutool.extra.qrcode.QrCodeUtil#generate",
         "paramTypes": [
             "java.lang.String",
-            "java.lang.Integer",
-            "java.lang.Integer",
+            "java.lang.Integer=1000",
+            "java.lang.Integer=1000",
             "java.io.File"
         ]
     },
@@ -243,6 +243,12 @@
         "method": "cn.hutool.extra.qrcode.QrCodeUtil#decode",
         "paramTypes": [
             "java.io.File"
+        ]
+    },
+    "lunar": {
+        "method": "org.code4everything.hutool.Utils#lunar",
+        "paramTypes": [
+            "java.util.Date"
         ]
     }
 }
