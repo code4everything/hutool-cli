@@ -250,5 +250,12 @@
         "paramTypes": [
             "java.util.Date"
         ]
+    },
+    "split": {
+        "method": "cn.hutool.core.util.StrUtil#splitTrim",
+        "paramTypes": [
+            "java.lang.CharSequence",
+            "java.lang.CharSequence"
+        ]
     }
 }

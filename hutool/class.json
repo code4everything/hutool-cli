@@ -122,5 +122,8 @@
     },
     "pinyin": {
         "clazz": "cn.hutool.extra.pinyin.PinyinUtil"
+    },
+    "list": {
+        "clazz": "cn.hutool.core.collection.ListUtil"
     }
 }
