@@ -20,7 +20,8 @@ const (
 )
 
 func main() {
-	args := append([]string{"-jar", "hutool.jar"}, os.Args[1:]...)
+	cwd, _ := os.Getwd()
+	args := append([]string{"-jar", "hutool.jar", "--work-dir", cwd}, os.Args[1:]...)
 	cmd := exec.Command("java", args...)
 	path := os.Getenv("HUTOOL_PATH")
 	if path == "" {

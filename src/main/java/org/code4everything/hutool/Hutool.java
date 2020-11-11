@@ -19,8 +19,10 @@ import com.alibaba.fastjson.TypeReference;
 import com.alibaba.fastjson.parser.ParserConfig;
 import com.alibaba.fastjson.util.TypeUtils;
 import com.beust.jcommander.JCommander;
+import org.code4everything.hutool.converter.MapConverter;
 import org.code4everything.hutool.converter.ObjectPropertyConverter;
 
+import java.io.File;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.nio.file.Paths;
@@ -38,7 +40,7 @@ public final class Hutool {
 
     public static final String CLAZZ_KEY = "clazz";
 
-    private static final MethodArg ARG = new MethodArg();
+    public static final MethodArg ARG = new MethodArg();
 
     private static final String CLASS_PREFIX = "cn.hutool.";
 
@@ -48,7 +50,7 @@ public final class Hutool {
 
     private static final String COMMAND_JSON = "command.json";
 
-    private static final String VERSION = "v1.1";
+    private static final String VERSION = "v1.2";
 
     static String workDir = ".";
 
@@ -412,7 +414,12 @@ public final class Hutool {
 
     @SuppressWarnings("rawtypes")
     private static void convertResult() {
-        if (Objects.isNull(result) || !ARG.formatOutput || result instanceof CharSequence) {
+        if (Objects.isNull(result) || result instanceof CharSequence) {
+            return;
+        }
+
+        if (!ARG.formatOutput) {
+            autoConvert();
             return;
         }
 
@@ -442,6 +449,16 @@ public final class Hutool {
             debugOutput("result convert success");
         } catch (Exception e) {
             debugOutput("converter[{}] not found!", converterName);
+        }
+    }
+
+    private static void autoConvert() {
+        if (result instanceof File) {
+            result = ((File) result).getAbsolutePath();
+        } else if (result instanceof Date) {
+            result = DatePattern.NORM_DATETIME_MS_FORMAT.format((Date) result);
+        } else if (result instanceof Map) {
+            result = new MapConverter().object2String(result);
         }
     }
 

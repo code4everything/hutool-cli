@@ -261,7 +261,7 @@
     "mkdir": {
         "method": "cn.hutool.core.io.FileUtil#mkdir",
         "paramTypes": [
-            "java.lang.String"
+            "java.io.File"
         ]
     }
 }
