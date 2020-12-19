@@ -5,5 +5,6 @@
     "java.nio.charset.Charset": "org.code4everything.hutool.converter.CharsetConverter",
     "java.lang.Class": "org.code4everything.hutool.converter.ClassConverter",
     "java.util.regex.Pattern": "org.code4everything.hutool.converter.PatternConverter",
-    "java.util.Map": "org.code4everything.hutool.converter.MapConverter"
+    "java.util.Map": "org.code4everything.hutool.converter.MapConverter",
+    "java.util.Date": "org.code4everything.hutool.converter.DateConverter"
 }
