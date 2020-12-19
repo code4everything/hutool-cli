@@ -30,7 +30,7 @@
         ]
     },
     "now": {
-        "method": "cn.hutool.core.date.DateUtil#now",
+        "method": "cn.hutool.core.date.DateUtil#date",
         "paramTypes": []
     },
     "curr-sec": {
