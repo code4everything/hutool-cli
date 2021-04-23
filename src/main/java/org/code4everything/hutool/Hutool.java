@@ -52,7 +52,7 @@ public final class Hutool {
 
     private static final String VERSION = "v1.2";
 
-    static String workDir = ".";
+    static String workDir = System.getenv("HUTOOL_PATH");
 
     private static boolean nonParamType = true;
 
