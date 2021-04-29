@@ -60,6 +60,8 @@ public final class Hutool {
 
     private static Object result;
 
+    private static final String HUTOOL_USER_HOME = FileUtil.getUserHomePath() + File.separator + "hutool-cli";
+
     private Hutool() {}
 
     public static void main(String[] args) {
@@ -134,7 +136,7 @@ public final class Hutool {
             }
 
             String methodKey = "method";
-            JSONObject aliasJson = getAlias(COMMAND_JSON);
+            JSONObject aliasJson = getAlias(command, "", COMMAND_JSON);
 
             JSONObject methodJson = aliasJson.getJSONObject(command);
             if (Objects.isNull(methodJson) || !methodJson.containsKey(methodKey)) {
@@ -177,7 +179,7 @@ public final class Hutool {
         List<String> methodAliasPaths = null;
         if (fixName) {
             String methodAliasKey = "methodAliasPaths";
-            JSONObject aliasJson = getAlias(CLASS_JSON);
+            JSONObject aliasJson = getAlias(ARG.className, "", CLASS_JSON);
 
             JSONObject clazzJson = aliasJson.getJSONObject(ARG.className);
             if (Objects.isNull(clazzJson) || !clazzJson.containsKey(CLAZZ_KEY)) {
@@ -269,7 +271,7 @@ public final class Hutool {
         ParserConfig parserConfig = new ParserConfig();
         Object[] params = new Object[paramTypes.length];
         StringJoiner paramJoiner = new StringJoiner(", ");
-        JSONObject converterJson = getAlias(CONVERTER_JSON);
+        JSONObject converterJson = getAlias("", "", CONVERTER_JSON);
         for (int i = 0; i < paramTypes.length; i++) {
             String param = ARG.params.get(i);
             paramJoiner.add(param);
@@ -338,8 +340,7 @@ public final class Hutool {
     }
 
     @SuppressWarnings("rawtypes")
-    private static Object castParam2JavaType(JSONObject convertJson, ParserConfig parserConfig, String param,
-                                             Class<?> type) {
+    private static Object castParam2JavaType(JSONObject convertJson, ParserConfig parserConfig, String param, Class<?> type) {
         String converterName = convertJson.getString(type.getName());
         if (StrUtil.isNotEmpty(converterName)) {
             try {
@@ -347,8 +348,7 @@ public final class Hutool {
                 Converter<?> converter = (Converter) ReflectUtil.newInstance(converterClass);
                 return converter.string2Object(param);
             } catch (Exception e) {
-                debugOutput("cast param[{}] to type[{}] using converter[{}] failed: {}", param, type.getName(),
-                        converterName, ExceptionUtil.stacktraceToString(e, Integer.MAX_VALUE));
+                debugOutput("cast param[{}] to type[{}] using converter[{}] failed: {}", param, type.getName(), converterName, ExceptionUtil.stacktraceToString(e, Integer.MAX_VALUE));
             }
         }
         return TypeUtils.cast(param, type, parserConfig);
@@ -357,7 +357,7 @@ public final class Hutool {
     private static void fixMethodName(boolean fixName, List<String> methodAliasPaths) {
         if (fixName && CollUtil.isNotEmpty(methodAliasPaths)) {
             String methodKey = "methodName";
-            JSONObject aliasJson = getAlias(methodAliasPaths.toArray(new String[0]));
+            JSONObject aliasJson = getAlias(ARG.methodName, "", methodAliasPaths.toArray(new String[0]));
 
             JSONObject methodJson = aliasJson.getJSONObject(ARG.methodName);
             if (Objects.nonNull(methodJson)) {
@@ -379,7 +379,8 @@ public final class Hutool {
     }
 
     private static void seeAlias(String... paths) {
-        JSONObject aliasJson = getAlias(paths);
+        JSONObject aliasJson = getAlias("", workDir, paths);
+        aliasJson.putAll(getAlias("", "", paths));
         StringJoiner joiner = new StringJoiner("\n");
         Holder<Integer> maxLength = Holder.of(0);
         Map<String, String> map = new TreeMap<>();
@@ -424,7 +425,7 @@ public final class Hutool {
         }
 
         String name = result.getClass().getName();
-        JSONObject converterJson = getAlias(CONVERTER_JSON);
+        JSONObject converterJson = getAlias("", "", CONVERTER_JSON);
         String converterName = converterJson.getString(name);
 
         try {
@@ -462,15 +463,22 @@ public final class Hutool {
         }
     }
 
-    public static JSONObject getAlias(String... paths) {
-        String path = Paths.get(workDir, paths).toAbsolutePath().normalize().toString();
+    public static JSONObject getAlias(String aliasKey, String parentDir, String... paths) {
+        String path = Paths.get(StrUtil.emptyToDefault(parentDir, HUTOOL_USER_HOME), paths).toAbsolutePath().normalize().toString();
         debugOutput("alias json file path: {}", path);
-        String json = null;
+
+        JSONObject json;
         if (FileUtil.exist(path)) {
-            json = FileUtil.readUtf8String(path);
+            json = JSON.parseObject(FileUtil.readUtf8String(path));
+        } else {
+            json = new JSONObject();
         }
-        json = StrUtil.emptyToDefault(json, "{}");
-        return JSON.parseObject(json);
+
+        if (StrUtil.isEmpty(aliasKey) || json.containsKey(aliasKey)) {
+            return json;
+        }
+
+        return getAlias("", workDir, paths);
     }
 
     private static void debugOutput(String msg, Object... params) {

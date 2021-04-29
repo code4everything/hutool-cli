@@ -62,6 +62,8 @@ cd bin
 python package.py
 ```
 
+> 说明：没有Golang环境时可直接使用 `java -jar` 执行，而 [WeTool工具](https://gitee.com/code4everything/wetool) 支持这一操作，并且不需要 `hutool` 命令前缀，但仍然需要配置环境变量哦。
+
 ### 配置环境变量
 
 新建 `HUTOOL_PATH` 变量，对应的路径如下：`your_path/hutool-cli/hutool`，目录结构如下：
@@ -307,6 +309,11 @@ hutool-cli 提供了很多常用的别名，参考下面文件：
 
 自定义你的别名后，你还可以 pr 到本仓库哦，让更多人享受到 hutool 带来的便捷吧。
 
+
+### 私有别名
+
+程序会优先读取用户目录 `{user.home}/hutool-cli` 下的私有别名文件，文件名和别名格式参考上面说明。
+
 ### 最后
 
-如果你觉得项目还不错，打个星星呗，欢迎 pr。
+如果你觉得项目还不错，记得Star哟，欢迎 pr。

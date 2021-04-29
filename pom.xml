@@ -13,9 +13,9 @@
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <jcommander.version>1.78</jcommander.version>
-        <hutool.version>5.4.6</hutool.version>
-        <fastjson.version>1.2.74</fastjson.version>
+        <jcommander.version>1.81</jcommander.version>
+        <hutool.version>5.6.4</hutool.version>
+        <fastjson.version>1.2.76</fastjson.version>
         <slf4j.version>1.7.30</slf4j.version>
         <oshi.version>5.3.1</oshi.version>
         <logback.version>1.2.3</logback.version>
