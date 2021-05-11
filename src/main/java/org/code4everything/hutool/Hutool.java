@@ -271,7 +271,7 @@ public final class Hutool {
         ParserConfig parserConfig = new ParserConfig();
         Object[] params = new Object[paramTypes.length];
         StringJoiner paramJoiner = new StringJoiner(", ");
-        JSONObject converterJson = getAlias("", "", CONVERTER_JSON);
+        JSONObject converterJson = getAlias("", workDir, CONVERTER_JSON);
         for (int i = 0; i < paramTypes.length; i++) {
             String param = ARG.params.get(i);
             paramJoiner.add(param);
@@ -425,7 +425,7 @@ public final class Hutool {
         }
 
         String name = result.getClass().getName();
-        JSONObject converterJson = getAlias("", "", CONVERTER_JSON);
+        JSONObject converterJson = getAlias("", workDir, CONVERTER_JSON);
         String converterName = converterJson.getString(name);
 
         try {
