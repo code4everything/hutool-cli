@@ -30,17 +30,7 @@ import java.io.File;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.StringJoiner;
-import java.util.TreeMap;
+import java.util.*;
 
 /**
  * @author pantao
@@ -66,6 +56,8 @@ public final class Hutool {
 
     private static final String VERSION = "v1.2";
 
+    private static final String HUTOOL_USER_HOME = FileUtil.getUserHomePath() + File.separator + "hutool-cli";
+
     static String workDir = System.getenv("HUTOOL_PATH");
 
     private static boolean nonParamType = true;
@@ -73,8 +65,6 @@ public final class Hutool {
     private static JCommander commander;
 
     private static Object result;
-
-    private static final String HUTOOL_USER_HOME = FileUtil.getUserHomePath() + File.separator + "hutool-cli";
 
     private Hutool() {}
 
@@ -399,7 +389,6 @@ public final class Hutool {
         Holder<Integer> maxLength = Holder.of(0);
         Map<String, String> map = new TreeMap<>();
 
-        Holder<CtClass> ctClassHolder = new Holder<>();
         aliasJson.keySet().forEach(k -> {
             int length = k.length();
             if (length > maxLength.get()) {
@@ -420,7 +409,7 @@ public final class Hutool {
                 List<String> paramTypes = json.getObject(PARAM_KEY, new TypeReference<List<String>>() {});
                 paramTypes = ObjectUtil.defaultIfNull(paramTypes, Collections.emptyList());
                 try {
-                    map.put(k, parseMethodFullInfo(className, ctClassHolder, methodName, paramTypes));
+                    map.put(k, parseMethodFullInfo(className, methodName, paramTypes));
                 } catch (Exception e) {
                     debugOutput("parse method param name error: {}", ExceptionUtil.stacktraceToString(e, Integer.MAX_VALUE));
                     String typeString = ArrayUtil.join(paramTypes.toArray(new String[0]), ", ");
@@ -434,15 +423,16 @@ public final class Hutool {
         result = joiner.toString();
     }
 
-    private static String parseMethodFullInfo(String className, Holder<CtClass> ctClassHolder, String methodName, List<String> paramTypes) throws NotFoundException {
+    private static String parseMethodFullInfo(String className, String methodName, List<String> paramTypes) throws NotFoundException {
         String mn = methodName;
         ClassPool pool = ClassPool.getDefault();
+        CtClass ctClass;
         if (StrUtil.isEmpty(className)) {
             int idx = methodName.indexOf("#");
-            ctClassHolder.set(pool.get(methodName.substring(0, idx)));
+            ctClass = pool.get(methodName.substring(0, idx));
             mn = methodName.substring(idx + 1);
-        } else if (Objects.isNull(ctClassHolder.get())) {
-            ctClassHolder.set(pool.get(className));
+        } else {
+            ctClass = pool.get(className);
         }
 
         CtClass[] params = new CtClass[paramTypes.size()];
@@ -455,9 +445,9 @@ public final class Hutool {
                 paramTypeClass = old.substring(0, idx);
                 defaultValueMap.put(paramTypeClass, old.substring(idx + 1));
             }
-            params[i] = pool.get(paramTypeClass);
+            params[i] = pool.get(Utils.parseClassName(paramTypeClass));
         }
-        CtMethod ctMethod = ctClassHolder.get().getDeclaredMethod(mn, params);
+        CtMethod ctMethod = ctClass.getDeclaredMethod(mn, params);
         return methodName + Utils.getMethodFullInfo(false, ctMethod, defaultValueMap);
     }
 

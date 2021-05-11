@@ -2,13 +2,13 @@
     "encode": {
         "methodName": "encodeHexStr",
         "paramTypes": [
-            "java.lang.String"
+            "string"
         ]
     },
     "decode": {
         "methodName": "decodeHexStr",
         "paramTypes": [
-            "java.lang.String"
+            "string"
         ]
     }
 }

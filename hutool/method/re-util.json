@@ -3,14 +3,14 @@
         "methodName": "getAllGroups",
         "paramTypes": [
             "java.util.regex.Pattern",
-            "java.lang.CharSequence"
+            "j.char.seq"
         ]
     },
     "match": {
         "methodName": "isMatch",
         "paramTypes": [
-            "java.lang.String",
-            "java.lang.CharSequence"
+            "string",
+            "j.char.seq"
         ]
     }
 }

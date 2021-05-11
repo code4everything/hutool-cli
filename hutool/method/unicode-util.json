@@ -2,19 +2,19 @@
     "2str": {
         "methodName": "toString",
         "paramTypes": [
-            "java.lang.String"
+            "string"
         ]
     },
     "2unicode": {
         "methodName": "toUnicode",
         "paramTypes": [
-            "java.lang.String"
+            "string"
         ]
     },
     "all2unicode": {
         "methodName": "toUnicode",
         "paramTypes": [
-            "java.lang.String",
+            "string",
             "java.lang.Boolean=false"
         ]
     }

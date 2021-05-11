@@ -8,7 +8,7 @@ public class HutoolCli {
 
     public static void main(String[] args) {
         Hutool.workDir = "./hutool";
-        String testArgs = "test .*success.* -a:1 -d";
+        String testArgs = "alias -d";
         Hutool.main(testArgs.split(" "));
     }
 }

@@ -2,31 +2,31 @@
     "base32-encode": {
         "method": "cn.hutool.core.codec.Base32#encode",
         "paramTypes": [
-            "java.lang.String"
+            "string"
         ]
     },
     "base32-decode": {
         "method": "cn.hutool.core.codec.Base32#decodeStr",
         "paramTypes": [
-            "java.lang.String"
+            "string"
         ]
     },
     "base64-encode": {
         "method": "cn.hutool.core.codec.Base64#encode",
         "paramTypes": [
-            "java.lang.CharSequence"
+            "j.char.seq"
         ]
     },
     "base64-decode": {
         "method": "cn.hutool.core.codec.Base64#decodeStr",
         "paramTypes": [
-            "java.lang.CharSequence"
+            "j.char.seq"
         ]
     },
     "base64-encode-url": {
         "method": "cn.hutool.core.codec.Base64#encodeUrlSafe",
         "paramTypes": [
-            "java.lang.CharSequence"
+            "j.char.seq"
         ]
     },
     "now": {
@@ -40,77 +40,77 @@
     "week": {
         "method": "cn.hutool.core.date.DateUtil#dayOfWeekEnum",
         "paramTypes": [
-            "java.util.Date"
+            "date"
         ]
     },
     "week-end": {
         "method": "cn.hutool.core.date.DateUtil#endOfWeek",
         "paramTypes": [
-            "java.util.Date"
+            "date"
         ]
     },
     "date-between": {
         "method": "cn.hutool.core.date.DateUtil#between",
         "paramTypes": [
-            "java.util.Date",
-            "java.util.Date",
+            "date",
+            "date",
             "cn.hutool.core.date.DateUnit=day"
         ]
     },
     "ms2date": {
         "method": "cn.hutool.core.date.DateUtil#date",
         "paramTypes": [
-            "java.util.Date"
+            "date"
         ]
     },
     "date2ms": {
         "method": "org.code4everything.hutool.Utils#date2Millis",
         "paramTypes": [
-            "java.util.Date"
+            "date"
         ]
     },
     "file-type": {
         "method": "cn.hutool.core.io.FileUtil#getType",
         "paramTypes": [
-            "java.io.File"
+            "file"
         ]
     },
     "file-read": {
         "method": "cn.hutool.core.io.FileUtil#readUtf8String",
         "paramTypes": [
-            "java.lang.String"
+            "string"
         ]
     },
     "unicode2str": {
         "method": "cn.hutool.core.text.UnicodeUtil#toString",
         "paramTypes": [
-            "java.lang.String"
+            "string"
         ]
     },
     "str2unicode": {
         "method": "cn.hutool.core.text.UnicodeUtil#toUnicode",
         "paramTypes": [
-            "java.lang.String"
+            "string"
         ]
     },
     "convert-charset": {
         "method": "cn.hutool.core.util.CharsetUtil#convert",
         "paramTypes": [
-            "java.io.File",
-            "java.nio.charset.Charset",
-            "java.nio.charset.Charset"
+            "file",
+            "charset",
+            "charset"
         ]
     },
     "2hex": {
         "method": "cn.hutool.core.util.HexUtil#encodeHexStr",
         "paramTypes": [
-            "java.lang.String"
+            "string"
         ]
     },
     "idcard": {
         "method": "cn.hutool.core.util.IdcardUtil#getIdcardInfo",
         "paramTypes": [
-            "java.lang.String"
+            "string"
         ]
     },
     "random-credit-code": {
@@ -143,33 +143,33 @@
     "methods": {
         "method": "org.code4everything.hutool.Utils#outputPublicStaticMethods",
         "paramTypes": [
-            "java.lang.Class"
+            "class"
         ]
     },
     "regex-match": {
         "method": "cn.hutool.core.util.ReUtil#isMatch",
         "paramTypes": [
-            "java.lang.String",
-            "java.lang.CharSequence"
+            "string",
+            "j.char.seq"
         ]
     },
     "test": {
         "method": "cn.hutool.core.util.ReUtil#isMatch",
         "paramTypes": [
-            "java.lang.String",
-            "java.lang.CharSequence"
+            "string",
+            "j.char.seq"
         ]
     },
     "upper": {
         "method": "org.code4everything.hutool.Utils#toUpperCase",
         "paramTypes": [
-            "java.lang.String"
+            "string"
         ]
     },
     "lower": {
         "method": "org.code4everything.hutool.Utils#toLowerCase",
         "paramTypes": [
-            "java.lang.String"
+            "string"
         ]
     },
     "java-info": {
@@ -190,78 +190,78 @@
     "md5": {
         "method": "cn.hutool.crypto.SecureUtil#md5",
         "paramTypes": [
-            "java.lang.String"
+            "string"
         ]
     },
     "sha1": {
         "method": "cn.hutool.crypto.SecureUtil#sha1",
         "paramTypes": [
-            "java.lang.String"
+            "string"
         ]
     },
     "sha256": {
         "method": "cn.hutool.crypto.SecureUtil#sha256",
         "paramTypes": [
-            "java.lang.String"
+            "string"
         ]
     },
     "get": {
         "method": "cn.hutool.http.HttpUtil#get",
         "paramTypes": [
-            "java.lang.String"
+            "string"
         ]
     },
     "post": {
         "method": "cn.hutool.http.HttpUtil#post",
         "paramTypes": [
-            "java.lang.String",
-            "java.lang.String={}"
+            "string",
+            "string={}"
         ]
     },
     "eval": {
         "method": "cn.hutool.script.ScriptUtil#eval",
         "paramTypes": [
-            "java.lang.String"
+            "string"
         ]
     },
     "pinyin": {
         "method": "cn.hutool.extra.pinyin.PinyinUtil#getPinyin",
         "paramTypes": [
-            "java.lang.String"
+            "string"
         ]
     },
     "qrcode-generate": {
         "method": "cn.hutool.extra.qrcode.QrCodeUtil#generate",
         "paramTypes": [
-            "java.lang.String",
+            "string",
             "int=1000",
             "int=1000",
-            "java.io.File"
+            "file"
         ]
     },
     "qrcode-decode": {
         "method": "cn.hutool.extra.qrcode.QrCodeUtil#decode",
         "paramTypes": [
-            "java.io.File"
+            "file"
         ]
     },
     "lunar": {
         "method": "org.code4everything.hutool.Utils#lunar",
         "paramTypes": [
-            "java.util.Date"
+            "date"
         ]
     },
     "split": {
         "method": "cn.hutool.core.text.CharSequenceUtil#splitTrim",
         "paramTypes": [
-            "java.lang.CharSequence",
-            "java.lang.CharSequence"
+            "j.char.seq",
+            "j.char.seq"
         ]
     },
     "mkdir": {
         "method": "cn.hutool.core.io.FileUtil#mkdir",
         "paramTypes": [
-            "java.io.File"
+            "file"
         ]
     }
 }

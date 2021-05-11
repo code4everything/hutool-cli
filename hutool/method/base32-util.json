@@ -2,13 +2,13 @@
     "encode": {
         "methodName": "encode",
         "paramTypes": [
-            "java.lang.String"
+            "string"
         ]
     },
     "decode": {
         "methodName": "decodeStr",
         "paramTypes": [
-            "java.lang.String"
+            "string"
         ]
     }
 }

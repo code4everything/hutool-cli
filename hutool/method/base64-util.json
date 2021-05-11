@@ -2,19 +2,19 @@
     "encode": {
         "methodName": "encode",
         "paramTypes": [
-            "java.lang.CharSequence"
+            "j.char.seq"
         ]
     },
     "decode": {
         "methodName": "decodeStr",
         "paramTypes": [
-            "java.lang.CharSequence"
+            "j.char.seq"
         ]
     },
     "encode-url": {
         "methodName": "encodeUrlSafe",
         "paramTypes": [
-            "java.lang.CharSequence"
+            "j.char.seq"
         ]
     }
 }

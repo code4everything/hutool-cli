@@ -2,13 +2,13 @@
     "type": {
         "methodName": "getType",
         "paramTypes": [
-            "java.io.File"
+            "file"
         ]
     },
     "read": {
         "methodName": "readUtf8String",
         "paramTypes": [
-            "java.lang.String"
+            "string"
         ]
     }
 }

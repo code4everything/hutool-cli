@@ -10,27 +10,27 @@
     "week": {
         "methodName": "dayOfWeekEnum",
         "paramTypes": [
-            "java.util.Date"
+            "date"
         ]
     },
     "week-end": {
         "methodName": "endOfWeek",
         "paramTypes": [
-            "java.util.Date"
+            "date"
         ]
     },
     "between": {
         "methodName": "between",
         "paramTypes": [
-            "java.util.Date",
-            "java.util.Date",
+            "date",
+            "date",
             "cn.hutool.core.date.DateUnit=day"
         ]
     },
     "ms2datetime": {
         "methodName": "date",
         "paramTypes": [
-            "java.util.Date"
+            "date"
         ]
     }
 }

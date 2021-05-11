@@ -41,12 +41,15 @@ public final class Utils {
 
     public static Class<?> parseClass(String className) throws ClassNotFoundException {
         switch (className) {
+            case "bool":
             case "boolean":
                 return boolean.class;
             case "byte":
                 return byte.class;
             case "short":
                 return short.class;
+            case "char":
+                return char.class;
             case "int":
                 return int.class;
             case "long":
@@ -56,7 +59,76 @@ public final class Utils {
             case "double":
                 return double.class;
             default:
-                return Class.forName(className);
+                return Class.forName(parseClassName0(className));
+        }
+    }
+
+    public static String parseClassName(String className) {
+        switch (className) {
+            case "bool":
+            case "boolean":
+                return "boolean";
+            case "byte":
+                return "byte";
+            case "short":
+                return "short";
+            case "char":
+                return "char";
+            case "int":
+                return "int";
+            case "long":
+                return "long";
+            case "float":
+                return "float";
+            case "double":
+                return "double";
+            default:
+                return parseClassName0(className);
+        }
+    }
+
+    private static String parseClassName0(String className) {
+        switch (className) {
+            case "string":
+                return "java.lang.String";
+            case "j.char.seq":
+                return "java.lang.CharSequence";
+            case "file":
+                return "java.io.File";
+            case "charset":
+                return "java.nio.charset.Charset";
+            case "date":
+                return "java.util.Date";
+            case "class":
+                return "java.lang.Class";
+            case "j.bool":
+            case "j.boolean":
+                return "java.lang.Boolean";
+            case "j.byte":
+                return "java.lang.Byte";
+            case "j.short":
+                return "java.lang.Short";
+            case "j.int":
+            case "j.integer":
+                return "java.lang.Integer";
+            case "j.char":
+                return "java.lang.Character";
+            case "j.long":
+                return "java.lang.Long";
+            case "j.float":
+                return "java.lang.Float";
+            case "j.double":
+                return "java.lang.Double";
+            case "regex.pattern":
+                return "java.util.regex.Pattern";
+            case "map":
+                return "java.util.Map";
+            case "list":
+                return "java.util.List";
+            case "set":
+                return "java.util.Set";
+            default:
+                return className;
         }
     }
 

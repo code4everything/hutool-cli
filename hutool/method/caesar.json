@@ -2,14 +2,14 @@
     "encode": {
         "methodName": "encode",
         "paramTypes": [
-            "java.lang.String",
+            "string",
             "java.lang.Integer=7"
         ]
     },
     "decode": {
         "methodName": "decode",
         "paramTypes": [
-            "java.lang.String",
+            "string",
             "java.lang.Integer=7"
         ]
     }
