@@ -399,7 +399,6 @@ public final class Hutool {
         Holder<Integer> maxLength = Holder.of(0);
         Map<String, String> map = new TreeMap<>();
 
-        ClassPool pool = ClassPool.getDefault();
         Holder<CtClass> ctClassHolder = new Holder<>();
         aliasJson.keySet().forEach(k -> {
             int length = k.length();
@@ -421,7 +420,7 @@ public final class Hutool {
                 List<String> paramTypes = json.getObject(PARAM_KEY, new TypeReference<List<String>>() {});
                 paramTypes = ObjectUtil.defaultIfNull(paramTypes, Collections.emptyList());
                 try {
-                    map.put(k, parseMethodFullInfo(className, pool, ctClassHolder, methodName, paramTypes));
+                    map.put(k, parseMethodFullInfo(className, ctClassHolder, methodName, paramTypes));
                 } catch (Exception e) {
                     debugOutput("parse method param name error: {}", ExceptionUtil.stacktraceToString(e, Integer.MAX_VALUE));
                     String typeString = ArrayUtil.join(paramTypes.toArray(new String[0]), ", ");
@@ -435,8 +434,9 @@ public final class Hutool {
         result = joiner.toString();
     }
 
-    private static String parseMethodFullInfo(String className, ClassPool pool, Holder<CtClass> ctClassHolder, String methodName, List<String> paramTypes) throws NotFoundException {
+    private static String parseMethodFullInfo(String className, Holder<CtClass> ctClassHolder, String methodName, List<String> paramTypes) throws NotFoundException {
         String mn = methodName;
+        ClassPool pool = ClassPool.getDefault();
         if (StrUtil.isEmpty(className)) {
             int idx = methodName.indexOf("#");
             ctClassHolder.set(pool.get(methodName.substring(0, idx)));
