@@ -22,6 +22,7 @@
         <emoji-java.version>5.1.1</emoji-java.version>
         <zxing.version>3.4.1</zxing.version>
         <pinyin4j.version>2.5.1</pinyin4j.version>
+        <javassist.version>3.28.0-GA</javassist.version>
     </properties>
 
     <dependencies>
@@ -95,6 +96,11 @@
             <artifactId>logback-classic</artifactId>
             <version>${logback.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.javassist</groupId>
+            <artifactId>javassist</artifactId>
+            <version>${javassist.version}</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -117,8 +123,6 @@
                                     <mainClass>org.code4everything.hutool.Hutool</mainClass>
                                 </transformer>
                             </transformers>
-                            <artifactSet>
-                            </artifactSet>
                         </configuration>
                     </execution>
                 </executions>

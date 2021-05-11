@@ -4,6 +4,7 @@ import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSONObject;
 import org.code4everything.hutool.Converter;
 import org.code4everything.hutool.Hutool;
+import org.code4everything.hutool.Utils;
 
 import java.util.Objects;
 
@@ -24,7 +25,7 @@ public class ClassConverter implements Converter<Class<?>> {
             }
         }
 
-        return Class.forName(string);
+        return Utils.parseClass(string);
     }
 
     @Override

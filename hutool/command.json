@@ -134,7 +134,7 @@
     "random-str": {
         "method": "cn.hutool.core.util.RandomUtil#randomString",
         "paramTypes": [
-            "java.lang.Integer"
+            "int"
         ]
     },
     "random-color": {
@@ -234,8 +234,8 @@
         "method": "cn.hutool.extra.qrcode.QrCodeUtil#generate",
         "paramTypes": [
             "java.lang.String",
-            "java.lang.Integer=1000",
-            "java.lang.Integer=1000",
+            "int=1000",
+            "int=1000",
             "java.io.File"
         ]
     },
@@ -252,7 +252,7 @@
         ]
     },
     "split": {
-        "method": "cn.hutool.core.util.StrUtil#splitTrim",
+        "method": "cn.hutool.core.text.CharSequenceUtil#splitTrim",
         "paramTypes": [
             "java.lang.CharSequence",
             "java.lang.CharSequence"

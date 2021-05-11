@@ -19,6 +19,10 @@ import com.alibaba.fastjson.TypeReference;
 import com.alibaba.fastjson.parser.ParserConfig;
 import com.alibaba.fastjson.util.TypeUtils;
 import com.beust.jcommander.JCommander;
+import javassist.ClassPool;
+import javassist.CtClass;
+import javassist.CtMethod;
+import javassist.NotFoundException;
 import org.code4everything.hutool.converter.MapConverter;
 import org.code4everything.hutool.converter.ObjectPropertyConverter;
 
@@ -26,7 +30,17 @@ import java.io.File;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.StringJoiner;
+import java.util.TreeMap;
 
 /**
  * @author pantao
@@ -119,7 +133,7 @@ public final class Hutool {
             String command = ARG.command.get(0);
             debugOutput("get command: {}", command);
             if (ALIAS.equals(command)) {
-                seeAlias(COMMAND_JSON);
+                seeAlias("", COMMAND_JSON);
                 return;
             }
 
@@ -172,7 +186,7 @@ public final class Hutool {
         }
 
         if (ALIAS.equals(ARG.className)) {
-            seeAlias(CLASS_JSON);
+            seeAlias("", CLASS_JSON);
             return;
         }
 
@@ -195,7 +209,7 @@ public final class Hutool {
         Class<?> clazz;
         debugOutput("loading class: {}", ARG.className);
         try {
-            clazz = Class.forName(ARG.className);
+            clazz = Utils.parseClass(ARG.className);
         } catch (ClassNotFoundException e) {
             debugOutput(ExceptionUtil.stacktraceToString(e, Integer.MAX_VALUE));
             ARG.className = StrUtil.EMPTY;
@@ -215,7 +229,7 @@ public final class Hutool {
 
         if (ALIAS.equals(ARG.methodName)) {
             if (CollUtil.isNotEmpty(methodAliasPaths)) {
-                seeAlias(methodAliasPaths.toArray(new String[0]));
+                seeAlias(clazz.getName(), methodAliasPaths.toArray(new String[0]));
             }
             return;
         }
@@ -233,7 +247,7 @@ public final class Hutool {
             String paramType = parseParamType(i, ARG.paramTypes.get(i), parseDefaultValue);
             // 解析默认值，默认值要么都填写，要么都不填写
             try {
-                paramTypes[i] = Class.forName(paramType);
+                paramTypes[i] = Utils.parseClass(paramType);
             } catch (ClassNotFoundException e) {
                 debugOutput(ExceptionUtil.stacktraceToString(e, Integer.MAX_VALUE));
                 Console.log("param type not found: {}", paramType);
@@ -344,7 +358,7 @@ public final class Hutool {
         String converterName = convertJson.getString(type.getName());
         if (StrUtil.isNotEmpty(converterName)) {
             try {
-                Class<?> converterClass = Class.forName(converterName);
+                Class<?> converterClass = Utils.parseClass(converterName);
                 Converter<?> converter = (Converter) ReflectUtil.newInstance(converterClass);
                 return converter.string2Object(param);
             } catch (Exception e) {
@@ -378,13 +392,15 @@ public final class Hutool {
         commander.usage();
     }
 
-    private static void seeAlias(String... paths) {
+    private static void seeAlias(String className, String... paths) {
         JSONObject aliasJson = getAlias("", workDir, paths);
         aliasJson.putAll(getAlias("", "", paths));
         StringJoiner joiner = new StringJoiner("\n");
         Holder<Integer> maxLength = Holder.of(0);
         Map<String, String> map = new TreeMap<>();
 
+        ClassPool pool = ClassPool.getDefault();
+        Holder<CtClass> ctClassHolder = new Holder<>();
         aliasJson.keySet().forEach(k -> {
             int length = k.length();
             if (length > maxLength.get()) {
@@ -401,16 +417,48 @@ public final class Hutool {
                 if (StrUtil.isEmpty(methodName)) {
                     methodName = json.getString("methodName");
                 }
+
                 List<String> paramTypes = json.getObject(PARAM_KEY, new TypeReference<List<String>>() {});
                 paramTypes = ObjectUtil.defaultIfNull(paramTypes, Collections.emptyList());
-                String typeString = ArrayUtil.join(paramTypes.toArray(new String[0]), ", ");
-                map.put(k, StrUtil.format("{}({})", methodName, typeString));
+                try {
+                    map.put(k, parseMethodFullInfo(className, pool, ctClassHolder, methodName, paramTypes));
+                } catch (Exception e) {
+                    debugOutput("parse method param name error: {}", ExceptionUtil.stacktraceToString(e, Integer.MAX_VALUE));
+                    String typeString = ArrayUtil.join(paramTypes.toArray(new String[0]), ", ");
+                    map.put(k, StrUtil.format("{}({})", methodName, typeString));
+                }
             }
         });
 
         debugOutput("max length: {}", maxLength.get());
         map.forEach((k, v) -> joiner.add(StrUtil.padAfter(k, maxLength.get(), ' ') + " = " + v));
         result = joiner.toString();
+    }
+
+    private static String parseMethodFullInfo(String className, ClassPool pool, Holder<CtClass> ctClassHolder, String methodName, List<String> paramTypes) throws NotFoundException {
+        String mn = methodName;
+        if (StrUtil.isEmpty(className)) {
+            int idx = methodName.indexOf("#");
+            ctClassHolder.set(pool.get(methodName.substring(0, idx)));
+            mn = methodName.substring(idx + 1);
+        } else if (Objects.isNull(ctClassHolder.get())) {
+            ctClassHolder.set(pool.get(className));
+        }
+
+        CtClass[] params = new CtClass[paramTypes.size()];
+        Map<String, String> defaultValueMap = new HashMap<>(4, 1);
+        for (int i = 0; i < paramTypes.size(); i++) {
+            String paramTypeClass = paramTypes.get(i);
+            int idx = paramTypeClass.indexOf("=");
+            if (idx > 0) {
+                String old = paramTypeClass;
+                paramTypeClass = old.substring(0, idx);
+                defaultValueMap.put(paramTypeClass, old.substring(idx + 1));
+            }
+            params[i] = pool.get(paramTypeClass);
+        }
+        CtMethod ctMethod = ctClassHolder.get().getDeclaredMethod(mn, params);
+        return methodName + Utils.getMethodFullInfo(false, ctMethod, defaultValueMap);
     }
 
     @SuppressWarnings("rawtypes")
@@ -431,7 +479,7 @@ public final class Hutool {
         try {
             if (StrUtil.isEmpty(converterName)) {
                 for (Map.Entry<String, Object> entry : converterJson.entrySet()) {
-                    Class<?> clazz = Class.forName(entry.getKey());
+                    Class<?> clazz = Utils.parseClass(entry.getKey());
                     if (clazz.isAssignableFrom(result.getClass())) {
                         converterName = entry.getValue().toString();
                         break;
@@ -442,7 +490,7 @@ public final class Hutool {
             if (StrUtil.isEmpty(converterName)) {
                 converter = new ObjectPropertyConverter();
             } else {
-                Class<?> converterClz = Class.forName(converterName);
+                Class<?> converterClz = Utils.parseClass(converterName);
                 converter = (Converter) ReflectUtil.newInstance(converterClz);
             }
             debugOutput("converting result");
@@ -481,7 +529,7 @@ public final class Hutool {
         return getAlias("", workDir, paths);
     }
 
-    private static void debugOutput(String msg, Object... params) {
+    public static void debugOutput(String msg, Object... params) {
         if (ARG.debug) {
             msg = DatePattern.NORM_DATETIME_MS_FORMAT.format(DateUtil.date()) + " debug output: " + msg;
             Console.log(msg, params);
