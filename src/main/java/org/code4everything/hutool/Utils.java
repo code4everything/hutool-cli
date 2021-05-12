@@ -174,10 +174,10 @@ public final class Utils {
     }
 
     public static String outputPublicStaticMethods(String className) {
-        if (StrUtil.isBlank(className)) {
-            return StrUtil.EMPTY;
-        }
+        return StrUtil.isBlank(className) ? StrUtil.EMPTY : outputPublicStaticMethods0(className);
+    }
 
+    private static String outputPublicStaticMethods0(String className) {
         ClassPool pool = ClassPool.getDefault();
         StringJoiner joiner = new StringJoiner("\n");
         try {

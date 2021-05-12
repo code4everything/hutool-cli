@@ -7,7 +7,7 @@ package org.code4everything.hutool;
 public class HutoolCli {
 
     public static void main(String[] args) {
-        String testArgs = "methods str -d";
+        String testArgs = "methods org.code4everything.hutool.Utils -d";
         Hutool.main(testArgs.split(" "));
     }
 }
