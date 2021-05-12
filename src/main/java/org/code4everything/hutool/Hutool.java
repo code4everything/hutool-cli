@@ -428,12 +428,14 @@ public final class Hutool {
 
     private static String parseMethodFullInfo(String className, String methodName, List<String> paramTypes) throws NotFoundException {
         String mn = methodName;
+        boolean outClassName = false;
         ClassPool pool = ClassPool.getDefault();
         CtClass ctClass;
         if (StrUtil.isEmpty(className)) {
             int idx = methodName.indexOf("#");
-            ctClass = pool.get(methodName.substring(0, idx));
+            ctClass = pool.get(Utils.parseClassName(methodName.substring(0, idx)));
             mn = methodName.substring(idx + 1);
+            outClassName = true;
         } else {
             ctClass = pool.get(className);
         }
@@ -451,7 +453,7 @@ public final class Hutool {
             params[i] = pool.get(Utils.parseClassName(paramTypeClass));
         }
         CtMethod ctMethod = ctClass.getDeclaredMethod(mn, params);
-        return methodName + Utils.getMethodFullInfo(false, ctMethod, defaultValueMap);
+        return (outClassName ? ctClass.getName() + "#" : "") + Utils.getMethodFullInfo(ctMethod, defaultValueMap);
     }
 
     @SuppressWarnings("rawtypes")

@@ -187,7 +187,7 @@ public final class Utils {
                 if (!Modifier.isPublic(modifiers) || !Modifier.isStatic(modifiers)) {
                     continue;
                 }
-                joiner.add(getMethodFullInfo(true, method, null));
+                joiner.add(getMethodFullInfo(method, null));
             }
 
         } catch (Exception e) {
@@ -197,7 +197,7 @@ public final class Utils {
         return joiner.toString();
     }
 
-    static String getMethodFullInfo(boolean addMethodName, CtMethod method, Map<String, String> defaultValueMap) throws NotFoundException {
+    static String getMethodFullInfo(CtMethod method, Map<String, String> defaultValueMap) throws NotFoundException {
         StringJoiner paramJoiner = new StringJoiner(", ");
         LocalVariableAttribute attribute = (LocalVariableAttribute) method.getMethodInfo().getCodeAttribute().getAttribute(LocalVariableAttribute.tag);
 
@@ -216,6 +216,6 @@ public final class Utils {
             paramJoiner.add(paramStr);
         }
 
-        return StrUtil.format("{}({})", addMethodName ? method.getName() : "", paramJoiner.toString());
+        return StrUtil.format("{}({})", method.getName(), paramJoiner.toString());
     }
 }
