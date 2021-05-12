@@ -15,7 +15,7 @@ import java.util.Objects;
 public class ClassConverter implements Converter<Class<?>> {
 
     @Override
-    public Class<?> string2Object(String string) throws ClassNotFoundException {
+    public Class<?> string2Object(String string) throws Exception {
         JSONObject aliasJson = Hutool.getAlias(string, "", Hutool.CLASS_JSON);
         JSONObject classJson = aliasJson.getJSONObject(string);
         if (Objects.nonNull(classJson)) {
