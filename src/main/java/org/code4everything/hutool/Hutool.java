@@ -30,7 +30,17 @@ import java.io.File;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.StringJoiner;
+import java.util.TreeMap;
 
 /**
  * @author pantao
@@ -44,7 +54,7 @@ public final class Hutool {
 
     public static final String CLAZZ_KEY = "clazz";
 
-    public static final MethodArg ARG = new MethodArg();
+    public static MethodArg ARG = new MethodArg();
 
     private static final String CLASS_PREFIX = "cn.hutool.";
 
@@ -200,7 +210,7 @@ public final class Hutool {
         debugOutput("loading class: {}", ARG.className);
         try {
             clazz = Utils.parseClass(ARG.className);
-        } catch (ClassNotFoundException e) {
+        } catch (Exception e) {
             debugOutput(ExceptionUtil.stacktraceToString(e, Integer.MAX_VALUE));
             ARG.className = StrUtil.EMPTY;
             handleResultOfClass(false);
@@ -238,7 +248,7 @@ public final class Hutool {
             // 解析默认值，默认值要么都填写，要么都不填写
             try {
                 paramTypes[i] = Utils.parseClass(paramType);
-            } catch (ClassNotFoundException e) {
+            } catch (Exception e) {
                 debugOutput(ExceptionUtil.stacktraceToString(e, Integer.MAX_VALUE));
                 Console.log("param type not found: {}", paramType);
                 return;

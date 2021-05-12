@@ -15,7 +15,7 @@
         "methodName": "toUnicode",
         "paramTypes": [
             "string",
-            "java.lang.Boolean=false"
+            "boolean=false"
         ]
     }
 }

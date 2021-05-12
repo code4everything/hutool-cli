@@ -9,6 +9,7 @@ import javassist.CtMethod;
 import javassist.NotFoundException;
 import javassist.bytecode.LocalVariableAttribute;
 
+import java.io.File;
 import java.lang.reflect.Modifier;
 import java.util.Date;
 import java.util.Map;
@@ -20,6 +21,8 @@ import java.util.StringJoiner;
  * @since 2020/10/30
  */
 public final class Utils {
+
+    private static boolean notExistsExternalClassPath = true;
 
     private Utils() {}
 
@@ -39,7 +42,7 @@ public final class Utils {
         return StrUtil.str(str).toLowerCase();
     }
 
-    public static Class<?> parseClass(String className) throws ClassNotFoundException {
+    public static Class<?> parseClass(String className) throws Exception {
         switch (className) {
             case "bool":
             case "boolean":
@@ -59,8 +62,24 @@ public final class Utils {
             case "double":
                 return double.class;
             default:
-                return Class.forName(parseClassName0(className));
+                return parseClass0(className);
         }
+    }
+
+    private static Class<?> parseClass0(String className) throws Exception {
+        if (className.startsWith("org.code4everything.hutool.converter.")) {
+            try {
+                return Class.forName(className);
+            } catch (Exception e) {
+                ClassPool classPool = ClassPool.getDefault();
+                if (notExistsExternalClassPath) {
+                    classPool.insertClassPath(Hutool.workDir + File.separator + "converter");
+                    notExistsExternalClassPath = false;
+                }
+                return classPool.get(className).toClass();
+            }
+        }
+        return Class.forName(parseClassName0(className));
     }
 
     public static String parseClassName(String className) {

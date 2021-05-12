@@ -55,6 +55,9 @@
             "unicode-util.json"
         ]
     },
+    "csu": {
+        "clazz": "cn.hutool.core.text.CharSequenceUtil"
+    },
     "charset": {
         "clazz": "cn.hutool.core.util.CharsetUtil",
         "methodAliasPaths": [
@@ -92,11 +95,7 @@
         ]
     },
     "str": {
-        "clazz": "cn.hutool.core.util.StrUtil",
-        "methodAliasPaths": [
-            "method",
-            "str-util.json"
-        ]
+        "clazz": "cn.hutool.core.util.StrUtil"
     },
     "system": {
         "clazz": "cn.hutool.system.SystemUtil",

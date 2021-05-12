@@ -60,7 +60,7 @@
     "ms2date": {
         "method": "cn.hutool.core.date.DateUtil#date",
         "paramTypes": [
-            "date"
+            "long"
         ]
     },
     "date2ms": {

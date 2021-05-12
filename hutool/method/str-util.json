@@ -1,9 +1,0 @@
-{
-    "split": {
-        "methodName": "splitTrim",
-        "paramTypes": [
-            "java.lang.CharSequence",
-            "java.lang.CharSequence"
-        ]
-    }
-}
