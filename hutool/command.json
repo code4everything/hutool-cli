@@ -146,6 +146,12 @@
             "class"
         ]
     },
+    "class": {
+        "method": "org.code4everything.hutool.Utils#parseClassName",
+        "paramTypes": [
+            "string"
+        ]
+    },
     "regex-match": {
         "method": "cn.hutool.core.util.ReUtil#isMatch",
         "paramTypes": [

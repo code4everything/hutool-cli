@@ -67,7 +67,8 @@ public final class Utils {
     }
 
     private static Class<?> parseClass0(String className) throws Exception {
-        if (className.startsWith("org.code4everything.hutool.converter.")) {
+        String converterPrefix = "org.code4everything.hutool.converter.";
+        if (className.startsWith(converterPrefix)) {
             try {
                 return Class.forName(className);
             } catch (Exception e) {

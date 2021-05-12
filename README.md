@@ -381,3 +381,5 @@ hutool-cli 提供了很多常用的别名，参考下面文件：
 |map|java.util.Map|
 |list|java.util.List|
 |set|java.util.Set|
+
+> 查看简写是否正确，可通过查看命名 `hutool class` 返回的结果是否是一个合法Java类名来判断，如 `hutool class j.float` 返回 `java.lang.Float`，`hutool class no.class` 返回 `no.class` 就不是一个合法的类名，注意此方法不可用来判断类别名。
