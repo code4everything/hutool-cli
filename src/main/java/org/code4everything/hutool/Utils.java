@@ -3,6 +3,7 @@ package org.code4everything.hutool;
 import cn.hutool.core.date.ChineseDate;
 import cn.hutool.core.exceptions.ExceptionUtil;
 import cn.hutool.core.util.StrUtil;
+import com.alibaba.fastjson.JSONObject;
 import javassist.ClassPool;
 import javassist.CtClass;
 import javassist.CtMethod;
@@ -23,6 +24,8 @@ import java.util.StringJoiner;
 public final class Utils {
 
     private static boolean notExistsExternalClassPath = true;
+
+    private static JSONObject classAliasJson = null;
 
     private Utils() {}
 
@@ -148,19 +151,37 @@ public final class Utils {
             case "set":
                 return "java.util.Set";
             default:
-                return className;
+                return parseClassName00(className);
         }
     }
 
-    public static String outputPublicStaticMethods(Class<?> clazz) {
-        if (Objects.isNull(clazz)) {
+    private static String parseClassName00(String className) {
+        if (Hutool.classNameParsed) {
+            return className;
+        }
+        if (Objects.isNull(classAliasJson)) {
+            classAliasJson = Hutool.getAlias("", Hutool.workDir, Hutool.CLASS_JSON);
+            classAliasJson.putAll(Hutool.getAlias("", "", Hutool.CLASS_JSON));
+        }
+        JSONObject classJson = classAliasJson.getJSONObject(className);
+        if (Objects.nonNull(classJson)) {
+            String className0 = classJson.getString(Hutool.CLAZZ_KEY);
+            if (StrUtil.isNotEmpty(className0)) {
+                className = className0;
+            }
+        }
+        return className;
+    }
+
+    public static String outputPublicStaticMethods(String className) {
+        if (StrUtil.isBlank(className)) {
             return StrUtil.EMPTY;
         }
 
         ClassPool pool = ClassPool.getDefault();
         StringJoiner joiner = new StringJoiner("\n");
         try {
-            CtClass ctClass = pool.get(clazz.getName());
+            CtClass ctClass = pool.get(parseClassName(className));
             for (CtMethod method : ctClass.getMethods()) {
                 int modifiers = method.getModifiers();
                 if (!Modifier.isPublic(modifiers) || !Modifier.isStatic(modifiers)) {
@@ -169,7 +190,7 @@ public final class Utils {
                 joiner.add(getMethodFullInfo(true, method, null));
             }
 
-        } catch (NotFoundException e) {
+        } catch (Exception e) {
             Hutool.debugOutput("parse class static methods error: {}", ExceptionUtil.stacktraceToString(e, Integer.MAX_VALUE));
         }
 

@@ -30,17 +30,7 @@ import java.io.File;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.StringJoiner;
-import java.util.TreeMap;
+import java.util.*;
 
 /**
  * @author pantao
@@ -54,8 +44,6 @@ public final class Hutool {
 
     public static final String CLAZZ_KEY = "clazz";
 
-    public static MethodArg ARG = new MethodArg();
-
     private static final String CLASS_PREFIX = "cn.hutool.";
 
     private static final String ALIAS = "alias";
@@ -68,7 +56,11 @@ public final class Hutool {
 
     private static final String HUTOOL_USER_HOME = FileUtil.getUserHomePath() + File.separator + "hutool-cli";
 
+    public static MethodArg ARG = new MethodArg();
+
     static String workDir = System.getenv("HUTOOL_PATH");
+
+    static boolean classNameParsed = false;
 
     private static boolean nonParamType = true;
 
@@ -194,6 +186,7 @@ public final class Hutool {
         if (fixName) {
             String methodAliasKey = "methodAliasPaths";
             JSONObject aliasJson = getAlias(ARG.className, "", CLASS_JSON);
+            classNameParsed = true;
 
             JSONObject clazzJson = aliasJson.getJSONObject(ARG.className);
             if (Objects.isNull(clazzJson) || !clazzJson.containsKey(CLAZZ_KEY)) {
