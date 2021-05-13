@@ -269,5 +269,11 @@
         "paramTypes": [
             "file"
         ]
+    },
+    "calc": {
+        "method": "cn.hutool.core.math.Calculator#conversion",
+        "paramTypes": [
+            "string"
+        ]
     }
 }
