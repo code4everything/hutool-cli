@@ -14,7 +14,9 @@ import java.io.File;
 import java.lang.reflect.Modifier;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.StringJoiner;
@@ -182,14 +184,16 @@ public final class Utils {
         StringJoiner joiner = new StringJoiner("\n");
         try {
             CtClass ctClass = pool.get(parseClassName(className));
-            for (CtMethod method : ctClass.getMethods()) {
+            CtMethod[] methods = ctClass.getMethods();
+            List<String> lineList = new ArrayList<>(methods.length);
+            for (CtMethod method : methods) {
                 int modifiers = method.getModifiers();
                 if (!Modifier.isPublic(modifiers) || !Modifier.isStatic(modifiers)) {
                     continue;
                 }
-                joiner.add(getMethodFullInfo(method, null));
+                lineList.add(getMethodFullInfo(method, null));
             }
-
+            lineList.stream().sorted(String::compareTo).forEach(joiner::add);
         } catch (Exception e) {
             Hutool.debugOutput("parse class static methods error: {}", ExceptionUtil.stacktraceToString(e, Integer.MAX_VALUE));
         }

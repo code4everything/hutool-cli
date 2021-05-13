@@ -85,7 +85,7 @@
         "method": "cn.hutool.core.io.FileUtil#writeUtf8String",
         "paramTypes": [
             "string",
-            "string"
+            "file"
         ]
     },
     "unicode2str": {
@@ -229,6 +229,13 @@
         "paramTypes": [
             "string",
             "string={}"
+        ]
+    },
+    "download": {
+        "method": "cn.hutool.http.HttpUtil#downloadFileFromUrl",
+        "paramTypes": [
+            "string",
+            "file"
         ]
     },
     "eval": {

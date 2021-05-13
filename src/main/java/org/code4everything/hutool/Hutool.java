@@ -362,11 +362,13 @@ public final class Hutool {
             try {
                 Class<?> converterClass = Utils.parseClass(converterName);
                 Converter<?> converter = (Converter) ReflectUtil.newInstance(converterClass);
+                debugOutput("cast param[{}] using converter: {}", param, converterName);
                 return converter.string2Object(param);
             } catch (Exception e) {
                 debugOutput("cast param[{}] to type[{}] using converter[{}] failed: {}", param, type.getName(), converterName, ExceptionUtil.stacktraceToString(e, Integer.MAX_VALUE));
             }
         }
+        debugOutput("auto convert param[{}] to type: {}", param, type.getName());
         return TypeUtils.cast(param, type, parserConfig);
     }
 

@@ -127,5 +127,26 @@
     },
     "img": {
         "clazz": "cn.hutool.core.img.ImgUtil"
+    },
+    "p": {
+        "clazz": "cn.hutool.core.swing.DesktopUtil"
+    },
+    "robot": {
+        "clazz": "cn.hutool.core.swing.RobotUtil"
+    },
+    "screen": {
+        "clazz": "cn.hutool.core.swing.ScreenUtil"
+    },
+    "clipboard": {
+        "clazz": "cn.hutool.core.swing.clipboard.ClipboardUtil"
+    },
+    "credit": {
+        "clazz": "cn.hutool.core.util.CreditCodeUtil"
+    },
+    "desensitize": {
+        "clazz": "cn.hutool.core.util.DesensitizedUtil"
+    },
+    "zip": {
+        "clazz": "cn.hutool.core.util.ZipUtil"
     }
 }
