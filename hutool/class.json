@@ -124,5 +124,8 @@
     },
     "list": {
         "clazz": "cn.hutool.core.collection.ListUtil"
+    },
+    "img": {
+        "clazz": "cn.hutool.core.img.ImgUtil"
     }
 }

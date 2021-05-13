@@ -81,6 +81,13 @@
             "string"
         ]
     },
+    "file-write": {
+        "method": "cn.hutool.core.io.FileUtil#writeUtf8String",
+        "paramTypes": [
+            "string",
+            "string"
+        ]
+    },
     "unicode2str": {
         "method": "cn.hutool.core.text.UnicodeUtil#toString",
         "paramTypes": [
