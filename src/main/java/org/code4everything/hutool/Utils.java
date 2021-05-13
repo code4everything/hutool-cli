@@ -12,6 +12,8 @@ import javassist.bytecode.LocalVariableAttribute;
 
 import java.io.File;
 import java.lang.reflect.Modifier;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.Date;
 import java.util.Map;
 import java.util.Objects;
@@ -75,12 +77,10 @@ public final class Utils {
             try {
                 return Class.forName(className);
             } catch (Exception e) {
-                ClassPool classPool = ClassPool.getDefault();
-                if (notExistsExternalClassPath) {
-                    classPool.insertClassPath(Hutool.workDir + File.separator + "converter");
-                    notExistsExternalClassPath = false;
+                String path = "file:" + Hutool.workDir + File.separator + "converter" + File.separator;
+                try (URLClassLoader loader = new URLClassLoader(new URL[]{new URL(path)}, Utils.class.getClassLoader())) {
+                    return loader.loadClass(className);
                 }
-                return classPool.get(className).toClass();
             }
         }
         return Class.forName(parseClassName0(className));

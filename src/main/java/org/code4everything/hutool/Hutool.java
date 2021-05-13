@@ -30,7 +30,17 @@ import java.io.File;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.StringJoiner;
+import java.util.TreeMap;
 
 /**
  * @author pantao
@@ -164,8 +174,7 @@ public final class Hutool {
 
             List<String> paramTypes = methodJson.getObject(PARAM_KEY, new TypeReference<List<String>>() {});
             ARG.paramTypes = ObjectUtil.defaultIfNull(paramTypes, Collections.emptyList());
-            fixClassName = methodJson.getBooleanValue("allowAlias");
-            nonParamType = false;
+            fixClassName = nonParamType = false;
         }
 
         handleResultOfClass(fixClassName);
