@@ -1,7 +1,6 @@
 package org.code4everything.hutool.converter;
 
 import cn.hutool.core.io.FileUtil;
-import cn.hutool.core.util.StrUtil;
 import org.code4everything.hutool.Converter;
 import org.code4everything.hutool.Hutool;
 
@@ -20,6 +19,6 @@ public class FileConverter implements Converter<File> {
 
     @Override
     public String object2String(Object object) {
-        return object instanceof File ? ((File) object).getAbsolutePath() : StrUtil.EMPTY;
+        return object instanceof File ? ((File) object).getAbsolutePath() : "";
     }
 }

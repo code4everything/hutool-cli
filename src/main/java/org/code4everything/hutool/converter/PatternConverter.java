@@ -1,6 +1,5 @@
 package org.code4everything.hutool.converter;
 
-import cn.hutool.core.util.StrUtil;
 import org.code4everything.hutool.Converter;
 
 import java.util.regex.Pattern;
@@ -18,6 +17,6 @@ public class PatternConverter implements Converter<Pattern> {
 
     @Override
     public String object2String(Object object) {
-        return object instanceof Pattern ? ((Pattern) object).pattern() : StrUtil.EMPTY;
+        return object instanceof Pattern ? ((Pattern) object).pattern() : "";
     }
 }

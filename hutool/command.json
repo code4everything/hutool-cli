@@ -159,6 +159,13 @@
             "string"
         ]
     },
+    "grep": {
+        "method": "org.code4everything.hutool.Utils#grep",
+        "paramTypes": [
+            "regex.pattern",
+            "list"
+        ]
+    },
     "regex-match": {
         "method": "cn.hutool.core.util.ReUtil#isMatch",
         "paramTypes": [

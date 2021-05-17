@@ -1,6 +1,5 @@
 package org.code4everything.hutool.converter;
 
-import cn.hutool.core.util.StrUtil;
 import org.code4everything.hutool.Converter;
 import org.code4everything.hutool.Utils;
 
@@ -17,6 +16,6 @@ public class ClassConverter implements Converter<Class<?>> {
 
     @Override
     public String object2String(Object object) {
-        return object instanceof Class<?> ? ((Class<?>) object).getName() : StrUtil.EMPTY;
+        return object instanceof Class<?> ? ((Class<?>) object).getName() : "";
     }
 }

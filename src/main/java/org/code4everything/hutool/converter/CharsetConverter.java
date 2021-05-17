@@ -1,6 +1,5 @@
 package org.code4everything.hutool.converter;
 
-import cn.hutool.core.util.StrUtil;
 import org.code4everything.hutool.Converter;
 
 import java.nio.charset.Charset;
@@ -18,6 +17,6 @@ public class CharsetConverter implements Converter<Charset> {
 
     @Override
     public String object2String(Object object) {
-        return object instanceof Charset ? ((Charset) object).name() : StrUtil.EMPTY;
+        return object instanceof Charset ? ((Charset) object).name() : "";
     }
 }

@@ -2,7 +2,6 @@ package org.code4everything.hutool;
 
 import cn.hutool.core.date.ChineseDate;
 import cn.hutool.core.exceptions.ExceptionUtil;
-import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSONObject;
 import javassist.ClassPool;
 import javassist.CtClass;
@@ -15,11 +14,13 @@ import java.lang.reflect.Modifier;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.StringJoiner;
+import java.util.regex.Pattern;
 
 /**
  * @author pantao
@@ -42,11 +43,25 @@ public final class Utils {
     }
 
     public static String toUpperCase(String str) {
-        return StrUtil.str(str).toUpperCase();
+        return isStringEmpty(str) ? "" : str.toUpperCase();
     }
 
     public static String toLowerCase(String str) {
-        return StrUtil.str(str).toLowerCase();
+        return isStringEmpty(str) ? "" : str.toLowerCase();
+    }
+
+    public static String grep(Pattern pattern, List<String> lines) {
+        StringJoiner joiner = new StringJoiner("\n");
+        for (String line : lines) {
+            if (pattern.matcher(line).find()) {
+                joiner.add(line);
+            }
+        }
+        return joiner.toString();
+    }
+
+    static <T> boolean isArrayEmpty(T[] arr) {
+        return arr == null || arr.length == 0;
     }
 
     public static Class<?> parseClass(String className) throws Exception {
@@ -161,22 +176,55 @@ public final class Utils {
         if (Hutool.classNameParsed) {
             return className;
         }
-        if (Objects.isNull(classAliasJson)) {
+        if (classAliasJson == null) {
             classAliasJson = Hutool.getAlias("", Hutool.workDir, Hutool.CLASS_JSON);
             classAliasJson.putAll(Hutool.getAlias("", "", Hutool.CLASS_JSON));
         }
         JSONObject classJson = classAliasJson.getJSONObject(className);
-        if (Objects.nonNull(classJson)) {
+        if (classJson != null) {
             String className0 = classJson.getString(Hutool.CLAZZ_KEY);
-            if (StrUtil.isNotEmpty(className0)) {
+            if (!isStringEmpty(className0)) {
                 className = className0;
             }
         }
         return className;
     }
 
+    public static boolean isStringEmpty(String str) {
+        return str == null || str.length() == 0;
+    }
+
+    static <T> boolean isCollectionEmpty(Collection<T> collection) {
+        return collection == null || collection.isEmpty();
+    }
+
+    static String addPrefixIfNot(String str, String prefix) {
+        if (isStringEmpty(str) || isStringEmpty(prefix) || str.startsWith(prefix)) {
+            return str;
+        }
+        return prefix + str;
+    }
+
+    public static String padAfter(String str, int len, char pad) {
+        if (str == null) {
+            str = "";
+        }
+
+        int diff = len - str.length();
+        if (diff < 1) {
+            return str;
+        }
+
+        char[] cs = new char[diff];
+        for (int i = 0; i < diff; i++) {
+            cs[i] = pad;
+        }
+
+        return str + new String(cs);
+    }
+
     public static String outputPublicStaticMethods(String className) {
-        return StrUtil.isBlank(className) ? StrUtil.EMPTY : outputPublicStaticMethods0(className);
+        return isStringEmpty(className) ? "" : outputPublicStaticMethods0(className);
     }
 
     private static String outputPublicStaticMethods0(String className) {
@@ -195,7 +243,7 @@ public final class Utils {
             }
             lineList.stream().sorted(String::compareTo).forEach(joiner::add);
         } catch (Exception e) {
-            Hutool.debugOutput("parse class static methods error: {}", ExceptionUtil.stacktraceToString(e, Integer.MAX_VALUE));
+            Hutool.debugOutput("parse class static methods error: %s", ExceptionUtil.stacktraceToString(e, Integer.MAX_VALUE));
         }
 
         return joiner.toString();
@@ -211,15 +259,15 @@ public final class Utils {
             String paramType = parameterType.getName();
 
             String paramStr = attribute.variableName(i) + ":" + paramType;
-            if (Objects.nonNull(defaultValueMap)) {
+            if (defaultValueMap != null) {
                 String defaultValue = defaultValueMap.get(paramType);
-                if (StrUtil.isNotEmpty(defaultValue)) {
+                if (!isStringEmpty(defaultValue)) {
                     paramStr += "=" + defaultValue;
                 }
             }
             paramJoiner.add(paramStr);
         }
 
-        return StrUtil.format("{}({})", method.getName(), paramJoiner.toString());
+        return method.getName() + "(" + paramJoiner.toString() + ")";
     }
 }

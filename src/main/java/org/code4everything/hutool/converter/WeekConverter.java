@@ -1,7 +1,6 @@
 package org.code4everything.hutool.converter;
 
 import cn.hutool.core.date.Week;
-import cn.hutool.core.util.StrUtil;
 import org.code4everything.hutool.Converter;
 
 /**
@@ -17,6 +16,6 @@ public class WeekConverter implements Converter<Week> {
 
     @Override
     public String object2String(Object object) {
-        return object instanceof Week ? ((Week) object).toChinese() : StrUtil.EMPTY;
+        return object instanceof Week ? ((Week) object).toChinese() : "";
     }
 }

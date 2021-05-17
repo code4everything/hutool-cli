@@ -1,9 +1,9 @@
 package org.code4everything.hutool.converter;
 
-import cn.hutool.core.date.DatePattern;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.StrUtil;
 import org.code4everything.hutool.Converter;
+import org.code4everything.hutool.Hutool;
 
 import java.util.Date;
 
@@ -29,6 +29,6 @@ public class DateConverter implements Converter<Date> {
 
     @Override
     public String object2String(Object object) {
-        return object instanceof Date ? DatePattern.NORM_DATETIME_MS_FORMAT.format(object) : StrUtil.EMPTY;
+        return object instanceof Date ? Hutool.getSimpleDateFormat().format(object) : "";
     }
 }

@@ -2,8 +2,8 @@ package org.code4everything.hutool.converter;
 
 import cn.hutool.core.lang.Holder;
 import cn.hutool.core.util.ObjectUtil;
-import cn.hutool.core.util.StrUtil;
 import org.code4everything.hutool.Converter;
+import org.code4everything.hutool.Utils;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -21,13 +21,13 @@ public class MapConverter implements Converter<Map<Object, Object>> {
     @Override
     public Map<Object, Object> string2Object(String string) {
         Map<Object, Object> map = new HashMap<>(16);
-        if (StrUtil.isEmpty(string)) {
+        if (Utils.isStringEmpty(string)) {
             return map;
         }
         StringTokenizer tokenizer = new StringTokenizer(string, ",");
         while (tokenizer.hasMoreTokens()) {
             String token = tokenizer.nextToken();
-            if (StrUtil.isEmpty(token)) {
+            if (Utils.isStringEmpty(token)) {
                 continue;
             }
 
@@ -38,8 +38,8 @@ public class MapConverter implements Converter<Map<Object, Object>> {
             if (idx < 1) {
                 key = token;
             } else {
-                key = StrUtil.sub(token, 0, idx).trim();
-                value = StrUtil.sub(token, idx + 1, token.length()).trim();
+                key = token.substring(0, idx).trim();
+                value = token.substring(idx + 1).trim();
             }
 
             map.put(key, value);
@@ -51,7 +51,7 @@ public class MapConverter implements Converter<Map<Object, Object>> {
     @SuppressWarnings("unchecked")
     public String object2String(Object object) {
         if (!(object instanceof Map)) {
-            return StrUtil.EMPTY;
+            return "";
         }
 
         Map<Object, Object> map = (Map<Object, Object>) object;
@@ -69,7 +69,7 @@ public class MapConverter implements Converter<Map<Object, Object>> {
         });
 
         StringJoiner joiner = new StringJoiner("\n");
-        tempMap.forEach((k, v) -> joiner.add(StrUtil.padAfter(k, maxLen.get(), ' ') + " = " + v));
+        tempMap.forEach((k, v) -> joiner.add(Utils.padAfter(k, maxLen.get(), ' ') + " = " + v));
         return joiner.toString();
     }
 }
