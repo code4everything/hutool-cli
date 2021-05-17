@@ -278,7 +278,7 @@ public final class Hutool {
         debugOutput("get method success");
 
         if (ARG.params.size() < paramTypes.length) {
-            String[] paramTypeArray = ARG.paramTypes.toArray(new String[0]);
+            String[] paramTypeArray = ARG.paramTypes.stream().map(Utils::parseClassName).toArray(String[]::new);
             Console.log("parameter error, required: ({})", ArrayUtil.join(paramTypeArray, ", "));
             return;
         }
