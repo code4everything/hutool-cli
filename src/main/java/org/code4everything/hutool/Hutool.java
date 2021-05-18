@@ -154,7 +154,9 @@ public final class Hutool {
                 }
                 resultContainer.add(res);
                 list.clear();
+                MethodArg methodArg = ARG;
                 ARG = new MethodArg();
+                ARG.workDir = methodArg.workDir;
             } else {
                 list.add(arg);
             }
