@@ -5,6 +5,7 @@ import org.code4everything.hutool.Converter;
 import org.code4everything.hutool.Hutool;
 
 import java.io.File;
+import java.nio.file.Paths;
 
 /**
  * @author pantao
@@ -14,7 +15,7 @@ public class FileConverter implements Converter<File> {
 
     @Override
     public File string2Object(String string) {
-        return FileUtil.isAbsolutePath(string) ? FileUtil.file(string) : FileUtil.file(Hutool.ARG.workDir, string);
+        return FileUtil.isAbsolutePath(string) ? FileUtil.file(string) : Paths.get(Hutool.ARG.workDir, string).toFile();
     }
 
     @Override

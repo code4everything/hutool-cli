@@ -62,5 +62,5 @@ public class MethodArg {
     public List<String> main = new ArrayList<>();
 
     @Parameter(names = "--work-dir", description = "current work dir", hidden = true, order = 12)
-    public String workDir;
+    public String workDir = ".";
 }

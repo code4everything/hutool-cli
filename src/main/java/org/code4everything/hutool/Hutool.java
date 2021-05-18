@@ -405,8 +405,8 @@ public final class Hutool {
             }
         }
 
+        Converter<?> converter = null;
         try {
-            Converter<?> converter = null;
             if (List.class.isAssignableFrom(type)) {
                 converter = new ListStringConverter();
             } else if (Set.class.isAssignableFrom(type)) {
@@ -420,7 +420,7 @@ public final class Hutool {
                 return converter.string2Object(param);
             }
         } catch (Exception e) {
-            debugOutput("cast param[%s] to type[%s] using converter[%s] failed: %s", param, type.getName(), converterName, ExceptionUtil.stacktraceToString(e, Integer.MAX_VALUE));
+            debugOutput("cast param[%s] to type[%s] using converter[%s] failed: %s", param, type.getName(), converter.getClass().getName(), ExceptionUtil.stacktraceToString(e, Integer.MAX_VALUE));
         }
         debugOutput("auto convert param[%s] to type: %s", param, type.getName());
         return TypeUtils.cast(param, type, parserConfig);

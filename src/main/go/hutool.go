@@ -25,7 +25,7 @@ func main() {
 	cmd := exec.Command("java", args...)
 	path := os.Getenv("HUTOOL_PATH")
 	if path == "" {
-		log.Fatalf("evirement 'HUTOOL_PATH' not found!")
+		log.Fatalf("environment 'HUTOOL_PATH' not found!")
 		return
 	}
 	cmd.Dir = path
