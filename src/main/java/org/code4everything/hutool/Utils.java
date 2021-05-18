@@ -2,6 +2,7 @@ package org.code4everything.hutool;
 
 import cn.hutool.core.date.ChineseDate;
 import cn.hutool.core.exceptions.ExceptionUtil;
+import cn.hutool.core.math.Calculator;
 import com.alibaba.fastjson.JSONObject;
 import javassist.ClassPool;
 import javassist.CtClass;
@@ -33,6 +34,11 @@ public final class Utils {
     private static JSONObject classAliasJson = null;
 
     private Utils() {}
+
+    public static String calc(String expression, int scale) {
+        double res = Calculator.conversion(expression);
+        return String.format("%." + scale + "f", res);
+    }
 
     public static String lunar(Date date) {
         return new ChineseDate(date).toString();

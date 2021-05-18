@@ -292,9 +292,10 @@
         ]
     },
     "calc": {
-        "method": "cn.hutool.core.math.Calculator#conversion",
+        "method": "org.code4everything.hutool.Utils#calc",
         "paramTypes": [
-            "string"
+            "string",
+            "int=0"
         ]
     }
 }

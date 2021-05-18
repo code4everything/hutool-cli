@@ -399,7 +399,7 @@ public final class Hutool {
 
         if (resultContainer != null) {
             for (int i = 0; i < resultContainer.size(); i++) {
-                String key = "+res" + i;
+                String key = "\\\\" + i;
                 String value = resultContainer.get(i);
                 param = param.replace(key, value);
             }
@@ -568,6 +568,8 @@ public final class Hutool {
             result = getSimpleDateFormat().format((Date) result);
         } else if (result instanceof Map) {
             result = new MapConverter().object2String(result);
+        } else if (result instanceof Double) {
+            result = String.format("%.2f", result);
         }
     }
 

@@ -118,8 +118,8 @@ hutool -r base64-decode -a:0
 # output: sky is blue
 # 说明：-a:0 表示将剪贴板字符串内容注入到索引位置是0的参数中
 
-# v1.2新功能：支持多命令，+res0表示将第一个执行结果作为参数注入，+res1表示将第二个执行结果作为参数注入，依次类推
-hutool base64-encode 'test multi cmd' // base64-decode +res0
+# v1.2新功能：支持连续执行，符号 // 分隔多个命令，\\0表示将第一个执行结果作为参数注入，\\1表示将第二个执行结果作为参数注入，依次类推
+hutool base64-encode 'test multi cmd' // base64-decode \\0
 # output: test multi cmd
 ```
 

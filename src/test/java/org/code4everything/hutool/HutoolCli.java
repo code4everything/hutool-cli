@@ -7,9 +7,9 @@ package org.code4everything.hutool;
 public class HutoolCli {
 
     public static void main(String[] args) {
-        String testArgs = "base64-encode 'test_multi_cmd' // base64-decode +res0`";
-        //String testArgs = "date2ms now // calc +res0/1000 -d";
-        //String testArgs = "alias // grep methods +res0";
+        //String testArgs = "base64-encode 'test_multi_cmd' // base64-decode \\\\0`";
+        String testArgs = "date2ms now // calc \\\\0/1000";
+        //String testArgs = "alias // grep methods \\\\0";
         Hutool.main(testArgs.split(" "));
     }
 }
