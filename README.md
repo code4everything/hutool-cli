@@ -56,6 +56,8 @@ git clone https://gitee.com/code4everything/hutool-cli.git
 
 最后将 `HUTOOL_PATH`/bin 添加到系统变量 `PATH` 中。
 
+> 你还可以通过重命名 `hutool(.exe)` 文件来达到修改命令前缀的目的，如修改为 `hu(.exe)`，现在可以这样执行命令：`hu random-uuid`。
+
 ### 如何使用
 
 查看支持的参数
