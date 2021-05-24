@@ -25,6 +25,7 @@ import org.code4everything.hutool.converter.SetStringConverter;
 import java.io.File;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.lang.reflect.Type;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -397,8 +398,6 @@ public final class Hutool {
 
     @SuppressWarnings("rawtypes")
     private static Object castParam2JavaType(JSONObject convertJson, ParserConfig parserConfig, String param, Class<?> type) {
-        String converterName = convertJson.getString(type.getName());
-
         if (resultContainer != null) {
             for (int i = 0; i < resultContainer.size(); i++) {
                 String key = "\\\\" + i;
@@ -407,6 +406,11 @@ public final class Hutool {
             }
         }
 
+        if (CharSequence.class.isAssignableFrom(type)) {
+            return param;
+        }
+
+        String converterName = convertJson.getString(type.getName());
         Converter<?> converter = null;
         try {
             if (List.class.isAssignableFrom(type)) {

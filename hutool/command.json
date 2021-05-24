@@ -78,7 +78,7 @@
     "file-read": {
         "method": "cn.hutool.core.io.FileUtil#readUtf8String",
         "paramTypes": [
-            "string"
+            "file"
         ]
     },
     "file-write": {

@@ -274,6 +274,6 @@ public final class Utils {
             paramJoiner.add(paramStr);
         }
 
-        return method.getName() + "(" + paramJoiner.toString() + ")";
+        return method.getName() + "(" + paramJoiner + ")";
     }
 }
