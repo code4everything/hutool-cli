@@ -159,10 +159,23 @@
             "string"
         ]
     },
+    "assignable-from": {
+        "method": "org.code4everything.hutool.Utils#assignableFrom",
+        "paramTypes": [
+            "class",
+            "class"
+        ]
+    },
+    "suppers": {
+        "method": "org.code4everything.hutool.Utils#getSupperClass",
+        "paramTypes": [
+            "class"
+        ]
+    },
     "grep": {
         "method": "org.code4everything.hutool.Utils#grep",
         "paramTypes": [
-            "regex.pattern",
+            "reg.pattern",
             "list"
         ]
     },

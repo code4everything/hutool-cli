@@ -23,9 +23,16 @@
         <zxing.version>3.4.1</zxing.version>
         <pinyin4j.version>2.5.1</pinyin4j.version>
         <javassist.version>3.28.0-GA</javassist.version>
+        <junit.version>4.13.2</junit.version>
     </properties>
 
     <dependencies>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>${junit.version}</version>
+            <scope>test</scope>
+        </dependency>
         <dependency>
             <groupId>com.beust</groupId>
             <artifactId>jcommander</artifactId>

@@ -29,11 +29,32 @@ import java.util.regex.Pattern;
  */
 public final class Utils {
 
-    private static boolean notExistsExternalClassPath = true;
-
     private static JSONObject classAliasJson = null;
 
     private Utils() {}
+
+    private static String getSupperClass(Class<?> clazz) {
+        StringJoiner joiner = new StringJoiner("\n");
+        getSupperClass(joiner, "", clazz);
+        return joiner.toString();
+    }
+
+    private static void getSupperClass(StringJoiner joiner, String prefix, Class<?> clazz) {
+        if (clazz == null || Object.class == clazz) {
+            return;
+        }
+
+        joiner.add(prefix + (clazz.isInterface() ? "<>" : "") + clazz.getName());
+
+        getSupperClass(joiner, prefix + "|\t", clazz.getSuperclass());
+        for (Class<?> anInterface : clazz.getInterfaces()) {
+            getSupperClass(joiner, prefix + "|\t", anInterface);
+        }
+    }
+
+    public static boolean assignableFrom(Class<?> sourceClass, Class<?> testClass) {
+        return sourceClass.isAssignableFrom(testClass);
+    }
 
     public static String calc(String expression, int scale) {
         double res = Calculator.conversion(expression);
@@ -165,7 +186,7 @@ public final class Utils {
                 return "java.lang.Float";
             case "j.double":
                 return "java.lang.Double";
-            case "regex.pattern":
+            case "reg.pattern":
                 return "java.util.regex.Pattern";
             case "map":
                 return "java.util.Map";
@@ -179,7 +200,7 @@ public final class Utils {
     }
 
     private static String parseClassName00(String className) {
-        if (Hutool.classNameParsed) {
+        if (Hutool.classNameParsed || className.length() > 16) {
             return className;
         }
         if (classAliasJson == null) {

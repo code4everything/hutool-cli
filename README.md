@@ -359,6 +359,8 @@ hutool-cli 提供了很多常用的别名，参考下面文件：
 
 自定义你的别名后，你还可以 pr 到本仓库哦，让更多人享受到 hutool 带来的便捷吧。
 
+> 注意：类别名的定义不能超过16个字符。
+
 > v1.2支持定义私有别名啦，定义路径 `{user.home}/hutool-cli/`，文件名和别名格式参照上面说明，程序会优先读取用户定义的私有别名。
 
 ### 最后
@@ -383,7 +385,7 @@ hutool-cli 提供了很多常用的别名，参考下面文件：
 |j.long|java.lang.Long|
 |j.float|java.lang.Float|
 |j.double|java.lang.Double|
-|regex.pattern|java.util.regex.Pattern|
+|reg.pattern|java.util.regex.Pattern|
 |map|java.util.Map|
 |list|java.util.List|
 |set|java.util.Set|

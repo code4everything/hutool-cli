@@ -2,7 +2,7 @@
     "groups": {
         "methodName": "getAllGroups",
         "paramTypes": [
-            "java.util.regex.Pattern",
+            "reg.pattern",
             "j.char.seq"
         ]
     },
