@@ -16,9 +16,7 @@
         <jcommander.version>1.81</jcommander.version>
         <hutool.version>5.6.4</hutool.version>
         <fastjson.version>1.2.76</fastjson.version>
-        <slf4j.version>1.7.30</slf4j.version>
         <oshi.version>5.3.1</oshi.version>
-        <logback.version>1.2.3</logback.version>
         <emoji-java.version>5.1.1</emoji-java.version>
         <zxing.version>3.4.1</zxing.version>
         <pinyin4j.version>2.5.1</pinyin4j.version>
@@ -92,16 +90,6 @@
             <groupId>com.alibaba</groupId>
             <artifactId>fastjson</artifactId>
             <version>${fastjson.version}</version>
-        </dependency>
-        <dependency>
-            <artifactId>slf4j-api</artifactId>
-            <groupId>org.slf4j</groupId>
-            <version>${slf4j.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>ch.qos.logback</groupId>
-            <artifactId>logback-classic</artifactId>
-            <version>${logback.version}</version>
         </dependency>
         <dependency>
             <groupId>org.javassist</groupId>

@@ -25,7 +25,6 @@ import org.code4everything.hutool.converter.SetStringConverter;
 import java.io.File;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.lang.reflect.Type;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -144,6 +143,7 @@ public final class Hutool {
         }
 
         List<String> list = new ArrayList<>(8);
+        resultContainer = null;
         for (String arg : args) {
             if ("//".equals(arg)) {
                 String res = handleCmd(list.toArray(new String[0]));

@@ -1,6 +1,4 @@
-# hutool-cli
-
-### 简介
+## 简介
 
 顾名思义，这是一个可以在终端执行的 hutool。
 
@@ -18,7 +16,7 @@ hutool random-uuid
 # output: 483cc7fc-4b22-4188-8f1c-dc1ce4b6d3ee
 ```
 
-### ZIP包安装
+## ZIP包安装
 
 所需环境
 
@@ -41,7 +39,7 @@ git clone https://gitee.com/code4everything/hutool-cli.git
 
 > 说明：[WeTool工具](https://gitee.com/code4everything/wetool) 支持无 `hutool` 前缀执行命令。
 
-### 配置环境变量
+## 配置环境变量
 
 新建 `HUTOOL_PATH` 变量，对应的路径如下：`your_path/hutool-cli/hutool`，目录结构如下：
 
@@ -58,7 +56,7 @@ git clone https://gitee.com/code4everything/hutool-cli.git
 
 > 你还可以通过重命名 `hutool(.exe)` 文件来达到修改命令前缀的目的，如修改为 `hu(.exe)`，现在可以这样执行命令：`hu random-uuid`。
 
-### 如何使用
+## 如何使用
 
 查看支持的参数
 
@@ -69,7 +67,7 @@ hutool
 Usage: hutool-cli [options]
   Options:
     -r, --run, --command
-      命令模式，命令可以精确的定位到静态方法，-r指令可缺省
+      命令模式，命令（类方法别名）可以精确的定位到静态方法，-r指令可缺省
     -c, --class
       类名称（自动加前缀：cn.hutool.）
     -m, --method
@@ -134,7 +132,7 @@ hutool eval 5+6+3+22+9999
 # output: 10035
 ```
 
-### 查看类有哪些可执行静态方法
+## 查看类有哪些可执行静态方法
 
 ```shell
 hutool methods regex
@@ -183,9 +181,9 @@ delAll(regex:java.lang.String, content:java.lang.CharSequence)
 
 > v1.2版本已支持输出方法形参名称
 
-### 别名查看
+## 别名查看
 
-查看有哪些命令别名（命令可以精确定位到方法）
+查看有哪些类方法别名（可以精确的定位到方法）
 
 ```shell
 hutool -r alias
@@ -301,7 +299,7 @@ week-end    = endOfWeek(date:java.util.Date)
 
 > 我们可以通过关键字 `alias` 来查看命令、类名、方法名已有的别名
 
-### 默认值
+## 默认值
 
 我们可以在别名文件中定义参数默认值，执行方法时默认值要么都缺省，要么都填上。
 
@@ -332,7 +330,7 @@ hutool qrcode-generate 'qrcode test' /home/test.png
 hutool qrcode-generate 'qrcode test' 600 600 /home/test.png
 ```
 
-### 自定义别名
+## 自定义别名
 
 别名可以用来快速的指向一个类或一个静态方法，格式大致如下，json中的key将作为别名，value包括了别名对应的类名、方法名以及方法所需的参数类型。
 
@@ -351,7 +349,7 @@ hutool qrcode-generate 'qrcode test' 600 600 /home/test.png
 
 hutool-cli 提供了很多常用的别名，参考下面文件：
 
-- 命令别名参考 [command.json](/hutool/command.json)
+- 类方法别名参考 [command.json](/hutool/command.json)
 
 - 类名称别名参考 [class.json](/hutool/class.json)
 
@@ -366,6 +364,8 @@ hutool-cli 提供了很多常用的别名，参考下面文件：
 ### 最后
 
 如果你觉得项目还不错，记得Star哟，欢迎 pr。
+
+> [走进HutoolCli](deep-in-hutool-cli.md)
 
 ### 常用类名简写对照表
 
