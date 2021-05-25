@@ -39,16 +39,16 @@ public final class Utils {
         return joiner.toString();
     }
 
-    private static void getSupperClass(StringJoiner joiner, String prefix, Class<?> clazz) {
+    public static void getSupperClass(StringJoiner joiner, String prefix, Class<?> clazz) {
         if (clazz == null || Object.class == clazz) {
             return;
         }
 
         joiner.add(prefix + (clazz.isInterface() ? "<>" : "") + clazz.getName());
 
-        getSupperClass(joiner, prefix + "|\t", clazz.getSuperclass());
+        getSupperClass(joiner, prefix + "|    ", clazz.getSuperclass());
         for (Class<?> anInterface : clazz.getInterfaces()) {
-            getSupperClass(joiner, prefix + "|\t", anInterface);
+            getSupperClass(joiner, prefix + "|    ", anInterface);
         }
     }
 
