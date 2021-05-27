@@ -9,7 +9,6 @@ import org.junit.Test;
 public class HutoolCli {
 
     public static void test(String cmd) {
-        Hutool.ARG = new MethodArg();
         Hutool.main(cmd.split(" "));
     }
 

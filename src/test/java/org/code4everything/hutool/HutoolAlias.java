@@ -12,7 +12,6 @@ public class HutoolAlias {
     public static void main(String[] args) {
         String json = FileUtil.readUtf8String(Hutool.workDir + "\\class.json");
         JSON.parseObject(json).forEach((k, v) -> {
-            Hutool.ARG = new MethodArg();
             String arg = k + "#alias -d";
             Hutool.main(arg.split(" "));
             System.out.println();

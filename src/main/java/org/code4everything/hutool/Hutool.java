@@ -63,13 +63,13 @@ public final class Hutool {
 
     private static final String HUTOOL_USER_HOME = System.getProperty("user.home") + File.separator + "hutool-cli";
 
-    public static MethodArg ARG = new MethodArg();
+    public static MethodArg ARG;
 
     static String workDir = System.getenv("HUTOOL_PATH");
 
     static boolean classNameParsed = false;
 
-    private static boolean nonParamType = true;
+    private static boolean omitParamType = true;
 
     private static JCommander commander;
 
@@ -88,11 +88,7 @@ public final class Hutool {
         return simpleDateFormat;
     }
 
-    public static void setSimpleDateFormat(SimpleDateFormat simpleDateFormat) {
-        Hutool.simpleDateFormat = simpleDateFormat;
-    }
-
-    private static String handleCmd(String[] args) {
+    private static String resolveCmd(String[] args) {
         commander = JCommander.newBuilder().addObject(ARG).build();
         commander.setProgramName("hutool-cli");
 
@@ -114,10 +110,10 @@ public final class Hutool {
             debugOutput("hutool-cli: " + VERSION);
         }
 
-        debugOutput("received command line arguments: " + ArrayUtil.toString(args));
-        debugOutput("handling result");
+        debugOutput("received arguments: " + ArrayUtil.toString(args));
+        debugOutput("starting resolve");
         ARG.command.addAll(ARG.main);
-        handleResult();
+        resolveResult();
         debugOutput("result handled success");
 
         if (result == null) {
@@ -142,11 +138,13 @@ public final class Hutool {
             return;
         }
 
+        ARG = new MethodArg();
         List<String> list = new ArrayList<>(8);
         resultContainer = null;
         for (String arg : args) {
             if ("//".equals(arg)) {
-                String res = handleCmd(list.toArray(new String[0]));
+                // 处理上条命令，并记录结果
+                String res = resolveCmd(list.toArray(new String[0]));
                 if (ARG.debug) {
                     System.out.println(res);
                 }
@@ -165,11 +163,11 @@ public final class Hutool {
 
         if (!list.isEmpty()) {
             System.out.println();
-            System.out.println(handleCmd(list.toArray(new String[0])));
+            System.out.println(resolveCmd(list.toArray(new String[0])));
         }
     }
 
-    private static void handleResult() {
+    private static void resolveResult() {
         boolean fixClassName = true;
 
         if (!Utils.isCollectionEmpty(ARG.command)) {
@@ -185,13 +183,15 @@ public final class Hutool {
             char sharp = '#';
             int idx = command.indexOf(sharp);
             if (idx > 0) {
+                // 非类方法别名，使用类别名和方法别名调用
                 debugOutput("invoke use class name and method name combined in command mode");
                 ARG.className = command.substring(0, idx);
                 ARG.methodName = command.substring(idx + 1);
-                handleResultOfClass(true);
+                resolveResultByClassMethod(true);
                 return;
             }
 
+            // 从命令文件中找到类名和方法名以及参数类型，默认值
             String methodKey = "method";
             JSONObject aliasJson = getAlias(command, "", COMMAND_JSON);
 
@@ -215,13 +215,13 @@ public final class Hutool {
 
             List<String> paramTypes = methodJson.getObject(PARAM_KEY, new TypeReference<List<String>>() {});
             ARG.paramTypes = ObjectUtil.defaultIfNull(paramTypes, Collections.emptyList());
-            fixClassName = nonParamType = false;
+            fixClassName = omitParamType = false;
         }
 
-        handleResultOfClass(fixClassName);
+        resolveResultByClassMethod(fixClassName);
     }
 
-    private static void handleResultOfClass(boolean fixName) {
+    private static void resolveResultByClassMethod(boolean fixName) {
         if (Utils.isStringEmpty(ARG.className)) {
             seeUsage();
             return;
@@ -234,6 +234,7 @@ public final class Hutool {
 
         List<String> methodAliasPaths = null;
         if (fixName) {
+            // 尝试从类别名文件中查找类全名
             String methodAliasKey = "methodAliasPaths";
             JSONObject aliasJson = getAlias(ARG.className, "", CLASS_JSON);
             classNameParsed = true;
@@ -256,15 +257,15 @@ public final class Hutool {
         } catch (Exception e) {
             debugOutput(ExceptionUtil.stacktraceToString(e, Integer.MAX_VALUE));
             ARG.className = "";
-            handleResultOfClass(false);
+            resolveResultByClassMethod(false);
             return;
         }
 
         debugOutput("load class success");
-        handleResultOfMethod(clazz, fixName, methodAliasPaths);
+        resolveResultByClassMethod(clazz, fixName, methodAliasPaths);
     }
 
-    private static void handleResultOfMethod(Class<?> clazz, boolean fixName, List<String> methodAliasPaths) {
+    private static void resolveResultByClassMethod(Class<?> clazz, boolean fixName, List<String> methodAliasPaths) {
         if (Utils.isStringEmpty(ARG.methodName)) {
             seeUsage();
             return;
@@ -279,6 +280,7 @@ public final class Hutool {
 
         fixMethodName(fixName, methodAliasPaths);
 
+        // 将剪贴板字符内容注入到方法参数的指定索引位置
         if (ARG.paramIdxFromClipboard >= 0) {
             ARG.params.add(Math.min(ARG.params.size(), ARG.paramIdxFromClipboard), ClipboardUtil.getStr());
         }
@@ -287,8 +289,8 @@ public final class Hutool {
         Class<?>[] paramTypes = new Class<?>[ARG.paramTypes.size()];
         boolean parseDefaultValue = ARG.params.size() < paramTypes.length;
         for (int i = 0; i < ARG.paramTypes.size(); i++) {
-            String paramType = parseParamType(i, ARG.paramTypes.get(i), parseDefaultValue);
             // 解析默认值，默认值要么都填写，要么都不填写
+            String paramType = parseParamType(i, ARG.paramTypes.get(i), parseDefaultValue);
             try {
                 paramTypes[i] = Utils.parseClass(paramType);
             } catch (Exception e) {
@@ -300,7 +302,8 @@ public final class Hutool {
         debugOutput("parse parameter types success");
 
         Method method;
-        if (nonParamType && Utils.isArrayEmpty(paramTypes)) {
+        if (omitParamType && Utils.isArrayEmpty(paramTypes)) {
+            // 缺省方法参数类型，自动匹配方法
             debugOutput("getting method ignore case by method name and param count");
             method = autoMatchMethod(clazz);
         } else {
@@ -312,7 +315,7 @@ public final class Hutool {
             String[] paramTypeArray = ARG.paramTypes.toArray(new String[0]);
             debugOutput(msg, clazz.getName(), ARG.methodName, ArrayUtil.join(paramTypeArray, ", "));
             ARG.methodName = "";
-            handleResultOfMethod(clazz, fixName, methodAliasPaths);
+            resolveResultByClassMethod(clazz, fixName, methodAliasPaths);
             return;
         }
         paramTypes = method.getParameterTypes();
@@ -324,6 +327,7 @@ public final class Hutool {
             return;
         }
 
+        // 转换参数类型
         debugOutput("casting parameter to class type");
         ParserConfig parserConfig = new ParserConfig();
         Object[] params = new Object[paramTypes.length];
@@ -334,6 +338,7 @@ public final class Hutool {
             paramJoiner.add(param);
             params[i] = castParam2JavaType(converterJson, parserConfig, param, paramTypes[i]);
         }
+
         debugOutput("cast parameter success");
         debugOutput("invoking method: %s#%s(%s)", ARG.className, method.getName(), paramJoiner);
         result = ReflectUtil.invokeStatic(method, params);
@@ -348,6 +353,7 @@ public final class Hutool {
 
         String type = paramType.substring(0, idx);
 
+        // 解析默认值
         if (parseDefaultValue) {
             String param = paramType.substring(idx + 1);
             ARG.params.add(Math.min(index, ARG.params.size()), param);
@@ -357,6 +363,7 @@ public final class Hutool {
     }
 
     private static Method autoMatchMethod(Class<?> clazz) {
+        // 找到与方法名一致的方法（忽略大小写）
         Method[] methods = clazz.getMethods();
         List<Method> fuzzyList = new ArrayList<>();
         for (Method method : methods) {
@@ -387,6 +394,7 @@ public final class Hutool {
             method = m;
         }
 
+        // 确定方法参数类型
         if (Objects.nonNull(method)) {
             ARG.paramTypes = new ArrayList<>();
             for (Class<?> paramType : method.getParameterTypes()) {
@@ -399,6 +407,7 @@ public final class Hutool {
     @SuppressWarnings("rawtypes")
     private static Object castParam2JavaType(JSONObject convertJson, ParserConfig parserConfig, String param, Class<?> type) {
         if (resultContainer != null) {
+            // 替换连续命令中的结果记录值
             for (int i = 0; i < resultContainer.size(); i++) {
                 String key = "\\\\" + i;
                 String value = resultContainer.get(i);
@@ -410,6 +419,7 @@ public final class Hutool {
             return param;
         }
 
+        // 转换参数
         String converterName = convertJson.getString(type.getName());
         Converter<?> converter = null;
         try {
@@ -433,6 +443,7 @@ public final class Hutool {
     }
 
     private static void fixMethodName(boolean fixName, List<String> methodAliasPaths) {
+        // 从方法别名文件中找到方法名
         if (fixName && !Utils.isCollectionEmpty(methodAliasPaths)) {
             String methodKey = "methodName";
             JSONObject aliasJson = getAlias(ARG.methodName, "", methodAliasPaths.toArray(new String[0]));
@@ -446,7 +457,7 @@ public final class Hutool {
                 debugOutput("get method name: %s", ARG.methodName);
                 List<String> paramTypes = methodJson.getObject(PARAM_KEY, new TypeReference<List<String>>() {});
                 ARG.paramTypes = ObjectUtil.defaultIfNull(paramTypes, Collections.emptyList());
-                nonParamType = false;
+                omitParamType = false;
             }
         }
     }
@@ -457,6 +468,7 @@ public final class Hutool {
     }
 
     private static void seeAlias(String className, String... paths) {
+        // 用户自定义别名会覆盖工作目录定义的别名
         JSONObject aliasJson = getAlias("", workDir, paths);
         aliasJson.putAll(getAlias("", "", paths));
         StringJoiner joiner = new StringJoiner("\n");
@@ -471,10 +483,10 @@ public final class Hutool {
 
             JSONObject json = aliasJson.getJSONObject(k);
             if (json.containsKey(CLAZZ_KEY)) {
-                // class alias
+                // 类别名
                 map.put(k, json.getString(CLAZZ_KEY));
             } else {
-                // method alias
+                // 类方法别名或方法别名字
                 String methodName = json.getString("method");
                 if (Utils.isStringEmpty(methodName)) {
                     methodName = json.getString("methodName");
@@ -483,8 +495,10 @@ public final class Hutool {
                 List<String> paramTypes = json.getObject(PARAM_KEY, new TypeReference<List<String>>() {});
                 paramTypes = ObjectUtil.defaultIfNull(paramTypes, Collections.emptyList());
                 try {
+                    // 拿到方法的形参名称，参数类型
                     map.put(k, parseMethodFullInfo(className, methodName, paramTypes));
                 } catch (Exception e) {
+                    // 这里只能输出方法参数类型，无法输出形参类型
                     debugOutput("parse method param name error: %s", ExceptionUtil.stacktraceToString(e, Integer.MAX_VALUE));
                     String typeString = ArrayUtil.join(paramTypes.toArray(new String[0]), ", ");
                     map.put(k, methodName + "(" + typeString + ")");
@@ -492,6 +506,7 @@ public final class Hutool {
             }
         });
 
+        // 输出别名到终端
         debugOutput("max length: %s", maxLength.get());
         map.forEach((k, v) -> joiner.add(Utils.padAfter(k, maxLength.get(), ' ') + " = " + v));
         result = joiner.toString();
@@ -503,14 +518,17 @@ public final class Hutool {
         ClassPool pool = ClassPool.getDefault();
         CtClass ctClass;
         if (Utils.isStringEmpty(className)) {
+            // 来自类方法别名
             int idx = methodName.indexOf("#");
             ctClass = pool.get(Utils.parseClassName(methodName.substring(0, idx)));
             mn = methodName.substring(idx + 1);
             outClassName = true;
         } else {
+            // 来自方法别名
             ctClass = pool.get(className);
         }
 
+        // 用javassist库解析形参类型
         CtClass[] params = new CtClass[paramTypes.size()];
         Map<String, String> defaultValueMap = new HashMap<>(4, 1);
         for (int i = 0; i < paramTypes.size(); i++) {
@@ -580,6 +598,7 @@ public final class Hutool {
     }
 
     public static JSONObject getAlias(String aliasKey, String parentDir, String... paths) {
+        // 先查找用户自定义别名，没找到再从工作目录查找
         if (Utils.isStringEmpty(parentDir)) {
             parentDir = HUTOOL_USER_HOME;
         }
