@@ -200,7 +200,7 @@ public final class Utils {
     }
 
     private static String parseClassName00(String className) {
-        if (Hutool.classNameParsed || className.length() > 16) {
+        if (className.length() > 16) {
             return className;
         }
         if (classAliasJson == null) {

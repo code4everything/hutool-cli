@@ -67,8 +67,6 @@ public final class Hutool {
 
     static String workDir = System.getenv("HUTOOL_PATH");
 
-    static boolean classNameParsed = false;
-
     private static boolean omitParamType = true;
 
     private static JCommander commander;
@@ -78,6 +76,8 @@ public final class Hutool {
     private static List<String> resultContainer = null;
 
     private static SimpleDateFormat simpleDateFormat = null;
+
+    private static final Map<String, JSONObject> ALIAS_CACHE = new HashMap<>(4, 1);
 
     private Hutool() {}
 
@@ -237,7 +237,6 @@ public final class Hutool {
             // 尝试从类别名文件中查找类全名
             String methodAliasKey = "methodAliasPaths";
             JSONObject aliasJson = getAlias(ARG.className, "", CLASS_JSON);
-            classNameParsed = true;
 
             JSONObject clazzJson = aliasJson.getJSONObject(ARG.className);
             if (Objects.isNull(clazzJson) || !clazzJson.containsKey(CLAZZ_KEY)) {
@@ -436,6 +435,7 @@ public final class Hutool {
                 return converter.string2Object(param);
             }
         } catch (Exception e) {
+            Objects.requireNonNull(converter);
             debugOutput("cast param[%s] to type[%s] using converter[%s] failed: %s", param, type.getName(), converter.getClass().getName(), ExceptionUtil.stacktraceToString(e, Integer.MAX_VALUE));
         }
         debugOutput("auto convert param[%s] to type: %s", param, type.getName());
@@ -605,11 +605,14 @@ public final class Hutool {
         String path = Paths.get(parentDir, paths).toAbsolutePath().normalize().toString();
         debugOutput("alias json file path: %s", path);
 
-        JSONObject json;
-        if (FileUtil.exist(path)) {
-            json = JSON.parseObject(FileUtil.readUtf8String(path));
-        } else {
-            json = new JSONObject();
+        JSONObject json = ALIAS_CACHE.get(path);
+        if (json == null) {
+            if (FileUtil.exist(path)) {
+                json = JSON.parseObject(FileUtil.readUtf8String(path));
+            } else {
+                json = new JSONObject();
+            }
+            ALIAS_CACHE.put(path, json);
         }
 
         if (Utils.isStringEmpty(aliasKey) || json.containsKey(aliasKey)) {
