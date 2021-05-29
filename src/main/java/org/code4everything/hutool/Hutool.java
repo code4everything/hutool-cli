@@ -63,6 +63,8 @@ public final class Hutool {
 
     private static final String HUTOOL_USER_HOME = System.getProperty("user.home") + File.separator + "hutool-cli";
 
+    private static final Map<String, JSONObject> ALIAS_CACHE = new HashMap<>(4, 1);
+
     public static MethodArg ARG;
 
     static String workDir = System.getenv("HUTOOL_PATH");
@@ -76,8 +78,6 @@ public final class Hutool {
     private static List<String> resultContainer = null;
 
     private static SimpleDateFormat simpleDateFormat = null;
-
-    private static final Map<String, JSONObject> ALIAS_CACHE = new HashMap<>(4, 1);
 
     private Hutool() {}
 
@@ -104,8 +104,7 @@ public final class Hutool {
         }
 
         if (ARG.version) {
-            System.out.println("hutool-cli: " + VERSION);
-            return "";
+            return "hutool-cli: " + VERSION;
         } else {
             debugOutput("hutool-cli: " + VERSION);
         }

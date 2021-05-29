@@ -213,7 +213,7 @@ setDelay(delayMillis:int)
 
 到这里我们还只能通过 `java -jar hutool.jar -r alias` 命令来执行，完整的终端命令仍然很长，现在我们需要把 `java -jar hutool.jar` 这段干掉，则需要一个二进制可执行文件，它就像一个中转站，可把从终端拿到的参数传给我们的Java程序，我选择了用 `go` 语言来完成这项工作，go可以把代码直接编译成机器码。
 
-现在我们可以这样来执行`hutool alias`，至此hutool-cli基本功能及其实现已全部介绍完成。
+现在我们可以这样来执行`hu alias`，至此hutool-cli基本功能及其实现已全部介绍完成。
 
 > [Go源代码查看](src/main/go/hutool.go)
 

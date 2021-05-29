@@ -1,0 +1,135 @@
+plugins {
+    id 'java'
+    id 'maven-publish'
+}
+
+repositories {
+    mavenLocal()
+    maven {
+        url = uri('https://repo.maven.apache.org/maven2/')
+    }
+}
+
+dependencies {
+    implementation 'com.beust:jcommander:1.81'
+    implementation 'cn.hutool:hutool-core:5.6.4'
+    implementation 'cn.hutool:hutool-system:5.6.4'
+    implementation 'com.github.oshi:oshi-core:5.3.1'
+    implementation 'cn.hutool:hutool-crypto:5.6.4'
+    implementation 'cn.hutool:hutool-http:5.6.4'
+    implementation 'cn.hutool:hutool-script:5.6.4'
+    implementation 'cn.hutool:hutool-extra:5.6.4'
+    implementation 'com.vdurmont:emoji-java:5.1.1'
+    implementation 'com.google.zxing:core:3.4.1'
+    implementation 'com.belerweb:pinyin4j:2.5.1'
+    implementation 'com.alibaba:fastjson:1.2.76'
+    implementation 'org.javassist:javassist:3.28.0-GA'
+    testImplementation 'junit:junit:4.13.2'
+}
+
+group = 'org.code4everything'
+version = '1.2'
+String hutoolCliVersion = version
+description = 'hutool-cli'
+java.sourceCompatibility = JavaVersion.VERSION_1_8
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            from(components.java)
+        }
+    }
+}
+
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+}
+
+jar {
+    archiveName "hutool.jar"
+
+    manifest {
+        def map = ["Manifest-Version": "1.0", "Main-Class": "org.code4everything.hutool.Hutool"]
+        attributes map
+    }
+
+    from {
+        (configurations.runtimeClasspath).collect {
+            it.isDirectory() ? it : zipTree(it)
+        }
+    }
+
+    exclude 'META-INF/AL2.0'
+    exclude 'META-INF/LGPL2.1'
+    exclude 'META-INF/LICENSE'
+}
+
+boolean isWin = System.getProperty('os.name').toLowerCase(Locale.ROOT).contains('windows')
+
+build.doFirst {
+    println 'git pull'.execute().text.trim()
+}
+
+build.doLast {
+    copy {
+        from './build/libs/hutool.jar'
+        into './hutool'
+    }
+}
+
+task pack(dependsOn: ['clean', 'build']) {}
+
+task install(dependsOn: 'pack') {
+    exec {
+        workingDir './src/main/go'
+        if (isWin) {
+            commandLine 'cmd', '/c', 'go build hutool.go'
+        } else {
+            commandLine 'sh', '-c', 'go build hutool.go'
+        }
+    }
+    copy {
+        from './src/main/go'
+        into './hutool/bin'
+        exclude 'hutool.go'
+        rename 'hutool', 'hu'
+    }
+}
+
+def deleteTempFile() {
+    delete './src/main/go/hutool.exe'
+    delete './src/main/go/hutool'
+    delete './hutool/bin'
+}
+
+String[] platforms = new String[]{"windows", "linux", "darwin"}
+3.times { counter ->
+    task "release$counter"(type: Zip) {
+        if (isWin) {
+            println 'sorry, this task cannot execute on windows platform.'
+            return
+        }
+
+        String osName = platforms[counter]
+        deleteTempFile()
+        exec {
+            workingDir './src/main/go'
+            commandLine "sh', '-c', 'CGO_ENABLED=0 GOOS=${osName} GOARCH=amd64 go build hutool.go"
+        }
+
+        copy {
+            from './src/main/go'
+            into './hutool/bin/'
+            exclude 'hutool.go'
+            rename 'hutool', 'hu'
+        }
+
+        archiveName "${osName}-${hutoolCliVersion}.zip"
+        destinationDir file('.')
+        from './hutool'
+        exclude 'method'
+        exclude '*.json'
+    }
+}
+
+task release(dependsOn: ['pack', 'release0', 'release1', 'release2']) {}

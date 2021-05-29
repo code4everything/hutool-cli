@@ -12,7 +12,7 @@
 比如我们想生成一个随机UUID，现在只需要打开终端执行下面命令：
 
 ```shell
-hutool random-uuid
+hu random-uuid
 # output: 483cc7fc-4b22-4188-8f1c-dc1ce4b6d3ee
 ```
 
@@ -21,7 +21,7 @@ hutool random-uuid
 所需环境
 
 - git
-- java8 above
+- java 8+
 
 下载本项目
 
@@ -37,15 +37,13 @@ git clone https://gitee.com/code4everything/hutool-cli.git
 
 下载完成后解压ZIP包，并将 hutool.jar 和 bin目录移动到 hutool-cli/hutool 目录下
 
-> 说明：[WeTool工具](https://gitee.com/code4everything/wetool) 支持无 `hutool` 前缀执行命令。
-
 ## 配置环境变量
 
 新建 `HUTOOL_PATH` 变量，对应的路径如下：`your_path/hutool-cli/hutool`，目录结构如下：
 
 ```text
 ├─bin
-│  └─hutool(.exe)
+│  └─hu(.exe)
 ├─method
 ├─class.json
 ├─command.json
@@ -54,14 +52,12 @@ git clone https://gitee.com/code4everything/hutool-cli.git
 
 最后将 `HUTOOL_PATH`/bin 添加到系统变量 `PATH` 中。
 
-> 你还可以通过重命名 `hutool(.exe)` 文件来达到修改命令前缀的目的，如修改为 `hu(.exe)`，现在可以这样执行命令：`hu random-uuid`。
-
 ## 如何使用
 
 查看支持的参数
 
 ```shell
-hutool
+hu
 
 # output:
 Usage: hutool-cli [options]
@@ -89,17 +85,17 @@ Usage: hutool-cli [options]
 查看版本
 
 ```shell
-hutool -v
+hu -v
 # output: hutool-cli: v1.2
 ```
 
 执行一个方法
 
 ```shell
-hutool -c cn.hutool.core.util.IdUtil -m randomUUID
+hu -c cn.hutool.core.util.IdUtil -m randomUUID
 # output: 3214683f-55c1-412e-8b7a-454c57468d99
 
-hutool -r core.codec.Base64#encode -t java.lang.CharSequence -p hutool-cli
+hu -r core.codec.Base64#encode -t java.lang.CharSequence -p hutool-cli
 # output: aHV0b29sLWNsaQ==
 # 说明：类名自动补前缀'cn.hutool.'，并且命令模式支持组合类名和方法名称
 ```
@@ -107,19 +103,19 @@ hutool -r core.codec.Base64#encode -t java.lang.CharSequence -p hutool-cli
 通过别名执行
 
 ```shell
-hutool -c base64 -m encode -p 'sky is blue'
+hu -c base64 -m encode -p 'sky is blue'
 # output: c2t5IGlzIGJsdWU=
 
-hutool -r base64-encode 'sky is blue' -y
+hu -r base64-encode 'sky is blue' -y
 # output: c2t5IGlzIGJsdWU=
 # 说明：-y 表示将输出结果复制到剪贴板
 
-hutool -r base64-decode -a:0
+hu -r base64-decode -a:0
 # output: sky is blue
 # 说明：-a:0 表示将剪贴板字符串内容注入到索引位置是0的参数中
 
 # v1.2新功能：支持连续执行，符号 // 分隔多个命令，\\0表示将第一个执行结果作为参数注入，\\1表示将第二个执行结果作为参数注入，依次类推
-hutool base64-encode 'test multi cmd' // base64-decode \\0
+hu base64-encode 'test multi cmd' // base64-decode \\0
 # output: test multi cmd
 ```
 
@@ -128,14 +124,14 @@ hutool base64-encode 'test multi cmd' // base64-decode \\0
 执行JavaScript脚本
 
 ```shell
-hutool eval 5+6+3+22+9999
+hu eval 5+6+3+22+9999
 # output: 10035
 ```
 
 ## 查看类有哪些可执行静态方法
 
 ```shell
-hutool methods regex
+hu methods regex
 
 # regex 是类 cn.hutool.core.util.ReUtil 的别名
 # output:
@@ -186,7 +182,7 @@ delAll(regex:java.lang.String, content:java.lang.CharSequence)
 查看有哪些类方法别名（可以精确的定位到方法）
 
 ```shell
-hutool -r alias
+hu -r alias
 
 # 或者 hutool alias
 # output:
@@ -244,7 +240,7 @@ week-end           = cn.hutool.core.date.DateUtil#endOfWeek(date:java.util.Date)
 查看类名称别名
 
 ```shell
-hutool -c alias
+hu -c alias
 
 # output:
 base32  = cn.hutool.core.codec.Base32
@@ -277,7 +273,7 @@ unicode = cn.hutool.core.text.UnicodeUtil
 查看类别名下方法别名，有以下两种方式：
 
 ```shell
-hutool -c base64 -m alias
+hu -c base64 -m alias
 
 # output:
 decode     = decodeStr(source:java.lang.CharSequence)
@@ -286,7 +282,7 @@ encode-url = encodeUrlSafe(source:java.lang.CharSequence)
 ```
 
 ```shell
-hutool -r date#alias
+hu -r date#alias
 
 # output:
 between     = between(beginDate:java.util.Date, endDate:java.util.Date, unit:cn.hutool.core.date.DateUnit=day)
@@ -308,7 +304,7 @@ week-end    = endOfWeek(date:java.util.Date)
 查看生成二维码的命令
 
 ```shell
-hutool alias | grep qrcode
+hu alias | grep qrcode
 
 # output:
 
@@ -320,14 +316,14 @@ qrcode-generate    = cn.hutool.extra.qrcode.QrCodeUtil#generate(java.lang.String
 
 ```shell
 # 该方法有默认值，默认值可全缺省
-hutool qrcode-generate 'qrcode test' /home/test.png
+hu qrcode-generate 'qrcode test' /home/test.png
 ```
 
 或者不使用默认值
 
 ```shell
 # 虽然该方法有默认值，但我们可以不使用
-hutool qrcode-generate 'qrcode test' 600 600 /home/test.png
+hu qrcode-generate 'qrcode test' 600 600 /home/test.png
 ```
 
 ## 自定义别名
@@ -390,4 +386,4 @@ hutool-cli 提供了很多常用的别名，参考下面文件：
 |list|java.util.List|
 |set|java.util.Set|
 
-> 查看简写是否正确，可通过查看命名 `hutool class` 返回的结果是否是一个合法Java类名来判断，如 `hutool class j.float` 返回 `java.lang.Float`，`hutool class no.class` 返回 `no.class` 就不是一个合法的类名，此方法也可用来判断类别名哦。
+> 查看简写是否正确，可通过查看命名 `hu class` 返回的结果是否是一个合法Java类名来判断，如 `hu class j.float` 返回 `java.lang.Float`，`hu class no.class` 返回 `no.class` 就不是一个合法的类名，此方法也可用来判断类别名哦。
