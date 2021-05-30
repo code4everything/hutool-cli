@@ -29,13 +29,19 @@ hu random-uuid
 git clone https://gitee.com/code4everything/hutool-cli.git
 ```
 
-下载对应的ZIP包
+下载对应的ZIP包，目录结构如下
 
-- [windows](http://share.qiniu.easepan.xyz/tool/hutool/windows-1.1.zip)
-- [linux](http://share.qiniu.easepan.xyz/tool/hutool/linux-1.1.zip)
-- [macos](http://share.qiniu.easepan.xyz/tool/hutool/darwin-1.1.zip)
+```text
+├─bin
+│  ├─hu
+│  ├─hu-mac
+│  └─hu.exe
+└─hutool.jar
+```
 
-下载完成后解压ZIP包，并将 hutool.jar 和 bin目录移动到 hutool-cli/hutool 目录下
+- [hu-1.2.zip](http://share.qiniu.easepan.xyz/tool/hutool/hu-1.2.zip)
+
+下载完成后解压ZIP包，并将 hutool.jar 和 bin目录中与平台对应的可执行文件移动到 hutool-cli/hutool 目录下，如windows对应的`hu.exe`文件，linux对应的`hu`文件，macos对应的`hu-mac`文件（移动后重命名为`hu`）。
 
 ## 配置环境变量
 

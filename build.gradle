@@ -85,7 +85,7 @@ task install(dependsOn: 'pack') {
         if (isWin) {
             commandLine 'cmd', '/c', 'go build hutool.go'
         } else {
-            commandLine 'sh', '-c', 'go build hutool.go'
+            commandLine 'bash', '-c', 'go build hutool.go'
         }
     }
     copy {
@@ -96,40 +96,35 @@ task install(dependsOn: 'pack') {
     }
 }
 
-def deleteTempFile() {
-    delete './src/main/go/hutool.exe'
-    delete './src/main/go/hutool'
-    delete './hutool/bin'
-}
-
 String[] platforms = new String[]{"windows", "linux", "darwin"}
 3.times { counter ->
-    task "release$counter"(type: Zip) {
+    task "release${counter}" {
         if (isWin) {
-            println 'sorry, this task cannot execute on windows platform.'
             return
         }
 
         String osName = platforms[counter]
-        deleteTempFile()
         exec {
             workingDir './src/main/go'
-            commandLine "sh', '-c', 'CGO_ENABLED=0 GOOS=${osName} GOARCH=amd64 go build hutool.go"
+            commandLine 'bash', '-c', "CGO_ENABLED=0 GOOS=${osName} GOARCH=amd64 go build hutool.go"
         }
 
         copy {
             from './src/main/go'
             into './hutool/bin/'
             exclude 'hutool.go'
-            rename 'hutool', 'hu'
+            String newName = osName == 'darwin' ? 'hu-mac' : 'hu'
+            rename 'hutool', newName
         }
-
-        archiveName "${osName}-${hutoolCliVersion}.zip"
-        destinationDir file('.')
-        from './hutool'
-        exclude 'method'
-        exclude '*.json'
+        delete './src/main/go/hutool.exe'
+        delete './src/main/go/hutool'
     }
 }
 
-task release(dependsOn: ['pack', 'release0', 'release1', 'release2']) {}
+task release(dependsOn: ['pack', 'release0', 'release1', 'release2'], type: Zip) {
+    archiveName "hu-${hutoolCliVersion}.zip"
+    destinationDir file('.')
+    from './hutool'
+    exclude 'method'
+    exclude '*.json'
+}
