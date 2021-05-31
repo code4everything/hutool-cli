@@ -7,6 +7,8 @@ import cn.hutool.core.swing.clipboard.ClipboardUtil;
 import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.ReflectUtil;
+import cn.hutool.log.dialect.console.ConsoleLog;
+import cn.hutool.log.level.Level;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.TypeReference;
@@ -137,6 +139,7 @@ public final class Hutool {
             return;
         }
 
+        ConsoleLog.setLevel(Level.ERROR);
         ARG = new MethodArg();
         List<String> list = new ArrayList<>(8);
         resultContainer = null;
