@@ -24,6 +24,8 @@ dependencies {
     implementation 'com.belerweb:pinyin4j:2.5.1'
     implementation 'com.alibaba:fastjson:1.2.76'
     implementation 'org.javassist:javassist:3.28.0-GA'
+    implementation 'ch.qos.logback:logback-classic:1.2.3'
+    implementation 'org.slf4j:slf4j-api:1.7.30'
     testImplementation 'junit:junit:4.13.2'
 }
 
