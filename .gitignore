@@ -9,3 +9,4 @@ hutool/bin
 build
 *.zip
 .DS_Store
+hutool/external.conf

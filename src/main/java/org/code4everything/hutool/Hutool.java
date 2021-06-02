@@ -300,7 +300,7 @@ public final class Hutool {
         debugOutput("parse parameter types success");
 
         Method method;
-        if (omitParamType && Utils.isArrayEmpty(paramTypes)) {
+        if (omitParamType && Utils.isArrayEmpty(paramTypes) && !Utils.isCollectionEmpty(ARG.params)) {
             // 缺省方法参数类型，自动匹配方法
             debugOutput("getting method ignore case by method name and param count");
             method = autoMatchMethod(clazz);

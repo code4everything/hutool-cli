@@ -362,6 +362,12 @@ hutool-cli 提供了很多常用的别名，参考下面文件：
 
 > v1.2支持定义私有别名啦，定义路径 `{user.home}/hutool-cli/`，文件名和别名格式参照上面说明，程序会优先读取用户定义的私有别名。
 
+### 支持加载外部类
+
+方法一，在 `HUTOOL_PATH` 对应的目录下新建external目录，将类class类文件（包含报名目录）拷贝到external文件夹中即可，如类 `com.example.Test` 对应的路径 `external/com/example/Test.class`。
+
+方法二，推荐，在 `HUTOOL_PATH` 对应的目录下新建external.conf文件，在文件中定义类加载路径（不包含包路径），多个用英文逗号分隔，还是用上面的类举例，假设类绝对路径是 `/home/java/com/examaple/Test.class`，那么文件定义路径 `/home/java` 即可。
+
 ### 最后
 
 如果你觉得项目还不错，记得Star哟，欢迎 pr。

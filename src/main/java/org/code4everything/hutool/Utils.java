@@ -2,6 +2,8 @@ package org.code4everything.hutool;
 
 import cn.hutool.core.date.ChineseDate;
 import cn.hutool.core.exceptions.ExceptionUtil;
+import cn.hutool.core.io.FileUtil;
+import cn.hutool.core.lang.JarClassLoader;
 import cn.hutool.core.math.Calculator;
 import com.alibaba.fastjson.JSONObject;
 import javassist.ClassPool;
@@ -12,8 +14,6 @@ import javassist.bytecode.LocalVariableAttribute;
 
 import java.io.File;
 import java.lang.reflect.Modifier;
-import java.net.URL;
-import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -30,6 +30,8 @@ import java.util.regex.Pattern;
 public final class Utils {
 
     private static JSONObject classAliasJson = null;
+
+    private static JarClassLoader classLoader = null;
 
     private Utils() {}
 
@@ -120,11 +122,25 @@ public final class Utils {
         try {
             return Class.forName(className);
         } catch (Exception e) {
-            String path = "file:" + Hutool.homeDir + File.separator + "external" + File.separator;
-            Hutool.debugOutput("loading class from path: " + path);
-            try (URLClassLoader loader = new URLClassLoader(new URL[]{new URL(path)}, Utils.class.getClassLoader())) {
-                return loader.loadClass(className);
+            if (Objects.isNull(classLoader)) {
+                classLoader = new JarClassLoader();
+                classLoader.addJar(FileUtil.file(Hutool.homeDir, "external"));
+                File externalConf = FileUtil.file(Hutool.homeDir, "external.conf");
+                if (FileUtil.exist(externalConf)) {
+                    String[] externalPaths = FileUtil.readUtf8String(externalConf).split(",");
+                    for (String externalPath : externalPaths) {
+                        if (Objects.isNull(externalPath)) {
+                            continue;
+                        }
+                        File external = FileUtil.file(externalPath.trim());
+                        if (FileUtil.exist(external)) {
+                            classLoader.addURL(external);
+                        }
+                    }
+                }
             }
+
+            return classLoader.loadClass(className);
         }
     }
 
@@ -228,6 +244,13 @@ public final class Utils {
             return str;
         }
         return prefix + str;
+    }
+
+    static String addSuffixIfNot(String str, String suffix) {
+        if (isStringEmpty(str) || isStringEmpty(suffix) || str.endsWith(suffix)) {
+            return str;
+        }
+        return str + suffix;
     }
 
     public static String padAfter(String str, int len, char pad) {

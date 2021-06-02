@@ -108,7 +108,7 @@ public class DateConverter implements Converter<Date> {
 }
 ```
 
-因为本工具内置的转化器目前有限，为避免以后新增转换器带来升级问题，所以本工具设计为了支持动态引入参数转换器，可在 `converter.json` 文件添加具体的转化器类，并把class类文件放置到 `converter` 目录中即可。
+因为本工具内置的转化器目前有限，为避免以后新增转换器带来升级问题，所以本工具设计为了支持动态引入参数转换器，可在 `converter.json` 文件添加具体的转化器类，并把class类文件放置到 `external` 目录中即可或在 `external.conf` 文件中定义类路径。
 
 > Java常用类型自动转换，无需引入方法参数转换器，比如：Boolean, Integer, Long, Float, Double等等，这些类型会使用fastjson的TypeUtils#cast方法转换。
 

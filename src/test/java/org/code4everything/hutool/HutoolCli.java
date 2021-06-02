@@ -35,4 +35,9 @@ public class HutoolCli {
         test("suppers java.util.ArrayList");
         test("suppers str");
     }
+
+    @Test
+    public void externalPath() {
+        test("-c org.code4everything.wetool.plugin.support.util.WeUtils -m getCurrentPid");
+    }
 }
