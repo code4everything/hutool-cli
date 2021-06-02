@@ -116,18 +116,16 @@ public final class Utils {
     }
 
     private static Class<?> parseClass0(String className) throws Exception {
-        String converterPrefix = "org.code4everything.hutool.converter.";
-        if (className.startsWith(converterPrefix)) {
-            try {
-                return Class.forName(className);
-            } catch (Exception e) {
-                String path = "file:" + Hutool.workDir + File.separator + "converter" + File.separator;
-                try (URLClassLoader loader = new URLClassLoader(new URL[]{new URL(path)}, Utils.class.getClassLoader())) {
-                    return loader.loadClass(className);
-                }
+        className = parseClassName0(className);
+        try {
+            return Class.forName(className);
+        } catch (Exception e) {
+            String path = "file:" + Hutool.homeDir + File.separator + "external" + File.separator;
+            Hutool.debugOutput("loading class from path: " + path);
+            try (URLClassLoader loader = new URLClassLoader(new URL[]{new URL(path)}, Utils.class.getClassLoader())) {
+                return loader.loadClass(className);
             }
         }
-        return Class.forName(parseClassName0(className));
     }
 
     public static String parseClassName(String className) {
@@ -204,7 +202,7 @@ public final class Utils {
             return className;
         }
         if (classAliasJson == null) {
-            classAliasJson = Hutool.getAlias("", Hutool.workDir, Hutool.CLASS_JSON);
+            classAliasJson = Hutool.getAlias("", Hutool.homeDir, Hutool.CLASS_JSON);
             classAliasJson.putAll(Hutool.getAlias("", "", Hutool.CLASS_JSON));
         }
         JSONObject classJson = classAliasJson.getJSONObject(className);

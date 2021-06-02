@@ -53,8 +53,6 @@ public final class Hutool {
 
     public static final String CLAZZ_KEY = "clazz";
 
-    private static final String CLASS_PREFIX = "cn.hutool.";
-
     private static final String ALIAS = "alias";
 
     private static final String PARAM_KEY = "paramTypes";
@@ -69,7 +67,7 @@ public final class Hutool {
 
     public static MethodArg ARG;
 
-    static String workDir = System.getenv("HUTOOL_PATH");
+    static String homeDir = System.getenv("HUTOOL_PATH");
 
     private static boolean omitParamType = true;
 
@@ -242,7 +240,6 @@ public final class Hutool {
 
             JSONObject clazzJson = aliasJson.getJSONObject(ARG.className);
             if (Objects.isNull(clazzJson) || !clazzJson.containsKey(CLAZZ_KEY)) {
-                ARG.className = Utils.addPrefixIfNot(ARG.className, CLASS_PREFIX);
                 fixName = false;
             } else {
                 ARG.className = clazzJson.getString(CLAZZ_KEY);
@@ -333,7 +330,7 @@ public final class Hutool {
         ParserConfig parserConfig = new ParserConfig();
         Object[] params = new Object[paramTypes.length];
         StringJoiner paramJoiner = new StringJoiner(", ");
-        JSONObject converterJson = getAlias("", workDir, CONVERTER_JSON);
+        JSONObject converterJson = getAlias("", homeDir, CONVERTER_JSON);
         for (int i = 0; i < paramTypes.length; i++) {
             String param = ARG.params.get(i);
             paramJoiner.add(param);
@@ -471,7 +468,7 @@ public final class Hutool {
 
     private static void seeAlias(String className, String... paths) {
         // 用户自定义别名会覆盖工作目录定义的别名
-        JSONObject aliasJson = getAlias("", workDir, paths);
+        JSONObject aliasJson = getAlias("", homeDir, paths);
         aliasJson.putAll(getAlias("", "", paths));
         StringJoiner joiner = new StringJoiner("\n");
         Holder<Integer> maxLength = Holder.of(0);
@@ -559,7 +556,7 @@ public final class Hutool {
         }
 
         String name = result.getClass().getName();
-        JSONObject converterJson = getAlias("", workDir, CONVERTER_JSON);
+        JSONObject converterJson = getAlias("", homeDir, CONVERTER_JSON);
         String converterName = converterJson.getString(name);
 
         try {
@@ -621,7 +618,7 @@ public final class Hutool {
             return json;
         }
 
-        return getAlias("", workDir, paths);
+        return getAlias("", homeDir, paths);
     }
 
     public static void debugOutput(String msg, Object... params) {

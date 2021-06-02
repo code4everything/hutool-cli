@@ -310,5 +310,11 @@
             "string",
             "int=0"
         ]
+    },
+    "fopen": {
+        "method": "cn.hutool.core.swing.DesktopUtil#open",
+        "paramTypes": [
+            "file=."
+        ]
     }
 }

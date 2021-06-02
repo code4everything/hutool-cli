@@ -101,9 +101,8 @@ hu -v
 hu -c cn.hutool.core.util.IdUtil -m randomUUID
 # output: 3214683f-55c1-412e-8b7a-454c57468d99
 
-hu -r core.codec.Base64#encode -t java.lang.CharSequence -p hutool-cli
+hu -r cn.hutool.core.codec.Base64#encode -t java.lang.CharSequence -p hutool-cli
 # output: aHV0b29sLWNsaQ==
-# 说明：类名自动补前缀'cn.hutool.'，并且命令模式支持组合类名和方法名称
 ```
 
 通过别名执行

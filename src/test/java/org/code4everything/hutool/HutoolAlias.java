@@ -10,7 +10,7 @@ import com.alibaba.fastjson.JSON;
 public class HutoolAlias {
 
     public static void main(String[] args) {
-        String json = FileUtil.readUtf8String(Hutool.workDir + "\\class.json");
+        String json = FileUtil.readUtf8String(Hutool.homeDir + "\\class.json");
         JSON.parseObject(json).forEach((k, v) -> {
             String arg = k + "#alias -d";
             Hutool.main(arg.split(" "));
