@@ -122,26 +122,28 @@ public final class Utils {
         try {
             return Class.forName(className);
         } catch (Exception e) {
-            if (Objects.isNull(classLoader)) {
-                classLoader = new JarClassLoader();
-                classLoader.addJar(FileUtil.file(Hutool.homeDir, "external"));
-                File externalConf = FileUtil.file(Hutool.homeDir, "external.conf");
-                if (FileUtil.exist(externalConf)) {
-                    String[] externalPaths = FileUtil.readUtf8String(externalConf).split(",");
-                    for (String externalPath : externalPaths) {
-                        if (Objects.isNull(externalPath)) {
-                            continue;
-                        }
-                        File external = FileUtil.file(externalPath.trim());
-                        if (FileUtil.exist(external)) {
-                            classLoader.addURL(external);
-                        }
+            // ignore
+        }
+
+        if (Objects.isNull(classLoader)) {
+            classLoader = new JarClassLoader();
+            classLoader.addJar(FileUtil.file(Hutool.homeDir, "external"));
+            File externalConf = FileUtil.file(Hutool.homeDir, "external.conf");
+            if (FileUtil.exist(externalConf)) {
+                String[] externalPaths = FileUtil.readUtf8String(externalConf).split(",");
+                for (String externalPath : externalPaths) {
+                    if (Objects.isNull(externalPath)) {
+                        continue;
+                    }
+                    File external = FileUtil.file(externalPath.trim());
+                    if (FileUtil.exist(external)) {
+                        classLoader.addURL(external);
                     }
                 }
             }
-
-            return classLoader.loadClass(className);
         }
+
+        return classLoader.loadClass(className);
     }
 
     public static String parseClassName(String className) {
