@@ -204,7 +204,6 @@ public final class Hutool {
             }
 
             String classMethod = methodJson.getString(methodKey);
-            debugOutput("get method: %s", classMethod);
             idx = classMethod.lastIndexOf(sharp);
             if (idx < 1) {
                 System.out.println("method[" + classMethod + "] format error, required: com.example.Main#main");
@@ -215,6 +214,7 @@ public final class Hutool {
             ARG.className = classMethod.substring(0, idx);
             ARG.methodName = classMethod.substring(idx + 1);
             parseMethod(methodJson);
+            debugOutput("get method: %s", ARG.methodName);
             fixClassName = omitParamType = false;
         }
 
@@ -552,7 +552,7 @@ public final class Hutool {
             if (idx > 0) {
                 String old = paramTypeClass;
                 paramTypeClass = Utils.parseClassName(old.substring(0, idx));
-                defaultValueMap.put(paramTypeClass, old.substring(idx + 1));
+                defaultValueMap.put(paramTypeClass + i, old.substring(idx + 1));
             } else {
                 paramTypeClass = Utils.parseClassName(paramTypeClass);
             }

@@ -3,7 +3,7 @@
         "methodName": "now",
         "paramTypes": []
     },
-    "curr-sec": {
+    "second": {
         "methodName": "currentSeconds",
         "paramTypes": []
     },
@@ -13,7 +13,7 @@
             "date"
         ]
     },
-    "week-end": {
+    "weekend": {
         "methodName": "endOfWeek",
         "paramTypes": [
             "date"
@@ -27,7 +27,7 @@
             "cn.hutool.core.date.DateUnit=day"
         ]
     },
-    "ms2datetime": {
+    "ms2date": {
         "methodName": "date",
         "paramTypes": [
             "date"

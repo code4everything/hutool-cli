@@ -40,4 +40,9 @@ public class HutoolCli {
     public void externalPath() {
         test("-c org.code4everything.wetool.plugin.support.util.WeUtils -m getCurrentPid");
     }
+
+    @Test
+    public void random() {
+        test("random");
+    }
 }

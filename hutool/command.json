@@ -1,29 +1,29 @@
 {
-    "base32-encode": {
+    "encode32": {
         "method": "cn.hutool.core.codec.Base32#encode",
         "paramTypes": [
             "string"
         ]
     },
-    "base32-decode": {
+    "decode32": {
         "method": "cn.hutool.core.codec.Base32#decodeStr",
         "paramTypes": [
             "string"
         ]
     },
-    "base64-encode": {
+    "encode64": {
         "method": "cn.hutool.core.codec.Base64#encode",
         "paramTypes": [
             "j.char.seq"
         ]
     },
-    "base64-decode": {
+    "decode64": {
         "method": "cn.hutool.core.codec.Base64#decodeStr",
         "paramTypes": [
             "j.char.seq"
         ]
     },
-    "base64-encode-url": {
+    "encode64url": {
         "method": "cn.hutool.core.codec.Base64#encodeUrlSafe",
         "paramTypes": [
             "j.char.seq"
@@ -33,7 +33,7 @@
         "method": "cn.hutool.core.date.DateUtil#date",
         "paramTypes": []
     },
-    "curr-sec": {
+    "second": {
         "method": "cn.hutool.core.date.DateUtil#currentSeconds",
         "paramTypes": []
     },
@@ -43,13 +43,13 @@
             "date"
         ]
     },
-    "week-end": {
+    "weekend": {
         "method": "cn.hutool.core.date.DateUtil#endOfWeek",
         "paramTypes": [
             "date"
         ]
     },
-    "date-between": {
+    "between": {
         "method": "cn.hutool.core.date.DateUtil#between",
         "paramTypes": [
             "date",
@@ -69,19 +69,19 @@
             "date"
         ]
     },
-    "file-type": {
+    "ftype": {
         "method": "cn.hutool.core.io.FileUtil#getType",
         "paramTypes": [
             "file"
         ]
     },
-    "file-read": {
+    "fr": {
         "method": "cn.hutool.core.io.FileUtil#readUtf8String",
         "paramTypes": [
             "file"
         ]
     },
-    "file-write": {
+    "fw": {
         "method": "cn.hutool.core.io.FileUtil#writeUtf8String",
         "paramTypes": [
             "string",
@@ -100,7 +100,7 @@
             "string"
         ]
     },
-    "convert-charset": {
+    "fconvert": {
         "method": "cn.hutool.core.util.CharsetUtil#convert",
         "paramTypes": [
             "file",
@@ -108,7 +108,7 @@
             "charset"
         ]
     },
-    "2hex": {
+    "hex": {
         "method": "cn.hutool.core.util.HexUtil#encodeHexStr",
         "paramTypes": [
             "string"
@@ -120,31 +120,34 @@
             "string"
         ]
     },
-    "random-credit-code": {
+    "creditc": {
         "method": "cn.hutool.core.util.CreditCodeUtil#randomCreditCode"
     },
-    "random-uuid": {
+    "uuid": {
         "method": "cn.hutool.core.util.IdUtil#randomUUID"
     },
-    "simple-uuid": {
+    "uuid0": {
         "method": "cn.hutool.core.util.IdUtil#simpleUUID"
     },
-    "object-id": {
+    "objectid": {
         "method": "cn.hutool.core.util.IdUtil#objectId"
     },
-    "random": {
-        "method": "cn.hutool.core.util.RandomUtil#randomLong"
+    "rand": {
+        "method": "cn.hutool.core.util.RandomUtil#randomLong(long=0,long=9223372036854775807)"
     },
-    "random-double": {
-        "method": "cn.hutool.core.util.RandomUtil#randomDouble"
+    "randd": {
+        "method": "cn.hutool.core.util.RandomUtil#randomDouble(double=0,double=9223372036854775807)"
     },
-    "random-str": {
+    "rands": {
         "method": "cn.hutool.core.util.RandomUtil#randomString",
         "paramTypes": [
-            "int"
+            "int=16"
         ]
     },
-    "random-color": {
+    "randpass": {
+        "method": "cn.hutool.core.util.RandomUtil#randomString(string=abcdefghijkmnpqrstuvwxyzABCDEFGHJKMNPQRSTUVWXYZ234567892345678923456789,int=16)"
+    },
+    "randc": {
         "method": "cn.hutool.core.img.ImgUtil#randomColor"
     },
     "methods": {
@@ -159,7 +162,7 @@
             "string"
         ]
     },
-    "assignable-from": {
+    "assignable": {
         "method": "org.code4everything.hutool.Utils#assignableFrom",
         "paramTypes": [
             "class",
@@ -179,19 +182,14 @@
             "list"
         ]
     },
-    "regex-match": {
-        "method": "cn.hutool.core.util.ReUtil#isMatch",
-        "paramTypes": [
-            "string",
-            "j.char.seq"
-        ]
+    "match": {
+        "method": "cn.hutool.core.util.ReUtil#isMatch(reg.pattern,j.char.seq)"
     },
     "test": {
-        "method": "cn.hutool.core.util.ReUtil#isMatch",
-        "paramTypes": [
-            "string",
-            "j.char.seq"
-        ]
+        "method": "cn.hutool.core.util.ReUtil#isMatch(reg.pattern,j.char.seq)"
+    },
+    "regex": {
+        "method": "cn.hutool.core.util.ReUtil#isMatch(reg.pattern,j.char.seq)"
     },
     "upper": {
         "method": "org.code4everything.hutool.Utils#toUpperCase",
@@ -205,19 +203,13 @@
             "string"
         ]
     },
-    "java-info": {
+    "jinfo": {
         "method": "cn.hutool.system.SystemUtil#props"
     },
-    "system-info": {
+    "sysinfo": {
         "method": "cn.hutool.system.oshi.OshiUtil#getSystem"
     },
-    "hardware-info": {
-        "method": "cn.hutool.system.oshi.OshiUtil#getHardware"
-    },
-    "processor-info": {
-        "method": "cn.hutool.system.oshi.OshiUtil#getProcessor"
-    },
-    "cpu-info": {
+    "cpuinfo": {
         "method": "cn.hutool.system.oshi.OshiUtil#getCpuInfo"
     },
     "md5": {
@@ -270,7 +262,7 @@
             "string"
         ]
     },
-    "qrcode-generate": {
+    "qrcode": {
         "method": "cn.hutool.extra.qrcode.QrCodeUtil#generate",
         "paramTypes": [
             "string",
@@ -279,7 +271,7 @@
             "file"
         ]
     },
-    "qrcode-decode": {
+    "decodeqr": {
         "method": "cn.hutool.extra.qrcode.QrCodeUtil#decode",
         "paramTypes": [
             "file"
@@ -295,7 +287,7 @@
         "method": "cn.hutool.core.text.CharSequenceUtil#splitTrim",
         "paramTypes": [
             "j.char.seq",
-            "j.char.seq"
+            "j.char.seq=,"
         ]
     },
     "mkdir": {

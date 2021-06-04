@@ -11,7 +11,7 @@
             "j.char.seq"
         ]
     },
-    "encode-url": {
+    "encodeurl": {
         "methodName": "encodeUrlSafe",
         "paramTypes": [
             "j.char.seq"

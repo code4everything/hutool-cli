@@ -12,7 +12,7 @@
 比如我们想生成一个随机UUID，现在只需要打开终端执行下面命令：
 
 ```shell
-hu random-uuid
+hu uuid
 # output: 483cc7fc-4b22-4188-8f1c-dc1ce4b6d3ee
 ```
 
@@ -111,16 +111,16 @@ hu -r cn.hutool.core.codec.Base64#encode -t java.lang.CharSequence -p hutool-cli
 hu -c base64 -m encode -p 'sky is blue'
 # output: c2t5IGlzIGJsdWU=
 
-hu -r base64-encode 'sky is blue' -y
+hu -r encode64 'sky is blue' -y
 # output: c2t5IGlzIGJsdWU=
 # 说明：-y 表示将输出结果复制到剪贴板
 
-hu -r base64-decode -a:0
+hu -r decode64 -a:0
 # output: sky is blue
 # 说明：-a:0 表示将剪贴板字符串内容注入到索引位置是0的参数中
 
 # v1.2新功能：支持连续执行，符号 // 分隔多个命令，\\0表示将第一个执行结果作为参数注入，\\1表示将第二个执行结果作为参数注入，依次类推
-hu base64-encode 'test multi cmd' // base64-decode \\0
+hu encode64 'test multi cmd' // decode64 \\0
 # output: test multi cmd
 ```
 
@@ -140,44 +140,44 @@ hu methods regex
 
 # regex 是类 cn.hutool.core.util.ReUtil 的别名
 # output:
-replaceAll(group:java.lang.CharSequence, var:java.util.regex.Pattern, replacement:java.lang.String)
-count(regex:java.lang.String, content:java.lang.CharSequence)
-replaceAll(e:java.lang.CharSequence, str:java.util.regex.Pattern, pattern:cn.hutool.core.lang.func.Func1)
-findAll(regex:java.lang.String, content:java.lang.CharSequence, group:int)
-getGroup0(regex:java.lang.String, content:java.lang.CharSequence)
-getGroup1(pattern:java.util.regex.Pattern, content:java.lang.CharSequence)
-delFirst(pattern:java.util.regex.Pattern, content:java.lang.CharSequence)
-getAllGroups(pattern:java.util.regex.Pattern, content:java.lang.CharSequence)
-findAllGroup1(pattern:java.util.regex.Pattern, content:java.lang.CharSequence)
-getFirstNumber(StringWithNumber:java.lang.CharSequence)
-isMatch(regex:java.lang.String, content:java.lang.CharSequence)
-findAll(regex:java.lang.String, content:java.lang.CharSequence, group:int, collection:java.util.Collection)
-getGroup0(pattern:java.util.regex.Pattern, content:java.lang.CharSequence)
-findAll(pattern:java.util.regex.Pattern, content:java.lang.CharSequence, group:int, collection:java.util.Collection)
-findAllGroup0(pattern:java.util.regex.Pattern, content:java.lang.CharSequence)
-extractMulti(regex:java.lang.String, content:java.lang.CharSequence, template:java.lang.String)
-isMatch(pattern:java.util.regex.Pattern, content:java.lang.CharSequence)
-getGroup1(regex:java.lang.String, content:java.lang.CharSequence)
-escape(current:java.lang.CharSequence)
-delAll(pattern:java.util.regex.Pattern, content:java.lang.CharSequence)
 contains(pattern:java.util.regex.Pattern, content:java.lang.CharSequence)
+contains(regex:java.lang.String, content:java.lang.CharSequence)
 count(pattern:java.util.regex.Pattern, content:java.lang.CharSequence)
+count(regex:java.lang.String, content:java.lang.CharSequence)
+delAll(pattern:java.util.regex.Pattern, content:java.lang.CharSequence)
+delAll(regex:java.lang.String, content:java.lang.CharSequence)
+delFirst(pattern:java.util.regex.Pattern, content:java.lang.CharSequence)
 delFirst(regex:java.lang.String, content:java.lang.CharSequence)
-replaceAll(str:java.lang.CharSequence, regex:java.lang.String, replaceFun:cn.hutool.core.lang.func.Func1)
+delPre(regex:java.lang.String, content:java.lang.CharSequence)
+escape(c:char)
+escape(current:java.lang.CharSequence)
+extractMulti(group:java.util.regex.Pattern, pattern:java.lang.CharSequence, content:java.lang.String)
+extractMulti(regex:java.lang.String, content:java.lang.CharSequence, template:java.lang.String)
+extractMultiAndDelPre(group:java.util.regex.Pattern, var:cn.hutool.core.lang.Holder, pattern:java.lang.String)
+extractMultiAndDelPre(regex:java.lang.String, contentHolder:cn.hutool.core.lang.Holder, template:java.lang.String)
+findAll(pattern:java.util.regex.Pattern, content:java.lang.CharSequence, group:int)
+findAll(pattern:java.util.regex.Pattern, content:java.lang.CharSequence, group:int, collection:java.util.Collection)
+findAll(regex:java.lang.String, content:java.lang.CharSequence, group:int)
+findAll(regex:java.lang.String, content:java.lang.CharSequence, group:int, collection:java.util.Collection)
+findAllGroup0(pattern:java.util.regex.Pattern, content:java.lang.CharSequence)
+findAllGroup0(regex:java.lang.String, content:java.lang.CharSequence)
+findAllGroup1(pattern:java.util.regex.Pattern, content:java.lang.CharSequence)
 findAllGroup1(regex:java.lang.String, content:java.lang.CharSequence)
 get(pattern:java.util.regex.Pattern, content:java.lang.CharSequence, groupIndex:int)
-extractMulti(group:java.util.regex.Pattern, pattern:java.lang.CharSequence, content:java.lang.String)
-escape(c:char)
-delPre(regex:java.lang.String, content:java.lang.CharSequence)
-getAllGroups(i:java.util.regex.Pattern, startGroup:java.lang.CharSequence, groupCount:boolean)
 get(regex:java.lang.String, content:java.lang.CharSequence, groupIndex:int)
-findAll(pattern:java.util.regex.Pattern, content:java.lang.CharSequence, group:int)
-findAllGroup0(regex:java.lang.String, content:java.lang.CharSequence)
-contains(regex:java.lang.String, content:java.lang.CharSequence)
+getAllGroups(i:java.util.regex.Pattern, startGroup:java.lang.CharSequence, groupCount:boolean)
+getAllGroups(pattern:java.util.regex.Pattern, content:java.lang.CharSequence)
+getFirstNumber(StringWithNumber:java.lang.CharSequence)
+getGroup0(pattern:java.util.regex.Pattern, content:java.lang.CharSequence)
+getGroup0(regex:java.lang.String, content:java.lang.CharSequence)
+getGroup1(pattern:java.util.regex.Pattern, content:java.lang.CharSequence)
+getGroup1(regex:java.lang.String, content:java.lang.CharSequence)
+isMatch(pattern:java.util.regex.Pattern, content:java.lang.CharSequence)
+isMatch(regex:java.lang.String, content:java.lang.CharSequence)
 replaceAll(content:java.lang.CharSequence, regex:java.lang.String, replacementTemplate:java.lang.String)
-extractMultiAndDelPre(regex:java.lang.String, contentHolder:cn.hutool.core.lang.Holder, template:java.lang.String)
-extractMultiAndDelPre(group:java.util.regex.Pattern, var:cn.hutool.core.lang.Holder, pattern:java.lang.String)
-delAll(regex:java.lang.String, content:java.lang.CharSequence)
+replaceAll(e:java.lang.CharSequence, str:java.util.regex.Pattern, pattern:cn.hutool.core.lang.func.Func1)
+replaceAll(group:java.lang.CharSequence, var:java.util.regex.Pattern, replacement:java.lang.String)
+replaceAll(str:java.lang.CharSequence, regex:java.lang.String, replaceFun:cn.hutool.core.lang.func.Func1)
 ```
 
 > v1.2版本已支持输出方法形参名称
@@ -191,55 +191,63 @@ hu -r alias
 
 # 或者 hutool alias
 # output:
-2hex               = cn.hutool.core.util.HexUtil#encodeHexStr(data:java.lang.String)
-base32-decode      = cn.hutool.core.codec.Base32#decodeStr(source:java.lang.String)
-base32-encode      = cn.hutool.core.codec.Base32#encode(source:java.lang.String)
-base64-decode      = cn.hutool.core.codec.Base64#decodeStr(source:java.lang.CharSequence)
-base64-encode      = cn.hutool.core.codec.Base64#encode(source:java.lang.CharSequence)
-base64-encode-url  = cn.hutool.core.codec.Base64#encodeUrlSafe(source:java.lang.CharSequence)
-convert-charset    = cn.hutool.core.util.CharsetUtil#convert(file:java.io.File, srcCharset:java.nio.charset.Charset, destCharset:java.nio.charset.Charset)
-cpu-info           = cn.hutool.system.oshi.OshiUtil#getCpuInfo()
-curr-sec           = cn.hutool.core.date.DateUtil#currentSeconds()
-date-between       = cn.hutool.core.date.DateUtil#between(beginDate:java.util.Date, endDate:java.util.Date, unit:cn.hutool.core.date.DateUnit=day)
-date2ms            = org.code4everything.hutool.Utils#date2Millis(date:java.util.Date)
-eval               = cn.hutool.script.ScriptUtil#eval(e:java.lang.String)
-file-read          = cn.hutool.core.io.FileUtil#readUtf8String(path:java.lang.String)
-file-type          = cn.hutool.core.io.FileUtil#getType(file:java.io.File)
-get                = cn.hutool.http.HttpUtil#get(urlString:java.lang.String)
-hardware-info      = cn.hutool.system.oshi.OshiUtil#getHardware()
-idcard             = cn.hutool.core.util.IdcardUtil#getIdcardInfo(idcard:java.lang.String)
-java-info          = cn.hutool.system.SystemUtil#props()
-lower              = org.code4everything.hutool.Utils#toLowerCase(str:java.lang.String)
-lunar              = org.code4everything.hutool.Utils#lunar(date:java.util.Date)
-md5                = cn.hutool.crypto.SecureUtil#md5(data:java.lang.String)
-methods            = org.code4everything.hutool.Utils#outputPublicStaticMethods(modifiers:java.lang.Class)
-mkdir              = cn.hutool.core.io.FileUtil#mkdir(dir:java.io.File)
-ms2date            = cn.hutool.core.date.DateUtil#date(date:java.util.Date)
-now                = cn.hutool.core.date.DateUtil#date()
-object-id          = cn.hutool.core.util.IdUtil#objectId()
-pinyin             = cn.hutool.extra.pinyin.PinyinUtil#getPinyin(str:java.lang.String)
-post               = cn.hutool.http.HttpUtil#post(urlString:java.lang.String, body:java.lang.String)
-processor-info     = cn.hutool.system.oshi.OshiUtil#getProcessor()
-qrcode-decode      = cn.hutool.extra.qrcode.QrCodeUtil#decode(qrCodeFile:java.io.File)
-qrcode-generate    = cn.hutool.extra.qrcode.QrCodeUtil#generate(content:java.lang.String, width:int=1000, height:int=1000, targetFile:java.io.File)
-random             = cn.hutool.core.util.RandomUtil#randomLong()
-random-color       = cn.hutool.core.img.ImgUtil#randomColor()
-random-credit-code = cn.hutool.core.util.CreditCodeUtil#randomCreditCode()
-random-double      = cn.hutool.core.util.RandomUtil#randomDouble()
-random-str         = cn.hutool.core.util.RandomUtil#randomString(length:int)
-random-uuid        = cn.hutool.core.util.IdUtil#randomUUID()
-regex-match        = cn.hutool.core.util.ReUtil#isMatch(regex:java.lang.String, content:java.lang.CharSequence)
-sha1               = cn.hutool.crypto.SecureUtil#sha1(data:java.lang.String)
-sha256             = cn.hutool.crypto.SecureUtil#sha256(data:java.lang.String)
-simple-uuid        = cn.hutool.core.util.IdUtil#simpleUUID()
-split              = cn.hutool.core.text.CharSequenceUtil#splitTrim(str:java.lang.CharSequence, separator:java.lang.CharSequence)
-str2unicode        = cn.hutool.core.text.UnicodeUtil#toUnicode(str:java.lang.String)
-system-info        = cn.hutool.system.oshi.OshiUtil#getSystem()
-test               = cn.hutool.core.util.ReUtil#isMatch(regex:java.lang.String, content:java.lang.CharSequence)
-unicode2str        = cn.hutool.core.text.UnicodeUtil#toString(c:java.lang.String)
-upper              = org.code4everything.hutool.Utils#toUpperCase(str:java.lang.String)
-week               = cn.hutool.core.date.DateUtil#dayOfWeekEnum(date:java.util.Date)
-week-end           = cn.hutool.core.date.DateUtil#endOfWeek(date:java.util.Date)
+assignable  = org.code4everything.hutool.Utils#assignableFrom(sourceClass:java.lang.Class, testClass:java.lang.Class)
+between     = cn.hutool.core.date.DateUtil#between(beginDate:java.util.Date, endDate:java.util.Date, unit:cn.hutool.core.date.DateUnit=day)
+calc        = org.code4everything.hutool.Utils#calc(expression:java.lang.String, scale:int=0)
+class       = org.code4everything.hutool.Utils#parseClassName(className:java.lang.String)
+cpuinfo     = cn.hutool.system.oshi.OshiUtil#getCpuInfo()
+creditc     = cn.hutool.core.util.CreditCodeUtil#randomCreditCode()
+date2ms     = org.code4everything.hutool.Utils#date2Millis(date:java.util.Date)
+decode32    = cn.hutool.core.codec.Base32#decodeStr(source:java.lang.String)
+decode64    = cn.hutool.core.codec.Base64#decodeStr(source:java.lang.CharSequence)
+decodeqr    = cn.hutool.extra.qrcode.QrCodeUtil#decode(qrCodeFile:java.io.File)
+download    = cn.hutool.http.HttpUtil#downloadFileFromUrl(url:java.lang.String, destFile:java.io.File)
+encode32    = cn.hutool.core.codec.Base32#encode(source:java.lang.String)
+encode64    = cn.hutool.core.codec.Base64#encode(source:java.lang.CharSequence)
+encode64url = cn.hutool.core.codec.Base64#encodeUrlSafe(source:java.lang.CharSequence)
+eval        = cn.hutool.script.ScriptUtil#eval(e:java.lang.String)
+fconvert    = cn.hutool.core.util.CharsetUtil#convert(file:java.io.File, srcCharset:java.nio.charset.Charset, destCharset:java.nio.charset.Charset)
+fopen       = cn.hutool.core.swing.DesktopUtil#open(e:java.io.File=.)
+fr          = cn.hutool.core.io.FileUtil#readUtf8String(file:java.io.File)
+ftype       = cn.hutool.core.io.FileUtil#getType(file:java.io.File)
+fw          = cn.hutool.core.io.FileUtil#writeUtf8String(content:java.lang.String, file:java.io.File)
+get         = cn.hutool.http.HttpUtil#get(urlString:java.lang.String)
+grep        = org.code4everything.hutool.Utils#grep(line:java.util.regex.Pattern, pattern:java.util.List)
+hex         = cn.hutool.core.util.HexUtil#encodeHexStr(data:java.lang.String)
+idcard      = cn.hutool.core.util.IdcardUtil#getIdcardInfo(idcard:java.lang.String)
+jinfo       = cn.hutool.system.SystemUtil#props()
+lower       = org.code4everything.hutool.Utils#toLowerCase(str:java.lang.String)
+lunar       = org.code4everything.hutool.Utils#lunar(date:java.util.Date)
+match       = cn.hutool.core.util.ReUtil#isMatch(pattern:java.util.regex.Pattern, content:java.lang.CharSequence)
+md5         = cn.hutool.crypto.SecureUtil#md5(data:java.lang.String)
+methods     = org.code4everything.hutool.Utils#outputPublicStaticMethods(className:java.lang.String)
+mkdir       = cn.hutool.core.io.FileUtil#mkdir(dir:java.io.File)
+ms2date     = cn.hutool.core.date.DateUtil#date(date:long)
+now         = cn.hutool.core.date.DateUtil#date()
+objectid    = cn.hutool.core.util.IdUtil#objectId()
+pinyin      = cn.hutool.extra.pinyin.PinyinUtil#getPinyin(str:java.lang.String)
+post        = cn.hutool.http.HttpUtil#post(urlString:java.lang.String, body:java.lang.String={})
+qrcode      = cn.hutool.extra.qrcode.QrCodeUtil#generate(content:java.lang.String, width:int=1000, height:int=1000, targetFile:java.io.File)
+rand        = cn.hutool.core.util.RandomUtil#randomLong(min:long=0, max:long=9223372036854775807)
+randc       = cn.hutool.core.img.ImgUtil#randomColor()
+randd       = cn.hutool.core.util.RandomUtil#randomDouble(min:double=0, max:double=9223372036854775807)
+randpass    = cn.hutool.core.util.RandomUtil#randomString(number:java.lang.String=abcdefghijkmnpqrstuvwxyzABCDEFGHJKMNPQRSTUVWXYZ234567892345678923456789, i:int=16)
+rands       = cn.hutool.core.util.RandomUtil#randomString(length:int=16)
+regex       = cn.hutool.core.util.ReUtil#isMatch(pattern:java.util.regex.Pattern, content:java.lang.CharSequence)
+second      = cn.hutool.core.date.DateUtil#currentSeconds()
+sha1        = cn.hutool.crypto.SecureUtil#sha1(data:java.lang.String)
+sha256      = cn.hutool.crypto.SecureUtil#sha256(data:java.lang.String)
+split       = cn.hutool.core.text.CharSequenceUtil#splitTrim(str:java.lang.CharSequence, separator:java.lang.CharSequence=,)
+str2unicode = cn.hutool.core.text.UnicodeUtil#toUnicode(str:java.lang.String)
+suppers     = org.code4everything.hutool.Utils#getSupperClass(clazz:java.lang.Class)
+sysinfo     = cn.hutool.system.oshi.OshiUtil#getSystem()
+test        = cn.hutool.core.util.ReUtil#isMatch(pattern:java.util.regex.Pattern, content:java.lang.CharSequence)
+unicode2str = cn.hutool.core.text.UnicodeUtil#toString(c:java.lang.String)
+upper       = org.code4everything.hutool.Utils#toUpperCase(str:java.lang.String)
+uuid        = cn.hutool.core.util.IdUtil#randomUUID()
+uuid0       = cn.hutool.core.util.IdUtil#simpleUUID()
+week        = cn.hutool.core.date.DateUtil#dayOfWeekEnum(date:java.util.Date)
+weekend     = cn.hutool.core.date.DateUtil#endOfWeek(date:java.util.Date)
 ```
 
 查看类名称别名
@@ -248,31 +256,40 @@ week-end           = cn.hutool.core.date.DateUtil#endOfWeek(date:java.util.Date)
 hu -c alias
 
 # output:
-base32  = cn.hutool.core.codec.Base32
-base64  = cn.hutool.core.codec.Base64
-caesar  = cn.hutool.core.codec.Caesar
-charset = cn.hutool.core.util.CharsetUtil
-date    = cn.hutool.core.date.DateUtil
-emoji   = cn.hutool.extra.emoji.EmojiUtil
-file    = cn.hutool.core.io.FileUtil
-hash    = cn.hutool.core.util.HashUtil
-hex     = cn.hutool.core.util.HexUtil
-http    = cn.hutool.http.HttpUtil
-id      = cn.hutool.core.util.IdUtil
-list    = cn.hutool.core.collection.ListUtil
-math    = cn.hutool.core.math.MathUtil
-net     = cn.hutool.core.net.NetUtil
-phone   = cn.hutool.core.util.PhoneUtil
-pinyin  = cn.hutool.extra.pinyin.PinyinUtil
-qrcode  = cn.hutool.extra.qrcode.QrCodeUtil
-random  = cn.hutool.core.util.RandomUtil
-reflect = cn.hutool.core.util.ReflectUtil
-regex   = cn.hutool.core.util.ReUtil
-script  = cn.hutool.script.ScriptUtil
-secure  = cn.hutool.crypto.SecureUtil
-str     = cn.hutool.core.util.StrUtil
-system  = cn.hutool.system.SystemUtil
-unicode = cn.hutool.core.text.UnicodeUtil
+base32      = cn.hutool.core.codec.Base32
+base64      = cn.hutool.core.codec.Base64
+caesar      = cn.hutool.core.codec.Caesar
+charset     = cn.hutool.core.util.CharsetUtil
+clipboard   = cn.hutool.core.swing.clipboard.ClipboardUtil
+credit      = cn.hutool.core.util.CreditCodeUtil
+csu         = cn.hutool.core.text.CharSequenceUtil
+date        = cn.hutool.core.date.DateUtil
+desensitize = cn.hutool.core.util.DesensitizedUtil
+emoji       = cn.hutool.extra.emoji.EmojiUtil
+file        = cn.hutool.core.io.FileUtil
+hash        = cn.hutool.core.util.HashUtil
+hex         = cn.hutool.core.util.HexUtil
+http        = cn.hutool.http.HttpUtil
+id          = cn.hutool.core.util.IdUtil
+img         = cn.hutool.core.img.ImgUtil
+list        = cn.hutool.core.collection.ListUtil
+math        = cn.hutool.core.math.MathUtil
+net         = cn.hutool.core.net.NetUtil
+p           = cn.hutool.core.swing.DesktopUtil
+phone       = cn.hutool.core.util.PhoneUtil
+pinyin      = cn.hutool.extra.pinyin.PinyinUtil
+qrcode      = cn.hutool.extra.qrcode.QrCodeUtil
+random      = cn.hutool.core.util.RandomUtil
+reflect     = cn.hutool.core.util.ReflectUtil
+regex       = cn.hutool.core.util.ReUtil
+robot       = cn.hutool.core.swing.RobotUtil
+screen      = cn.hutool.core.swing.ScreenUtil
+script      = cn.hutool.script.ScriptUtil
+secure      = cn.hutool.crypto.SecureUtil
+str         = cn.hutool.core.util.StrUtil
+system      = cn.hutool.system.SystemUtil
+unicode     = cn.hutool.core.text.UnicodeUtil
+zip         = cn.hutool.core.util.ZipUtil
 ```
 
 查看类别名下方法别名，有以下两种方式：
@@ -281,21 +298,21 @@ unicode = cn.hutool.core.text.UnicodeUtil
 hu -c base64 -m alias
 
 # output:
-decode     = decodeStr(source:java.lang.CharSequence)
-encode     = encode(source:java.lang.CharSequence)
-encode-url = encodeUrlSafe(source:java.lang.CharSequence)
+decode    = decodeStr(source:java.lang.CharSequence)
+encode    = encode(source:java.lang.CharSequence)
+encodeurl = encodeUrlSafe(source:java.lang.CharSequence)
 ```
 
 ```shell
 hu -r date#alias
 
 # output:
-between     = between(beginDate:java.util.Date, endDate:java.util.Date, unit:cn.hutool.core.date.DateUnit=day)
-curr-sec    = currentSeconds()
-ms2datetime = date(date:java.util.Date)
-now         = now()
-week        = dayOfWeekEnum(date:java.util.Date)
-week-end    = endOfWeek(date:java.util.Date)
+between = between(beginDate:java.util.Date, endDate:java.util.Date, unit:cn.hutool.core.date.DateUnit=day)
+ms2date = date(date:java.util.Date)
+now     = now()
+second  = currentSeconds()
+week    = dayOfWeekEnum(date:java.util.Date)
+weekend = endOfWeek(date:java.util.Date)
 ```
 
 > 我们可以通过关键字 `alias` 来查看命令、类名、方法名已有的别名
@@ -309,26 +326,27 @@ week-end    = endOfWeek(date:java.util.Date)
 查看生成二维码的命令
 
 ```shell
-hu alias | grep qrcode
+# 查找qrcode相关命令
+hu alias // grep qr \\0
 
 # output:
-
-qrcode-decode      = cn.hutool.extra.qrcode.QrCodeUtil#decode(java.io.File)
-qrcode-generate    = cn.hutool.extra.qrcode.QrCodeUtil#generate(java.lang.String, java.lang.Integer=1000, java.lang.Integer=1000, java.io.File)
+decodeqr    = cn.hutool.extra.qrcode.QrCodeUtil#decode(qrCodeFile:java.io.File)
+qrcode      = cn.hutool.extra.qrcode.QrCodeUtil#generate(content:java.lang.String, width:int=1000, height:int=1000, targetFile:java.io.File)
+randpass    = cn.hutool.core.util.RandomUtil#randomString(number:java.lang.String=abcdefghijkmnpqrstuvwxyzABCDEFGHJKMNPQRSTUVWXYZ234567892345678923456789, i:int=16)
 ```
 
 然后执行
 
 ```shell
 # 该方法有默认值，默认值可全缺省
-hu qrcode-generate 'qrcode test' /home/test.png
+hu qrcode 'qrcode test' /home/test.png
 ```
 
 或者不使用默认值
 
 ```shell
 # 虽然该方法有默认值，但我们可以不使用
-hu qrcode-generate 'qrcode test' 600 600 /home/test.png
+hu qrcode 'qrcode test' 600 600 /home/test.png
 ```
 
 ## 自定义别名
@@ -337,7 +355,7 @@ hu qrcode-generate 'qrcode test' 600 600 /home/test.png
 
 ```json
 {
-    "base64-encode-url": {
+    "encode64url": {
         "method": "cn.hutool.core.codec.Base64#encodeUrlSafe",
         "paramTypes": [
             "j.char.seq"

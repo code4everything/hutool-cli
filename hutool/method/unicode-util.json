@@ -1,11 +1,11 @@
 {
-    "2str": {
+    "str": {
         "methodName": "toString",
         "paramTypes": [
             "string"
         ]
     },
-    "2unicode": {
+    "unicode": {
         "methodName": "toUnicode",
         "paramTypes": [
             "string"

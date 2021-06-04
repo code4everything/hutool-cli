@@ -310,7 +310,7 @@ public final class Utils {
 
             String paramStr = attribute.variableName(i) + ":" + paramType;
             if (defaultValueMap != null) {
-                String defaultValue = defaultValueMap.get(paramType);
+                String defaultValue = defaultValueMap.get(paramType + i);
                 if (!isStringEmpty(defaultValue)) {
                     paramStr += "=" + defaultValue;
                 }

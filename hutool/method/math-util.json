@@ -1,12 +1,12 @@
 {
-    "arrangement-count": {
+    "arrangement": {
         "methodName": "arrangementCount",
         "paramTypes": [
             "int",
             "int"
         ]
     },
-    "combination-count": {
+    "combination": {
         "methodName": "combinationCount",
         "paramTypes": [
             "int",
