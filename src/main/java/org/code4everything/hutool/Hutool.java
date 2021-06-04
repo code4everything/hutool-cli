@@ -30,6 +30,7 @@ import java.lang.reflect.Modifier;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -40,6 +41,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.StringJoiner;
 import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 /**
  * @author pantao
@@ -212,9 +214,7 @@ public final class Hutool {
             debugOutput("parse method to class name and method name");
             ARG.className = classMethod.substring(0, idx);
             ARG.methodName = classMethod.substring(idx + 1);
-
-            List<String> paramTypes = methodJson.getObject(PARAM_KEY, new TypeReference<List<String>>() {});
-            ARG.paramTypes = ObjectUtil.defaultIfNull(paramTypes, Collections.emptyList());
+            parseMethod(methodJson);
             fixClassName = omitParamType = false;
         }
 
@@ -453,9 +453,8 @@ public final class Hutool {
                 if (!Utils.isStringEmpty(methodName)) {
                     ARG.methodName = methodName;
                 }
+                parseMethod(methodJson);
                 debugOutput("get method name: %s", ARG.methodName);
-                List<String> paramTypes = methodJson.getObject(PARAM_KEY, new TypeReference<List<String>>() {});
-                ARG.paramTypes = ObjectUtil.defaultIfNull(paramTypes, Collections.emptyList());
                 omitParamType = false;
             }
         }
@@ -490,16 +489,15 @@ public final class Hutool {
                 if (Utils.isStringEmpty(methodName)) {
                     methodName = json.getString("methodName");
                 }
-
-                List<String> paramTypes = json.getObject(PARAM_KEY, new TypeReference<List<String>>() {});
-                paramTypes = ObjectUtil.defaultIfNull(paramTypes, Collections.emptyList());
+                ARG.methodName = methodName;
+                parseMethod(json);
                 try {
                     // 拿到方法的形参名称，参数类型
-                    map.put(k, parseMethodFullInfo(className, methodName, paramTypes));
+                    map.put(k, parseMethodFullInfo(className, ARG.methodName, ARG.paramTypes));
                 } catch (Exception e) {
                     // 这里只能输出方法参数类型，无法输出形参类型
                     debugOutput("parse method param name error: %s", ExceptionUtil.stacktraceToString(e, Integer.MAX_VALUE));
-                    String typeString = ArrayUtil.join(paramTypes.toArray(new String[0]), ", ");
+                    String typeString = ArrayUtil.join(ARG.paramTypes.toArray(new String[0]), ", ");
                     map.put(k, methodName + "(" + typeString + ")");
                 }
             }
@@ -509,6 +507,24 @@ public final class Hutool {
         debugOutput("max length: %s", maxLength.get());
         map.forEach((k, v) -> joiner.add(Utils.padAfter(k, maxLength.get(), ' ') + " = " + v));
         result = joiner.toString();
+    }
+
+    private static void parseMethod(JSONObject json) {
+        if (ARG.methodName.endsWith(")")) {
+            int idx = ARG.methodName.indexOf("(");
+            if (idx < 1) {
+                debugOutput("method format error: " + ARG.methodName);
+                return;
+            }
+            String[] split = ARG.methodName.substring(idx + 1, ARG.methodName.length() - 1).split(",");
+            ARG.paramTypes = Arrays.stream(split).filter(e -> !Utils.isStringEmpty(e)).collect(Collectors.toList());
+            ARG.methodName = ARG.methodName.substring(0, idx);
+            return;
+        }
+        if (Objects.nonNull(json)) {
+            List<String> paramTypes = json.getObject(PARAM_KEY, new TypeReference<List<String>>() {});
+            ARG.paramTypes = ObjectUtil.defaultIfNull(paramTypes, Collections.emptyList());
+        }
     }
 
     private static String parseMethodFullInfo(String className, String methodName, List<String> paramTypes) throws NotFoundException {
@@ -535,10 +551,12 @@ public final class Hutool {
             int idx = paramTypeClass.indexOf("=");
             if (idx > 0) {
                 String old = paramTypeClass;
-                paramTypeClass = old.substring(0, idx);
+                paramTypeClass = Utils.parseClassName(old.substring(0, idx));
                 defaultValueMap.put(paramTypeClass, old.substring(idx + 1));
+            } else {
+                paramTypeClass = Utils.parseClassName(paramTypeClass);
             }
-            params[i] = pool.get(Utils.parseClassName(paramTypeClass));
+            params[i] = pool.get(paramTypeClass);
         }
         CtMethod ctMethod = ctClass.getDeclaredMethod(mn, params);
         return (outClassName ? ctClass.getName() + "#" : "") + Utils.getMethodFullInfo(ctMethod, defaultValueMap);
