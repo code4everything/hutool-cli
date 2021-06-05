@@ -45,4 +45,12 @@ public class HutoolCli {
     public void random() {
         test("random");
     }
+
+    @Test
+    public void value() {
+        test("value j.int MAX_VALUE");
+        test("value j.long MAX_VALUE");
+        test("maxint");
+        test("maxlong");
+    }
 }

@@ -5,6 +5,7 @@ import cn.hutool.core.exceptions.ExceptionUtil;
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.lang.JarClassLoader;
 import cn.hutool.core.math.Calculator;
+import cn.hutool.core.util.ReflectUtil;
 import com.alibaba.fastjson.JSONObject;
 import javassist.ClassPool;
 import javassist.CtClass;
@@ -13,6 +14,7 @@ import javassist.NotFoundException;
 import javassist.bytecode.LocalVariableAttribute;
 
 import java.io.File;
+import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -36,6 +38,11 @@ public final class Utils {
 
     private Utils() {}
 
+    public static Object getStaticFieldValue(Class<?> clazz, String fieldName) {
+        Field field = ReflectUtil.getField(clazz, fieldName);
+        return ReflectUtil.getStaticFieldValue(field);
+    }
+
     public static List<String> getMatchedItems(Pattern regex, String content) {
         ArrayList<String> result = new ArrayList<>();
         Matcher matcher = regex.matcher(content);
@@ -44,7 +51,7 @@ public final class Utils {
         }
         return result;
     }
-    
+
     public static String getSupperClass(Class<?> clazz) {
         StringJoiner joiner = new StringJoiner("\n");
         getSupperClass(joiner, "", clazz);

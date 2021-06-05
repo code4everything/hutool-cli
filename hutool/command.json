@@ -308,5 +308,14 @@
         "paramTypes": [
             "file=."
         ]
+    },
+    "value": {
+        "method": "org.code4everything.hutool.Utils#getStaticFieldValue(class,string)"
+    },
+    "maxint": {
+        "method": "org.code4everything.hutool.Utils#getStaticFieldValue(class=j.int,string=MAX_VALUE)"
+    },
+    "maxlong": {
+        "method": "org.code4everything.hutool.Utils#getStaticFieldValue(class=j.long,string=MAX_VALUE)"
     }
 }
