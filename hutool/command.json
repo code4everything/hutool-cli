@@ -183,7 +183,7 @@
         ]
     },
     "match": {
-        "method": "cn.hutool.core.util.ReUtil#isMatch(reg.pattern,j.char.seq)"
+        "method": "org.code4everything.hutool.Utils#getMatchedItems(reg.pattern,string)"
     },
     "test": {
         "method": "cn.hutool.core.util.ReUtil#isMatch(reg.pattern,j.char.seq)"

@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.StringJoiner;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
@@ -35,13 +36,22 @@ public final class Utils {
 
     private Utils() {}
 
-    private static String getSupperClass(Class<?> clazz) {
+    public static List<String> getMatchedItems(Pattern regex, String content) {
+        ArrayList<String> result = new ArrayList<>();
+        Matcher matcher = regex.matcher(content);
+        while (matcher.find()) {
+            result.add(matcher.group(0));
+        }
+        return result;
+    }
+    
+    public static String getSupperClass(Class<?> clazz) {
         StringJoiner joiner = new StringJoiner("\n");
         getSupperClass(joiner, "", clazz);
         return joiner.toString();
     }
 
-    public static void getSupperClass(StringJoiner joiner, String prefix, Class<?> clazz) {
+    private static void getSupperClass(StringJoiner joiner, String prefix, Class<?> clazz) {
         if (clazz == null || Object.class == clazz) {
             return;
         }
