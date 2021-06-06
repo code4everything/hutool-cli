@@ -68,5 +68,7 @@ public class HutoolCli {
     public void fields() {
         test("fields j.int");
         test("fields string");
+        test("fields org.code4everything.hutool.MethodArg");
+        test("fields org.code4everything.hutool.Hutool");
     }
 }

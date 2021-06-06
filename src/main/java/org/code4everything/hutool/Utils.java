@@ -1,8 +1,10 @@
 package org.code4everything.hutool;
 
+import cn.hutool.core.comparator.ComparatorChain;
 import cn.hutool.core.date.ChineseDate;
 import cn.hutool.core.exceptions.ExceptionUtil;
 import cn.hutool.core.io.FileUtil;
+import cn.hutool.core.lang.Holder;
 import cn.hutool.core.lang.JarClassLoader;
 import cn.hutool.core.math.Calculator;
 import cn.hutool.core.util.ReflectUtil;
@@ -19,13 +21,17 @@ import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.StringJoiner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * @author pantao
@@ -43,12 +49,56 @@ public final class Utils {
         if (clazz.isPrimitive()) {
             clazz = parseClass0(parseClassName0("j." + clazz.getName()));
         }
+
         Field[] fields = ReflectUtil.getFields(clazz);
         StringJoiner joiner = new StringJoiner("\n");
-        Arrays.stream(fields).filter(field -> {
+        Map<String, List<String>> modifierMap = new HashMap<>();
+        ComparatorChain<String> comparators = new ComparatorChain<>();
+        comparators.addComparator(Comparator.comparingInt(o -> modifierMap.computeIfAbsent(o, s -> {
+            String[] ss = s.split(" ");
+            return ss.length > 2 ? Arrays.stream(ss).limit(ss.length - 2L).collect(Collectors.toList()) : Collections.emptyList();
+        }).size()));
+        comparators.addComparator(Comparator.naturalOrder());
+
+        List<String> modifierList = new ArrayList<>();
+        Holder<String> holder = Holder.of("");
+        Arrays.stream(fields).map(field -> {
+            String line = "";
             int modifiers = field.getModifiers();
-            return Modifier.isStatic(modifiers) && Modifier.isPublic(modifiers);
-        }).forEach(e -> joiner.add(e.getName()));
+            if (Modifier.isPrivate(modifiers)) {
+                line += "private ";
+            } else if (Modifier.isProtected(modifiers)) {
+                line += "protected ";
+            } else if (Modifier.isPublic(modifiers)) {
+                line += "public ";
+            }
+
+            if (Modifier.isStatic(modifiers)) {
+                line += "static ";
+            }
+            if (Modifier.isFinal(modifiers)) {
+                line += "final ";
+            }
+            if (Modifier.isTransient(modifiers)) {
+                line += "transient ";
+            }
+            if (Modifier.isVolatile(modifiers)) {
+                line += "volatile ";
+            }
+            return line + field.getType().getSimpleName() + " " + field.getName();
+        }).sorted(comparators).forEach(s -> {
+            String line = s;
+            List<String> list = modifierMap.get(s);
+            if (!modifierList.equals(list)) {
+                line = holder.get() + line;
+                modifierList.clear();
+                modifierList.addAll(list);
+            }
+
+            joiner.add(line);
+            holder.set("\n");
+        });
+
         return joiner.toString();
     }
 
