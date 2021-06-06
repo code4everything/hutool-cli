@@ -10,3 +10,5 @@ build
 *.zip
 .DS_Store
 hutool/external.conf
+src/main/java/org/code4everything/hutool/ignore
+src/test/java/org/code4everything/hutool/ignore

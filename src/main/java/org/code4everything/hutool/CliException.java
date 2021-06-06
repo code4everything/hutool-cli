@@ -9,4 +9,8 @@ public class CliException extends RuntimeException {
     public CliException() {
         super("hutool-cli exception test in debug mode");
     }
+
+    public CliException(String msg) {
+        super(msg);
+    }
 }
