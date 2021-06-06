@@ -148,5 +148,8 @@
     },
     "zip": {
         "clazz": "cn.hutool.core.util.ZipUtil"
+    },
+    "utils": {
+        "clazz": "org.code4everything.hutool.Utils"
     }
 }

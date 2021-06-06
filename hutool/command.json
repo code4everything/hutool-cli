@@ -30,12 +30,10 @@
         ]
     },
     "now": {
-        "method": "cn.hutool.core.date.DateUtil#date",
-        "paramTypes": []
+        "method": "cn.hutool.core.date.DateUtil#date"
     },
     "second": {
-        "method": "cn.hutool.core.date.DateUtil#currentSeconds",
-        "paramTypes": []
+        "method": "cn.hutool.core.date.DateUtil#currentSeconds"
     },
     "week": {
         "method": "cn.hutool.core.date.DateUtil#dayOfWeekEnum",
@@ -64,7 +62,7 @@
         ]
     },
     "date2ms": {
-        "method": "org.code4everything.hutool.Utils#date2Millis",
+        "method": "utils#date2Millis",
         "paramTypes": [
             "date"
         ]
@@ -151,39 +149,39 @@
         "method": "cn.hutool.core.img.ImgUtil#randomColor"
     },
     "methods": {
-        "method": "org.code4everything.hutool.Utils#outputPublicStaticMethods",
+        "method": "utils#outputPublicStaticMethods",
         "paramTypes": [
             "string"
         ]
     },
     "class": {
-        "method": "org.code4everything.hutool.Utils#parseClassName",
+        "method": "utils#parseClassName",
         "paramTypes": [
             "string"
         ]
     },
     "assignable": {
-        "method": "org.code4everything.hutool.Utils#assignableFrom",
+        "method": "utils#assignableFrom",
         "paramTypes": [
             "class",
             "class"
         ]
     },
     "suppers": {
-        "method": "org.code4everything.hutool.Utils#getSupperClass",
+        "method": "utils#getSupperClass",
         "paramTypes": [
             "class"
         ]
     },
     "grep": {
-        "method": "org.code4everything.hutool.Utils#grep",
+        "method": "utils#grep",
         "paramTypes": [
             "reg.pattern",
             "list"
         ]
     },
     "match": {
-        "method": "org.code4everything.hutool.Utils#getMatchedItems(reg.pattern,string)"
+        "method": "utils#getMatchedItems(reg.pattern,string)"
     },
     "test": {
         "method": "cn.hutool.core.util.ReUtil#isMatch(reg.pattern,j.char.seq)"
@@ -192,13 +190,13 @@
         "method": "cn.hutool.core.util.ReUtil#isMatch(reg.pattern,j.char.seq)"
     },
     "upper": {
-        "method": "org.code4everything.hutool.Utils#toUpperCase",
+        "method": "utils#toUpperCase",
         "paramTypes": [
             "string"
         ]
     },
     "lower": {
-        "method": "org.code4everything.hutool.Utils#toLowerCase",
+        "method": "utils#toLowerCase",
         "paramTypes": [
             "string"
         ]
@@ -278,7 +276,7 @@
         ]
     },
     "lunar": {
-        "method": "org.code4everything.hutool.Utils#lunar",
+        "method": "utils#lunar",
         "paramTypes": [
             "date"
         ]
@@ -297,7 +295,7 @@
         ]
     },
     "calc": {
-        "method": "org.code4everything.hutool.Utils#calc",
+        "method": "utils#calc",
         "paramTypes": [
             "string",
             "int=0"
@@ -310,12 +308,15 @@
         ]
     },
     "value": {
-        "method": "org.code4everything.hutool.Utils#getStaticFieldValue(class,string)"
+        "method": "utils#getStaticFieldValue(class,string)"
     },
     "maxint": {
-        "method": "org.code4everything.hutool.Utils#getStaticFieldValue(class=j.int,string=MAX_VALUE)"
+        "method": "utils#getStaticFieldValue(class=j.int,string=MAX_VALUE)"
     },
     "maxlong": {
-        "method": "org.code4everything.hutool.Utils#getStaticFieldValue(class=j.long,string=MAX_VALUE)"
+        "method": "utils#getStaticFieldValue(class=j.long,string=MAX_VALUE)"
+    },
+    "fields": {
+        "method": "utils#getStaticFieldNames(class)"
     }
 }

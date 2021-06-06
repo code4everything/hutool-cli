@@ -71,6 +71,8 @@ public final class Hutool {
 
     static String homeDir = System.getenv("HUTOOL_PATH");
 
+    static String resultString;
+
     private static boolean omitParamType = true;
 
     private static JCommander commander;
@@ -121,7 +123,7 @@ public final class Hutool {
             return "";
         }
         convertResult();
-        String resultString = ObjectUtil.toString(result);
+        resultString = ObjectUtil.toString(result);
         if (ARG.copy) {
             debugOutput("copying result into clipboard");
             ClipboardUtil.setStr(resultString);

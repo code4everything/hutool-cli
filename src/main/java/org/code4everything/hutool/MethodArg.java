@@ -1,5 +1,6 @@
 package org.code4everything.hutool;
 
+import com.alibaba.fastjson.JSON;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 
@@ -63,4 +64,9 @@ public class MethodArg {
 
     @Parameter(names = "--work-dir", description = "current work dir", hidden = true, order = 12)
     public String workDir = ".";
+
+    @Override
+    public String toString() {
+        return JSON.toJSONString(this, true);
+    }
 }

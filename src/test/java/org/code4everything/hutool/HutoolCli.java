@@ -1,5 +1,8 @@
 package org.code4everything.hutool;
 
+import cn.hutool.core.codec.Base64;
+import cn.hutool.core.util.StrUtil;
+import org.junit.Assert;
 import org.junit.Test;
 
 /**
@@ -8,25 +11,32 @@ import org.junit.Test;
  */
 public class HutoolCli {
 
-    public static void test(String cmd) {
-        Hutool.main(cmd.split(" "));
+    public static String test(String cmd, Object... params) {
+        Hutool.main(StrUtil.format(cmd, params).split(" "));
+        return Hutool.resultString;
     }
 
     @Test
     public void base64() {
-        test("-c cn.hutool.core.codec.Base64 -m encode -t j.char.seq -p 123456789");
+        String test = "123456789";
+        Assert.assertEquals(Base64.encode(test), test("-c cn.hutool.core.codec.Base64 -m encode -t j.char.seq -p {}", test));
+
+        test = "dd55122a5a5f4a";
+        Assert.assertEquals(Base64.encode(test), test("encode64 {}", test));
+
+        test = Base64.encode(test);
+        Assert.assertEquals(Base64.decodeStr(test), test("decode64 {}", test));
     }
 
     @Test
     public void multiCmd() {
-        test("base64-encode 'test_multi_cmd' // base64-decode \\\\0");
-        test("date2ms now // calc \\\\0/1000");
-        test("alias // grep methods \\\\0");
+        String test = "test_multi_cmd";
+        Assert.assertEquals(test, test("encode64 {} // decode64 \\\\0", test));
     }
 
     @Test
     public void calc() {
-        test("calc 88/9");
+        Assert.assertEquals("3", test("calc 9/3"));
     }
 
     @Test
@@ -48,9 +58,15 @@ public class HutoolCli {
 
     @Test
     public void value() {
-        test("value j.int MAX_VALUE");
-        test("value j.long MAX_VALUE");
-        test("maxint");
-        test("maxlong");
+        Assert.assertEquals(String.valueOf(Integer.MAX_VALUE), test("maxint"));
+        Assert.assertEquals(String.valueOf(Long.MAX_VALUE), test("maxlong"));
+        Assert.assertEquals(String.valueOf(Integer.MIN_VALUE), test("value j.int MIN_VALUE"));
+        Assert.assertEquals(String.valueOf(Short.MIN_VALUE), test("value j.short MIN_VALUE"));
+    }
+
+    @Test
+    public void fields() {
+        test("fields j.int");
+        test("fields string");
     }
 }

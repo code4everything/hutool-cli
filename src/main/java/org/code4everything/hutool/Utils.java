@@ -17,6 +17,7 @@ import java.io.File;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -38,7 +39,23 @@ public final class Utils {
 
     private Utils() {}
 
-    public static Object getStaticFieldValue(Class<?> clazz, String fieldName) {
+    public static String getStaticFieldNames(Class<?> clazz) throws Exception {
+        if (clazz.isPrimitive()) {
+            clazz = parseClass0(parseClassName0("j." + clazz.getName()));
+        }
+        Field[] fields = ReflectUtil.getFields(clazz);
+        StringJoiner joiner = new StringJoiner("\n");
+        Arrays.stream(fields).filter(field -> {
+            int modifiers = field.getModifiers();
+            return Modifier.isStatic(modifiers) && Modifier.isPublic(modifiers);
+        }).forEach(e -> joiner.add(e.getName()));
+        return joiner.toString();
+    }
+
+    public static Object getStaticFieldValue(Class<?> clazz, String fieldName) throws Exception {
+        if (clazz.isPrimitive()) {
+            clazz = parseClass0(parseClassName0("j." + clazz.getName()));
+        }
         Field field = ReflectUtil.getField(clazz, fieldName);
         return ReflectUtil.getStaticFieldValue(field);
     }
