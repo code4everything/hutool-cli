@@ -406,6 +406,10 @@ public final class Hutool {
 
     @SuppressWarnings("rawtypes")
     private static Object castParam2JavaType(JSONObject convertJson, ParserConfig parserConfig, String param, Class<?> type) {
+        if ("nil".equals(param)) {
+            return null;
+        }
+
         if (resultContainer != null) {
             // 替换连续命令中的结果记录值
             for (int i = 0; i < resultContainer.size(); i++) {

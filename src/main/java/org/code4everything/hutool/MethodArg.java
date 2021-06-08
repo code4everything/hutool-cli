@@ -16,7 +16,7 @@ public class MethodArg {
 
     // @formatter:off
 
-    private static final String CLASS_DESC = "the hutool class name, here will add prefix 'cn.hutool.' automatically if missed";
+    private static final String CLASS_DESC = "full class name or name alias";
 
     private static final String PARAM_DESC = "the parameter(s) of method invoking required";
 

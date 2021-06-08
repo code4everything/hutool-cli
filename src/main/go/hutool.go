@@ -21,7 +21,7 @@ const (
 
 func main() {
 	cwd, _ := os.Getwd()
-	args := append([]string{"-jar", "hutool.jar", "--work-dir", cwd}, os.Args[1:]...)
+	args := append([]string{"--illegal-access=debug", "-jar", "hutool.jar", "--work-dir", cwd}, os.Args[1:]...)
 	cmd := exec.Command("java", args...)
 	path := os.Getenv("HUTOOL_PATH")
 	if path == "" {
