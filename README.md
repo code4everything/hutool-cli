@@ -133,6 +133,18 @@ hu eval 5+6+3+22+9999
 # output: 10035
 ```
 
+查看时间进度
+
+```shell
+hu dayp
+
+# output:
+today [oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo                            ]: 72%
+week  [oooooooooooooooooooooooooooo                                                                        ]: 28%
+month [oooooooooooooooooooooooooo                                                                          ]: 26%
+year  [ooooooooooooooooooooooooooooooooooooooooooo                                                         ]: 43%
+```
+
 ## 查看类有哪些可执行静态方法
 
 ```shell
