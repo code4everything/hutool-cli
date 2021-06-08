@@ -71,4 +71,9 @@ public class HutoolCli {
         test("fields org.code4everything.hutool.MethodArg");
         test("fields org.code4everything.hutool.Hutool");
     }
+
+    @Test
+    public void dayp() {
+        test("dayp");
+    }
 }

@@ -2,6 +2,8 @@ package org.code4everything.hutool;
 
 import cn.hutool.core.comparator.ComparatorChain;
 import cn.hutool.core.date.ChineseDate;
+import cn.hutool.core.date.DateTime;
+import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.exceptions.ExceptionUtil;
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.lang.Holder;
@@ -44,6 +46,51 @@ public final class Utils {
     private static JarClassLoader classLoader = null;
 
     private Utils() {}
+
+    public static String dayProcess() {
+        DateTime date = DateUtil.beginOfDay(DateUtil.date());
+        int todayProcess = (int) ((System.currentTimeMillis() - date.getTime()) * 100 / 24D / 60 / 60 / 1000);
+        int week = DateUtil.dayOfWeek(date) - 1;
+        int weekProcess = (int) ((week == 0 ? 7 : week) * 100 / 7D);
+        int monthProcess = (int) (DateUtil.dayOfMonth(date) * 100 / (double) DateUtil.endOfMonth(date).dayOfMonth());
+        int yearProcess = (int) (DateUtil.dayOfYear(date) * 100 / (double) DateUtil.endOfYear(date).dayOfYear());
+
+        String template = "";
+        template += String.format("today [%s%s]: %d%%\n", repeat('o', todayProcess), repeat(' ', 100 - todayProcess), todayProcess);
+        template += String.format("week  [%s%s]: %d%%\n", repeat('o', weekProcess), repeat(' ', 100 - weekProcess), weekProcess);
+        template += String.format("month [%s%s]: %d%%\n", repeat('o', monthProcess), repeat(' ', 100 - monthProcess), monthProcess);
+        template += String.format("year  [%s%s]: %d%%\n", repeat('o', yearProcess), repeat(' ', 100 - yearProcess), yearProcess);
+        return template;
+    }
+
+    public static String repeat(char c, int len) {
+        char[] cs = new char[len];
+        for (int i = 0; i < len; i++) {
+            cs[i] = c;
+        }
+        return new String(cs);
+    }
+
+    public static String toHttpUrlString(Map<String, Object> paramMap) {
+        if (paramMap == null || paramMap.isEmpty()) {
+            return "";
+        }
+
+        StringBuilder sb = new StringBuilder();
+        String sep = "?";
+        for (Map.Entry<String, Object> entry : paramMap.entrySet()) {
+            if (Objects.isNull(entry.getValue())) {
+                continue;
+            }
+            String value = entry.getValue().toString();
+            if (isStringEmpty(value)) {
+                continue;
+            }
+            sb.append(sep).append(entry.getKey()).append("=").append(value);
+            sep = "&";
+        }
+        return sb.toString();
+    }
 
     public static String getStaticFieldNames(Class<?> clazz) throws Exception {
         if (clazz.isPrimitive()) {

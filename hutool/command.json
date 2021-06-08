@@ -318,5 +318,8 @@
     },
     "fields": {
         "method": "utils#getStaticFieldNames(class)"
+    },
+    "dayp": {
+        "method": "utils#dayProcess"
     }
 }
