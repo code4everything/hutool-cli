@@ -56,10 +56,10 @@ public final class Utils {
         int yearProcess = (int) (DateUtil.dayOfYear(date) * 100 / (double) DateUtil.endOfYear(date).dayOfYear());
 
         String template = "";
-        template += String.format("today [%s%s]: %d%%\n", repeat('o', todayProcess), repeat(' ', 100 - todayProcess), todayProcess);
-        template += String.format("week  [%s%s]: %d%%\n", repeat('o', weekProcess), repeat(' ', 100 - weekProcess), weekProcess);
-        template += String.format("month [%s%s]: %d%%\n", repeat('o', monthProcess), repeat(' ', 100 - monthProcess), monthProcess);
-        template += String.format("year  [%s%s]: %d%%\n", repeat('o', yearProcess), repeat(' ', 100 - yearProcess), yearProcess);
+        template += String.format("today [%s%s]: %d%%%n", repeat('o', todayProcess), repeat(' ', 100 - todayProcess), todayProcess);
+        template += String.format("week  [%s%s]: %d%%%n", repeat('o', weekProcess), repeat(' ', 100 - weekProcess), weekProcess);
+        template += String.format("month [%s%s]: %d%%%n", repeat('o', monthProcess), repeat(' ', 100 - monthProcess), monthProcess);
+        template += String.format("year  [%s%s]: %d%%%n", repeat('o', yearProcess), repeat(' ', 100 - yearProcess), yearProcess);
         return template;
     }
 

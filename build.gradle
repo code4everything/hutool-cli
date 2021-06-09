@@ -25,6 +25,7 @@ dependencies {
     implementation 'com.alibaba:fastjson:1.2.76'
     implementation 'org.javassist:javassist:3.28.0-GA'
     testImplementation 'junit:junit:4.13.2'
+    testImplementation 'de.vandermeer:asciitable:0.3.2'
 }
 
 group = 'org.code4everything'
