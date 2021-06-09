@@ -398,6 +398,15 @@ hutool-cli 提供了很多常用的别名，参考下面文件：
 
 方法二，推荐，在 `HUTOOL_PATH` 对应的目录下新建external.conf文件，在文件中定义类加载路径（不包含包路径），多个用英文逗号分隔，还是用上面的类举例，假设类绝对路径是 `/home/java/com/examaple/Test.class`，那么文件定义路径 `/home/java` 即可。
 
+external.conf文件支持mvn坐标，但前提是本地maven仓库已有对应的jar包，比如：
+
+```txt
+/path/a,
+/path/b,
+mvn:org.code4everything:wetool-plugin-support:1.6.0,
+/path/c
+```
+
 ### 最后
 
 如果你觉得项目还不错，记得Star哟，欢迎 pr。

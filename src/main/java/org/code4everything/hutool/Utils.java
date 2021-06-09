@@ -45,6 +45,8 @@ public final class Utils {
 
     private static JarClassLoader classLoader = null;
 
+    private static List<String> mvnRepositoryHome = null;
+
     private Utils() {}
 
     public static String dayProcess() {
@@ -263,10 +265,7 @@ public final class Utils {
             if (FileUtil.exist(externalConf)) {
                 String[] externalPaths = FileUtil.readUtf8String(externalConf).split(",");
                 for (String externalPath : externalPaths) {
-                    if (Objects.isNull(externalPath)) {
-                        continue;
-                    }
-                    File external = FileUtil.file(externalPath.trim());
+                    File external = parseClasspath(externalPath);
                     if (FileUtil.exist(external)) {
                         classLoader.addURL(external);
                     }
@@ -275,6 +274,40 @@ public final class Utils {
         }
 
         return classLoader.loadClass(className);
+    }
+
+    private static File parseClasspath(String path) {
+        if (isStringEmpty(path)) {
+            return null;
+        }
+
+        path = path.trim();
+        if (path.startsWith("mvn:")) {
+            path = path.substring(4);
+            if (isStringEmpty(path)) {
+                return null;
+            }
+            String[] coordinates = path.split(":", 3);
+            if (coordinates.length != 3) {
+                Hutool.debugOutput("mvn coordinate format error: " + path);
+                return null;
+            }
+            if (Objects.isNull(mvnRepositoryHome)) {
+                mvnRepositoryHome = Arrays.asList("~", ".m2", "repository");
+            }
+            List<String> paths = new ArrayList<>(mvnRepositoryHome);
+            paths.addAll(Arrays.asList(coordinates[0].split("\\.")));
+            String name = coordinates[1];
+            String version = coordinates[2];
+            paths.add(name);
+            paths.add(version);
+            paths.add(name + "-" + version + ".jar");
+            File file = FileUtil.file(paths.toArray(new String[0]));
+            Hutool.debugOutput("get mvn path: " + file.getAbsolutePath());
+            return file;
+        }
+
+        return FileUtil.file(path);
     }
 
     public static String parseClassName(String className) {
