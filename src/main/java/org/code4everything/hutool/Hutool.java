@@ -647,7 +647,10 @@ public final class Hutool {
 
     public static void debugOutput(String msg, Object... params) {
         if (ARG.debug) {
-            msg = getSimpleDateFormat().format(new Date()) + " debug output: " + String.format(msg, params);
+            StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
+            String className = stackTrace.length > 2 ? stackTrace[2].getClassName() : "Unknown";
+            String lineNumber = stackTrace.length > 2 ? String.valueOf(stackTrace[2].getLineNumber()) : "NaN";
+            msg = getSimpleDateFormat().format(new Date()) + " " + className + ":" + lineNumber + " - " + String.format(msg, params);
             System.out.println(msg);
         }
     }

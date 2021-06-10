@@ -258,6 +258,7 @@ public final class Utils {
             // ignore
         }
 
+        Hutool.debugOutput("loading class: " + className);
         if (Objects.isNull(classLoader)) {
             classLoader = new JarClassLoader();
             classLoader.addJar(FileUtil.file(Hutool.homeDir, "external"));
@@ -267,6 +268,7 @@ public final class Utils {
                 for (String externalPath : externalPaths) {
                     File external = parseClasspath(externalPath);
                     if (FileUtil.exist(external)) {
+                        Hutool.debugOutput("add class path: " + external.getAbsolutePath());
                         classLoader.addURL(external);
                     }
                 }
