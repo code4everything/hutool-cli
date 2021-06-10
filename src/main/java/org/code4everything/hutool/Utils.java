@@ -50,26 +50,28 @@ public final class Utils {
     private Utils() {}
 
     public static String dayProcess() {
-        DateTime date = DateUtil.beginOfDay(DateUtil.date());
-        int todayProcess = (int) ((System.currentTimeMillis() - date.getTime()) * 100 / 24D / 60 / 60 / 1000);
+        DateTime now = DateUtil.date();
+        DateTime date = DateUtil.beginOfDay(now);
+        double todayProcess = (System.currentTimeMillis() - date.getTime()) * 100 / 24D / 60 / 60 / 1000;
         int week = DateUtil.dayOfWeek(date) - 1;
-        int weekProcess = (int) ((week == 0 ? 7 : week) * 100 / 7D);
-        int monthProcess = (int) (DateUtil.dayOfMonth(date) * 100 / (double) DateUtil.endOfMonth(date).dayOfMonth());
-        int yearProcess = (int) (DateUtil.dayOfYear(date) * 100 / (double) DateUtil.endOfYear(date).dayOfYear());
+        week = (week == 0 ? 7 : week) * 24 - 24;
+        double weekProcess = (week + now.hour(true)) * 100 / 7D / 24;
+        double monthProcess = DateUtil.dayOfMonth(date) * 100 / (double) DateUtil.endOfMonth(date).dayOfMonth();
+        double yearProcess = DateUtil.dayOfYear(date) * 100 / (double) DateUtil.endOfYear(date).dayOfYear();
 
         String template = "";
-        template += String.format("today [%s%s]: %d%%%n", repeat('o', todayProcess), repeat(' ', 100 - todayProcess), todayProcess);
-        template += String.format("week  [%s%s]: %d%%%n", repeat('o', weekProcess), repeat(' ', 100 - weekProcess), weekProcess);
-        template += String.format("month [%s%s]: %d%%%n", repeat('o', monthProcess), repeat(' ', 100 - monthProcess), monthProcess);
-        template += String.format("year  [%s%s]: %d%%%n", repeat('o', yearProcess), repeat(' ', 100 - yearProcess), yearProcess);
+        template += String.format("today [%s]: %.2f%%%n", getDayProcessString(todayProcess), todayProcess);
+        template += String.format("week  [%s]: %.2f%%%n", getDayProcessString(weekProcess), weekProcess);
+        template += String.format("month [%s]: %.2f%%%n", getDayProcessString(monthProcess), monthProcess);
+        template += String.format("year  [%s]: %.2f%%%n", getDayProcessString(yearProcess), yearProcess);
         return template;
     }
 
-    public static String repeat(char c, int len) {
-        char[] cs = new char[len];
-        for (int i = 0; i < len; i++) {
-            cs[i] = c;
-        }
+    private static String getDayProcessString(double process) {
+        int p = (int) process;
+        char[] cs = new char[100];
+        Arrays.fill(cs, 0, p, 'o');
+        Arrays.fill(cs, p, 100, ' ');
         return new String(cs);
     }
 

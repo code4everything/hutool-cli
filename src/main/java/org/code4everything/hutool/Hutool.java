@@ -332,7 +332,7 @@ public final class Hutool {
         ParserConfig parserConfig = new ParserConfig();
         Object[] params = new Object[paramTypes.length];
         StringJoiner paramJoiner = new StringJoiner(", ");
-        JSONObject converterJson = getAlias("", homeDir, CONVERTER_JSON);
+        JSONObject converterJson = paramTypes.length > 0 ? getAlias("", homeDir, CONVERTER_JSON) : null;
         for (int i = 0; i < paramTypes.length; i++) {
             String param = ARG.params.get(i);
             paramJoiner.add(param);
@@ -340,7 +340,7 @@ public final class Hutool {
         }
 
         debugOutput("cast parameter success");
-        debugOutput("invoking method: %s#%s(%s)", ARG.className, method.getName(), paramJoiner);
+        debugOutput("invoking method: %s#%s(%s)", clazz.getName(), method.getName(), paramJoiner);
         result = ReflectUtil.invokeStatic(method, params);
         debugOutput("invoke method success");
     }

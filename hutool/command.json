@@ -321,5 +321,8 @@
     },
     "dayp": {
         "method": "utils#dayProcess"
+    },
+    "repeat": {
+        "method": "csu#repeat(j.char.seq,int)"
     }
 }
