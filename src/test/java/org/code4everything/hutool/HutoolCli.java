@@ -76,4 +76,10 @@ public class HutoolCli {
     public void dayp() {
         test("dayp");
     }
+
+    @Test
+    public void ll() {
+        test("ll build.gradle");
+        test("ll");
+    }
 }

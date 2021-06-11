@@ -324,5 +324,8 @@
     },
     "repeat": {
         "method": "csu#repeat(j.char.seq,int)"
+    },
+    "ll": {
+        "method": "utils#listFiles(file=.)"
     }
 }

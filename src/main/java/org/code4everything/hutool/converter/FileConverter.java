@@ -18,10 +18,10 @@ public class FileConverter implements Converter<File> {
         if ("~".equals(string)) {
             return FileUtil.getUserHomeDir();
         }
-        if ("$".equals(string)) {
+        if ("!".equals(string)) {
             return FileUtil.file(System.getenv("HUTOOL_PATH"));
         }
-        if ("^".equals(string)) {
+        if ("$".equals(string)) {
             return FileUtil.file(System.getenv("JAVA_HOME"));
         }
         return FileUtil.isAbsolutePath(string) ? FileUtil.file(string) : Paths.get(Hutool.ARG.workDir, string).toFile();

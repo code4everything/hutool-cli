@@ -11,6 +11,7 @@ import cn.hutool.core.lang.Holder;
 import cn.hutool.core.lang.JarClassLoader;
 import cn.hutool.core.math.Calculator;
 import cn.hutool.core.util.ReflectUtil;
+import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSONObject;
 import javassist.ClassPool;
 import javassist.CtClass;
@@ -49,6 +50,38 @@ public final class Utils {
     private static List<String> mvnRepositoryHome = null;
 
     private Utils() {}
+
+    public static String listFiles(File file) {
+        if (!FileUtil.exist(file)) {
+            return "file not found!";
+        }
+        if (FileUtil.isFile(file)) {
+            return DateUtil.formatDateTime(new Date(file.lastModified())) + "\t" + FileUtil.readableFileSize(file) + "\t" + file.getName();
+        }
+
+        File[] files = file.listFiles();
+        if (Objects.isNull(files) || files.length == 0) {
+            return "";
+        }
+
+        Arrays.sort(files, ComparatorChain.of(Comparator.comparingInt(f -> f.isDirectory() ? 0 : 1), Comparator.comparing(File::getName)));
+        StringJoiner joiner = new StringJoiner("\n");
+        int maxLen = 0;
+        String[] size = new String[files.length];
+        for (int i = 0; i < files.length; i++) {
+            size[i] = FileUtil.readableFileSize(files[i]);
+            if (size[i].length() > maxLen) {
+                maxLen = size[i].length();
+            }
+        }
+
+        for (int i = 0; i < files.length; i++) {
+            file = files[i];
+            joiner.add(DateUtil.formatDateTime(new Date(file.lastModified())) + "\t" + StrUtil.padPre(size[i], maxLen, " ") + "\t" + file.getName());
+        }
+
+        return joiner.toString();
+    }
 
     public static String dayProcess() {
         DateTime now = DateUtil.date();
