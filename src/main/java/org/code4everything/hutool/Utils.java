@@ -75,14 +75,14 @@ public final class Utils {
         return new String(cs);
     }
 
-    public static String toHttpUrlString(Map<String, Object> paramMap) {
+    public static String toHttpUrlString(Map<String, ?> paramMap) {
         if (paramMap == null || paramMap.isEmpty()) {
             return "";
         }
 
         StringBuilder sb = new StringBuilder();
         String sep = "?";
-        for (Map.Entry<String, Object> entry : paramMap.entrySet()) {
+        for (Map.Entry<String, ?> entry : paramMap.entrySet()) {
             if (Objects.isNull(entry.getValue())) {
                 continue;
             }
