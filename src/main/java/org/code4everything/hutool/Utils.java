@@ -4,6 +4,7 @@ import cn.hutool.core.comparator.ComparatorChain;
 import cn.hutool.core.date.ChineseDate;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.date.Week;
 import cn.hutool.core.exceptions.ExceptionUtil;
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.lang.Holder;
@@ -53,17 +54,18 @@ public final class Utils {
         DateTime now = DateUtil.date();
         DateTime date = DateUtil.beginOfDay(now);
         double todayProcess = (System.currentTimeMillis() - date.getTime()) * 100 / 24D / 60 / 60 / 1000;
-        int week = DateUtil.dayOfWeek(date) - 1;
+        Week weekEnum = DateUtil.dayOfWeekEnum(date);
+        int week = weekEnum.getValue() - 1;
         week = (week == 0 ? 7 : week) * 24 - 24;
         double weekProcess = (week + now.hour(true)) * 100 / 7D / 24;
         double monthProcess = DateUtil.dayOfMonth(date) * 100 / (double) DateUtil.endOfMonth(date).dayOfMonth();
         double yearProcess = DateUtil.dayOfYear(date) * 100 / (double) DateUtil.endOfYear(date).dayOfYear();
 
-        String template = "";
-        template += String.format("today [%s]: %.2f%%%n", getDayProcessString(todayProcess), todayProcess);
-        template += String.format("week  [%s]: %.2f%%%n", getDayProcessString(weekProcess), weekProcess);
-        template += String.format("month [%s]: %.2f%%%n", getDayProcessString(monthProcess), monthProcess);
-        template += String.format("year  [%s]: %.2f%%%n", getDayProcessString(yearProcess), yearProcess);
+        String template = String.format("%s %s %s%n%n", lunar(now), weekEnum.toChinese("周"), Hutool.getSimpleDateFormat().format(now));
+        template += String.format("今天 [%s]: %.2f%%%n", getDayProcessString(todayProcess), todayProcess);
+        template += String.format("本周 [%s]: %.2f%%%n", getDayProcessString(weekProcess), weekProcess);
+        template += String.format("本月 [%s]: %.2f%%%n", getDayProcessString(monthProcess), monthProcess);
+        template += String.format("本年 [%s]: %.2f%%%n", getDayProcessString(yearProcess), yearProcess);
         return template;
     }
 

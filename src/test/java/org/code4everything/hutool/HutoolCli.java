@@ -74,6 +74,6 @@ public class HutoolCli {
 
     @Test
     public void dayp() {
-        test("dayp -d");
+        test("dayp");
     }
 }
