@@ -41,7 +41,7 @@ git clone https://gitee.com/code4everything/hutool-cli.git
 
 - [hu-1.2.zip](http://share.qiniu.easepan.xyz/tool/hutool/hu-1.2.zip)
 
-下载完成后解压ZIP包，并将 hutool.jar 和 bin目录中与平台对应的可执行文件移动到 hutool-cli/hutool 目录下，如windows对应的`hu.exe`文件，linux对应的`hu`文件，macos对应的`hu-mac`文件（移动后重命名为`hu`）。
+下载完成后解压ZIP包，并将 hutool.jar 和 bin目录中与平台对应的可执行文件移动到 hutool-cli/hutool 目录下，如windows对应的`hu.exe`文件，linux对应的`hu`文件，macos对应的`hu-mac`文件（Mac移动后需重命名为`hu`），移动后目录结构如下。
 
 ## 配置环境变量
 
@@ -412,8 +412,6 @@ mvn:org.code4everything:wetool-plugin-support:1.6.0,
 ### 最后
 
 如果你觉得项目还不错，记得Star哟，欢迎 pr。
-
-> [走进HutoolCli](deep-in-hutool-cli.md)
 
 ### 常用类名简写对照表
 

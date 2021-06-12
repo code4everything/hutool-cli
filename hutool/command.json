@@ -245,7 +245,7 @@
         "method": "cn.hutool.http.HttpUtil#downloadFileFromUrl",
         "paramTypes": [
             "string",
-            "file"
+            "file=."
         ]
     },
     "eval": {
@@ -310,10 +310,10 @@
     "value": {
         "method": "utils#getStaticFieldValue(class,string)"
     },
-    "maxint": {
+    "intmax": {
         "method": "utils#getStaticFieldValue(class=j.int,string=MAX_VALUE)"
     },
-    "maxlong": {
+    "longmax": {
         "method": "utils#getStaticFieldValue(class=j.long,string=MAX_VALUE)"
     },
     "fields": {
