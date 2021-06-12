@@ -139,10 +139,12 @@ hu eval 5+6+3+22+9999
 hu dayp
 
 # output:
-today [oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo                            ]: 72%
-week  [oooooooooooooooooooooooooooo                                                                        ]: 28%
-month [oooooooooooooooooooooooooo                                                                          ]: 26%
-year  [ooooooooooooooooooooooooooooooooooooooooooo                                                         ]: 43%
+辛丑牛年 五月初三 周六 2021-06-12 09:45:07.755
+
+今日 [oooooooooooooooooooooooooooooooooooooooo                                                            ]: 40.63%
+本周 [oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo                        ]: 76.79%
+本月 [oooooooooooooooooooooooooooooooooooooooo                                                            ]: 40.00%
+本年 [oooooooooooooooooooooooooooooooooooooooooooo                                                        ]: 44.66%
 ```
 
 ## 查看类有哪些可执行静态方法
