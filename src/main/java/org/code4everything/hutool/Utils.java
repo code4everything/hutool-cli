@@ -95,10 +95,10 @@ public final class Utils {
         double yearProcess = DateUtil.dayOfYear(date) * 100 / (double) DateUtil.endOfYear(date).dayOfYear();
 
         String template = String.format("%s %s %s%n", lunar(now), weekEnum.toChinese("周"), Hutool.getSimpleDateFormat().format(now));
-        template += String.format("%n今日 [%s]: %.2f%%", getDayProcessString(todayProcess), todayProcess);
-        template += String.format("%n本周 [%s]: %.2f%%", getDayProcessString(weekProcess), weekProcess);
-        template += String.format("%n本月 [%s]: %.2f%%", getDayProcessString(monthProcess), monthProcess);
-        template += String.format("%n本年 [%s]: %.2f%%", getDayProcessString(yearProcess), yearProcess);
+        template += String.format("%n今日 [%s]: %05.2f%%", getDayProcessString(todayProcess), todayProcess);
+        template += String.format("%n本周 [%s]: %05.2f%%", getDayProcessString(weekProcess), weekProcess);
+        template += String.format("%n本月 [%s]: %05.2f%%", getDayProcessString(monthProcess), monthProcess);
+        template += String.format("%n本年 [%s]: %05.2f%%", getDayProcessString(yearProcess), yearProcess);
         return template;
     }
 

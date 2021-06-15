@@ -33,7 +33,7 @@ public class HuMap<K, V> implements Map<K, V> {
         return new HuMap<>(map);
     }
 
-    public static HuMap<String, Object> ofStrOjb(String key, Object value) {
+    public static HuMap<String, Object> ofStrObj(String key, Object value) {
         return new HuMap<String, Object>().push(key, value);
     }
 
