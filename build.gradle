@@ -29,7 +29,7 @@ dependencies {
 }
 
 group = 'org.code4everything'
-version = '1.2'
+version = '1.3'
 String hutoolCliVersion = version
 description = 'hutool-cli'
 java.sourceCompatibility = JavaVersion.VERSION_1_8

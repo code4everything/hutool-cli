@@ -1,7 +1,6 @@
 package org.code4everything.hutool;
 
 import cn.hutool.core.codec.Base64;
-import cn.hutool.core.util.StrUtil;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -12,26 +11,25 @@ import org.junit.Test;
 public class HutoolCli {
 
     public static String test(String cmd, Object... params) {
-        Hutool.main(StrUtil.format(cmd, params).split(" "));
-        return Hutool.resultString;
+        return Hutool.test(cmd, params);
     }
 
     @Test
     public void base64() {
         String test = "123456789";
-        Assert.assertEquals(Base64.encode(test), test("-c cn.hutool.core.codec.Base64 -m encode -t j.char.seq -p {}", test));
+        Assert.assertEquals(Base64.encode(test), test("-c cn.hutool.core.codec.Base64 -m encode -t j.char.seq -p %s", test));
 
         test = "dd55122a5a5f4a";
-        Assert.assertEquals(Base64.encode(test), test("encode64 {}", test));
+        Assert.assertEquals(Base64.encode(test), test("encode64 %s", test));
 
         test = Base64.encode(test);
-        Assert.assertEquals(Base64.decodeStr(test), test("decode64 {}", test));
+        Assert.assertEquals(Base64.decodeStr(test), test("decode64 %s", test));
     }
 
     @Test
     public void multiCmd() {
         String test = "test_multi_cmd";
-        Assert.assertEquals(test, test("encode64 {} // decode64 \\\\0", test));
+        Assert.assertEquals(test, test("encode64 %s // decode64 \\\\0", test));
     }
 
     @Test

@@ -71,7 +71,7 @@ public final class Hutool {
 
     static String homeDir = System.getenv("HUTOOL_PATH");
 
-    static String resultString;
+    private static String resultString;
 
     private static boolean omitParamType = true;
 
@@ -653,5 +653,10 @@ public final class Hutool {
             msg = getSimpleDateFormat().format(new Date()) + " " + className + ":" + lineNumber + " - " + String.format(msg, params);
             System.out.println(msg);
         }
+    }
+
+    public static String test(String cmd, Object... formatArgs) {
+        Hutool.main(String.format(cmd, formatArgs).split(" "));
+        return Hutool.resultString;
     }
 }
