@@ -316,11 +316,11 @@ public final class Utils {
     }
 
     private static File parseClasspath(String path) {
+        path = path.trim();
         if (isStringEmpty(path)) {
             return null;
         }
 
-        path = path.trim();
         if (path.startsWith("mvn:")) {
             path = path.substring(4);
             if (isStringEmpty(path)) {

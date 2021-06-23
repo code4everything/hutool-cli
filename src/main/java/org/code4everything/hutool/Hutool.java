@@ -646,7 +646,7 @@ public final class Hutool {
     }
 
     public static void debugOutput(String msg, Object... params) {
-        if (ARG.debug) {
+        if (Objects.nonNull(ARG) && ARG.debug) {
             StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
             String className = stackTrace.length > 2 ? stackTrace[2].getClassName() : "Unknown";
             String lineNumber = stackTrace.length > 2 ? String.valueOf(stackTrace[2].getLineNumber()) : "NaN";
