@@ -13,5 +13,6 @@ public class Tester {
         Class<?> clazz = Utils.parseClass("[I");
         System.out.println(clazz.getName());
         System.out.println(long[].class.getName());
+        System.out.println(Long[].class.getName());
     }
 }
