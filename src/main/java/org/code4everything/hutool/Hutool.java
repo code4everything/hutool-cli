@@ -19,9 +19,9 @@ import javassist.ClassPool;
 import javassist.CtClass;
 import javassist.CtMethod;
 import javassist.NotFoundException;
+import org.code4everything.hutool.converter.ArrayConverter;
 import org.code4everything.hutool.converter.ListStringConverter;
 import org.code4everything.hutool.converter.MapConverter;
-import org.code4everything.hutool.converter.ObjectArrayConverter;
 import org.code4everything.hutool.converter.ObjectPropertyConverter;
 import org.code4everything.hutool.converter.SetStringConverter;
 
@@ -146,6 +146,7 @@ public final class Hutool {
         ARG = new MethodArg();
         List<String> list = new ArrayList<>(8);
         resultContainer = null;
+        // 使用字符串 `//` 切割多条命令
         for (String arg : args) {
             if ("//".equals(arg)) {
                 // 处理上条命令，并记录结果
@@ -337,7 +338,7 @@ public final class Hutool {
         for (int i = 0; i < paramTypes.length; i++) {
             String param = ARG.params.get(i);
             paramJoiner.add(param);
-            params[i] = castParam2JavaType(converterJson, parserConfig, param, paramTypes[i]);
+            params[i] = castParam2JavaType(converterJson, parserConfig, param, paramTypes[i], true);
         }
 
         debugOutput("cast parameter success");
@@ -406,13 +407,13 @@ public final class Hutool {
     }
 
     @SuppressWarnings("rawtypes")
-    private static Object castParam2JavaType(JSONObject convertJson, ParserConfig parserConfig, String param, Class<?> type) {
+    public static Object castParam2JavaType(JSONObject convertJson, ParserConfig parserConfig, String param, Class<?> type, boolean replace) {
         if ("nil".equals(param)) {
             return null;
         }
 
-        if (resultContainer != null) {
-            // 替换连续命令中的结果记录值
+        if (replace && resultContainer != null) {
+            // 替换连续命令中的结果记录值，格式：\\0,\\1,\\2...
             for (int i = 0; i < resultContainer.size(); i++) {
                 String key = "\\\\" + i;
                 String value = resultContainer.get(i);
@@ -424,17 +425,16 @@ public final class Hutool {
             return param;
         }
 
-        // 转换参数
-        String className = type.getName();
-        String converterName = convertJson.getString(className);
+        // 转换参数类型
+        String converterName = convertJson.getString(type.getName());
         Converter<?> converter = null;
         try {
             if (List.class.isAssignableFrom(type)) {
                 converter = new ListStringConverter();
             } else if (Set.class.isAssignableFrom(type)) {
                 converter = new SetStringConverter();
-            } else if (className.hashCode() == 614832599 && className.equals("[Ljava.lang.Object;")) {
-                converter = new ObjectArrayConverter();
+            } else if (type.isArray()) {
+                converter = new ArrayConverter(type.getTypeName(), convertJson, parserConfig);
             } else if (!Utils.isStringEmpty(converterName)) {
                 Class<?> converterClass = Utils.parseClass(converterName);
                 converter = (Converter) ReflectUtil.newInstance(converterClass);

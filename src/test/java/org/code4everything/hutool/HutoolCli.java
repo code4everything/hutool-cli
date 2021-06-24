@@ -80,4 +80,9 @@ public class HutoolCli {
         test("ll build.gradle");
         test("ll");
     }
+
+    @Test
+    public void charSequenceUtil$format() {
+        test("csu#format -t j.char.seq -t obj.arr {}#{} csu,format");
+    }
 }

@@ -419,6 +419,10 @@ public final class Utils {
     }
 
     private static String parseClassName00(String className) {
+        if (className.endsWith(";") && className.contains("[L")) {
+            int idx = className.indexOf("L");
+            return className.substring(0, idx + 1) + parseClassName(className.substring(idx + 1, className.length() - 1)) + ";";
+        }
         if (className.length() > 16) {
             return className;
         }
