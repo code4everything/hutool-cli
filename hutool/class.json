@@ -1,4 +1,31 @@
 {
+    "byte.arr": {
+        "clazz": "[B"
+    },
+    "char.arr": {
+        "clazz": "[C"
+    },
+    "bool.arr": {
+        "clazz": "[Z"
+    },
+    "short.arr": {
+        "clazz": "[S"
+    },
+    "int.arr": {
+        "clazz": "[I"
+    },
+    "long.arr": {
+        "clazz": "[J"
+    },
+    "float.arr": {
+        "clazz": "[F"
+    },
+    "double.arr": {
+        "clazz": "[D"
+    },
+    "obj.arr": {
+        "clazz": "[Ljava.lang.Object;"
+    },
     "base32": {
         "clazz": "cn.hutool.core.codec.Base32",
         "methodAliasPaths": [

@@ -9,10 +9,14 @@ import org.junit.Test;
 public class Tester {
 
     @Test
-    public void parseClass() throws Exception {
-        Class<?> clazz = Utils.parseClass("[I");
-        System.out.println(clazz.getName());
+    public void parseClass() {
+        System.out.println(byte[].class.getName());
+        System.out.println(boolean[].class.getName());
+        System.out.println(short[].class.getName());
+        System.out.println(int[].class.getName());
         System.out.println(long[].class.getName());
-        System.out.println(Long[].class.getName());
+        System.out.println(float[].class.getName());
+        System.out.println(double[].class.getName());
+        System.out.println(char[].class.getName());
     }
 }

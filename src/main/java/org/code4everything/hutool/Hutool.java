@@ -21,6 +21,7 @@ import javassist.CtMethod;
 import javassist.NotFoundException;
 import org.code4everything.hutool.converter.ListStringConverter;
 import org.code4everything.hutool.converter.MapConverter;
+import org.code4everything.hutool.converter.ObjectArrayConverter;
 import org.code4everything.hutool.converter.ObjectPropertyConverter;
 import org.code4everything.hutool.converter.SetStringConverter;
 
@@ -424,13 +425,16 @@ public final class Hutool {
         }
 
         // 转换参数
-        String converterName = convertJson.getString(type.getName());
+        String className = type.getName();
+        String converterName = convertJson.getString(className);
         Converter<?> converter = null;
         try {
             if (List.class.isAssignableFrom(type)) {
                 converter = new ListStringConverter();
             } else if (Set.class.isAssignableFrom(type)) {
                 converter = new SetStringConverter();
+            } else if (className.hashCode() == 614832599 && className.equals("[Ljava.lang.Object;")) {
+                converter = new ObjectArrayConverter();
             } else if (!Utils.isStringEmpty(converterName)) {
                 Class<?> converterClass = Utils.parseClass(converterName);
                 converter = (Converter) ReflectUtil.newInstance(converterClass);
