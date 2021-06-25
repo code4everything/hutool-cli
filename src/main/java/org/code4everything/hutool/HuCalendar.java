@@ -77,7 +77,7 @@ public class HuCalendar {
 
     private String getCalendarStr(DateTime begin) {
         int week = begin.dayOfWeek();
-        week = (week == 0 ? 7 : week) - 1;
+        week = (week == 1 ? 8 : week) - 2;
 
         String[] line = null;
         List<String> result = new ArrayList<>();
