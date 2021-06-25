@@ -16,6 +16,55 @@ hu uuid
 # output: 483cc7fc-4b22-4188-8f1c-dc1ce4b6d3ee
 ```
 
+现在不仅仅是终端里的Hutool了，更多功能等待你来探索哦。
+
+## 封装命令
+
+查看时间进度
+
+```shell
+hu dayp
+
+# output:
+辛丑牛年 五月初三 周六 2021-06-12 09:45:07.755
+
+今日 [oooooooooooooooooooooooooooooooooooooooo                                                            ]: 40.63%
+本周 [oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo                        ]: 76.79%
+本月 [oooooooooooooooooooooooooooooooooooooooo                                                            ]: 40.00%
+本年 [oooooooooooooooooooooooooooooooooooooooooooo                                                        ]: 44.66%
+```
+
+列出目录文件
+
+```shell
+hu ll
+
+# output:
+2021-05-30 00:46:38	      0	bin
+2021-06-02 19:48:08	      0	external
+2021-06-12 10:29:19	   4 KB	method
+2021-06-25 19:26:38	4.21 KB	class.json
+2021-06-25 19:27:11	8.06 KB	command.json
+2021-06-12 10:29:19	  749 B	converter.json
+2021-06-09 22:19:07	  165 B	external.conf
+2021-06-24 22:15:32	 7.2 MB	hutool.jar
+```
+
+查看日历
+
+```shell
+hu calendar
+
+# output:
+     2021-06-25    
+Mo Tu We Th Fr Sa Su
+       1  2  3  4  5
+ 6  7  8  9 10 11 12
+13 14 15 16 17 18 19
+20 21 22 23 24 25 26
+27 28 29 30         
+```
+
 ## ZIP包安装
 
 所需环境
@@ -29,7 +78,7 @@ hu uuid
 git clone https://gitee.com/code4everything/hutool-cli.git
 ```
 
-下载对应的ZIP包，目录结构如下
+下载对应的 [ZIP包](http://share.qiniu.easepan.xyz/tool/hutool/hu-1.2.zip) ，目录结构如下
 
 ```text
 ├─bin
@@ -38,8 +87,6 @@ git clone https://gitee.com/code4everything/hutool-cli.git
 │  └─hu.exe
 └─hutool.jar
 ```
-
-- [hu-1.2.zip](http://share.qiniu.easepan.xyz/tool/hutool/hu-1.2.zip)
 
 下载完成后解压ZIP包，并将 hutool.jar 和 bin目录中与平台对应的可执行文件移动到 hutool-cli/hutool 目录下，如windows对应的`hu.exe`文件，linux对应的`hu`文件，macos对应的`hu-mac`文件（Mac移动后需重命名为`hu`），移动后目录结构如下。
 
@@ -60,7 +107,7 @@ git clone https://gitee.com/code4everything/hutool-cli.git
 
 ## 如何使用
 
-查看支持的参数
+查看支持的指令
 
 ```shell
 hu
@@ -131,20 +178,6 @@ hu encode64 'test multi cmd' // decode64 \\0
 ```shell
 hu eval 5+6+3+22+9999
 # output: 10035
-```
-
-查看时间进度
-
-```shell
-hu dayp
-
-# output:
-辛丑牛年 五月初三 周六 2021-06-12 09:45:07.755
-
-今日 [oooooooooooooooooooooooooooooooooooooooo                                                            ]: 40.63%
-本周 [oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo                        ]: 76.79%
-本月 [oooooooooooooooooooooooooooooooooooooooo                                                            ]: 40.00%
-本年 [oooooooooooooooooooooooooooooooooooooooooooo                                                        ]: 44.66%
 ```
 
 ## 查看类有哪些可执行静态方法
@@ -408,6 +441,8 @@ external.conf文件支持mvn坐标，但前提是本地maven仓库已有对应�
 mvn:org.code4everything:wetool-plugin-support:1.6.0,
 /path/c
 ```
+
+> 你可以基于此功能开发适用于本地的指令。
 
 ### 最后
 

@@ -83,8 +83,9 @@ public class HutoolCli {
 
     @Test
     public void calendar() {
-        test("calendar 202104,202105");
         test("calendar");
+        test("calendar 4,5");
+        test("calendar 202001,2");
         test("calendar 2021");
     }
 

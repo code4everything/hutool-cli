@@ -17,8 +17,6 @@ import java.util.Objects;
  */
 public class HuCalendar {
 
-    private int year;
-
     private int month = 0;
 
     private int currentMonth;
@@ -39,10 +37,30 @@ public class HuCalendar {
             beginDate = DateUtil.parse(yearMonth, "yyyy-MM");
         }
 
-        year = beginDate.getField(DateField.YEAR);
         if (month >= 0) {
             month = beginDate.getField(DateField.MONTH);
         }
+    }
+
+    public static String calendar(String[] yearMonths) {
+        if (Objects.isNull(yearMonths) || yearMonths.length == 0) {
+            return new HuCalendar(null).getCalenderStr();
+        }
+
+        StrJoiner joiner = StrJoiner.of("\n\n");
+        String previousYear = DateUtil.format(DateUtil.date(), "yyyy");
+        for (String yearMonth : yearMonths) {
+            int len = StrUtil.length(yearMonth);
+            if (len == 0) {
+                continue;
+            }
+            if (len < 3) {
+                yearMonth = previousYear + StrUtil.padPre(yearMonth, 2, '0');
+            }
+            previousYear = yearMonth.substring(0, 4);
+            joiner.append(new HuCalendar(yearMonth).getCalenderStr());
+        }
+        return joiner.toString();
     }
 
     public String getCalenderStr() {
@@ -63,7 +81,7 @@ public class HuCalendar {
 
         String[] line = null;
         List<String> result = new ArrayList<>();
-        if (month == currentMonth) {
+        if (begin.getField(DateField.MONTH) == currentMonth) {
             result.add("     " + DateUtil.format(DateUtil.date(), "yyyy-MM-dd") + "    ");
         } else {
             result.add("      " + DateUtil.format(begin, "yyyy-MM") + "       ");

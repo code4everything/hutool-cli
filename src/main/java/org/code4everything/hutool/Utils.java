@@ -10,7 +10,6 @@ import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.lang.Holder;
 import cn.hutool.core.lang.JarClassLoader;
 import cn.hutool.core.math.Calculator;
-import cn.hutool.core.text.StrJoiner;
 import cn.hutool.core.util.ReflectUtil;
 import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSONObject;
@@ -51,18 +50,6 @@ public final class Utils {
     private static List<String> mvnRepositoryHome = null;
 
     private Utils() {}
-
-    public static String calendar(String[] yearMonths) {
-        if (Objects.isNull(yearMonths) || yearMonths.length == 0) {
-            return new HuCalendar(null).getCalenderStr();
-        }
-
-        StrJoiner joiner = StrJoiner.of("\n\n");
-        for (String yearMonth : yearMonths) {
-            joiner.append(new HuCalendar(yearMonth).getCalenderStr());
-        }
-        return joiner.toString();
-    }
 
     public static String listFiles(File file) {
         if (!FileUtil.exist(file)) {
@@ -144,7 +131,7 @@ public final class Utils {
         return sb.toString();
     }
 
-    public static String getStaticFieldNames(Class<?> clazz) throws Exception {
+    public static String getFieldNames(Class<?> clazz) throws Exception {
         if (clazz.isPrimitive()) {
             clazz = parseClass0(parseClassName0("j." + clazz.getName()));
         }

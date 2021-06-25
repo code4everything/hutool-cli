@@ -26,6 +26,9 @@
     "obj.arr": {
         "clazz": "[Ljava.lang.Object;"
     },
+    "str.arr": {
+        "clazz": "[Ljava.lang.String;"
+    },
     "base32": {
         "clazz": "cn.hutool.core.codec.Base32",
         "methodAliasPaths": [

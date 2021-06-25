@@ -317,7 +317,7 @@
         "method": "utils#getStaticFieldValue(class=j.long,string=MAX_VALUE)"
     },
     "fields": {
-        "method": "utils#getStaticFieldNames(class)"
+        "method": "utils#getFieldNames(class)"
     },
     "dayp": {
         "method": "utils#dayProcess"
@@ -329,6 +329,6 @@
         "method": "utils#listFiles(file=.)"
     },
     "calendar": {
-        "method": "utils#calendar([Lstring;=nil)"
+        "method": "org.code4everything.hutool.HuCalendar#calendar(str.arr=nil)"
     }
 }

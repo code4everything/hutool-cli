@@ -56,15 +56,15 @@ public final class Hutool {
 
     public static final String CLAZZ_KEY = "clazz";
 
+    static final String COMMAND_JSON = "command.json";
+
+    static final String HUTOOL_USER_HOME = System.getProperty("user.home") + File.separator + "hutool-cli";
+
     private static final String ALIAS = "alias";
 
     private static final String PARAM_KEY = "paramTypes";
 
-    static final String COMMAND_JSON = "command.json";
-
     private static final String VERSION = "v1.3";
-
-    static final String HUTOOL_USER_HOME = System.getProperty("user.home") + File.separator + "hutool-cli";
 
     private static final Map<String, JSONObject> ALIAS_CACHE = new HashMap<>(4, 1);
 
@@ -661,7 +661,14 @@ public final class Hutool {
     }
 
     public static String test(String cmd, Object... formatArgs) {
-        Hutool.main(String.format(cmd, formatArgs).split(" "));
+        cmd = String.format(cmd, formatArgs);
+        int len = cmd.length() + 10;
+        char[] cs = new char[len + 1];
+        Arrays.fill(cs, '=');
+        cs[0] = '\n';
+        String separator = new String(cs);
+        System.out.println(separator + "\n>> hu " + cmd + " <<" + separator);
+        Hutool.main(cmd.split(" "));
         return Hutool.resultString;
     }
 }
