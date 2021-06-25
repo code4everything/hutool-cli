@@ -53,7 +53,7 @@ hu ll
 查看日历
 
 ```shell
-hu calendar
+hu calendar 202106
 
 # output:
      2021-06-25    
@@ -63,6 +63,12 @@ Mo Tu We Th Fr Sa Su
 13 14 15 16 17 18 19
 20 21 22 23 24 25 26
 27 28 29 30         
+
+# also support like follow command: 
+# hu calendar 6
+# hu calendar 2020
+# hu calendar 202101,2,3,4,5
+# hu calendar 6,7,8
 ```
 
 ## ZIP包安装
