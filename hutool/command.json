@@ -327,5 +327,8 @@
     },
     "ll": {
         "method": "utils#listFiles(file=.)"
+    },
+    "calendar": {
+        "method": "utils#calendar([Lstring;=nil)"
     }
 }

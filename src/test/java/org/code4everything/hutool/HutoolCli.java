@@ -82,6 +82,13 @@ public class HutoolCli {
     }
 
     @Test
+    public void calendar() {
+        test("calendar 202104,202105");
+        test("calendar");
+        test("calendar 2021");
+    }
+
+    @Test
     public void charSequenceUtil$format() {
         test("csu#format -t j.char.seq -t obj.arr {}#{} csu,format");
     }

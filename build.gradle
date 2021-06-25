@@ -10,22 +10,31 @@ repositories {
     }
 }
 
+String jcommanderVersion = "1.81"
+String hutoolVersion = "5.7.2"
+String oshiVersion = "5.7.5"
+String emojiVersion = "5.1.1"
+String zxingVersion = "3.4.1"
+String pinyinVersion = "2.5.1"
+String fastjsonVersion = "1.2.76"
+String javassistVersion = "3.28.0-GA"
+String junitVersion = "4.13.2"
+
 dependencies {
-    implementation 'com.beust:jcommander:1.81'
-    implementation 'cn.hutool:hutool-core:5.6.4'
-    implementation 'cn.hutool:hutool-system:5.6.4'
-    implementation 'com.github.oshi:oshi-core:5.3.1'
-    implementation 'cn.hutool:hutool-crypto:5.6.4'
-    implementation 'cn.hutool:hutool-http:5.6.4'
-    implementation 'cn.hutool:hutool-script:5.6.4'
-    implementation 'cn.hutool:hutool-extra:5.6.4'
-    implementation 'com.vdurmont:emoji-java:5.1.1'
-    implementation 'com.google.zxing:core:3.4.1'
-    implementation 'com.belerweb:pinyin4j:2.5.1'
-    implementation 'com.alibaba:fastjson:1.2.76'
-    implementation 'org.javassist:javassist:3.28.0-GA'
-    testImplementation 'junit:junit:4.13.2'
-    testImplementation 'de.vandermeer:asciitable:0.3.2'
+    implementation "com.beust:jcommander:${jcommanderVersion}"
+    implementation "cn.hutool:hutool-core:${hutoolVersion}"
+    implementation "cn.hutool:hutool-system:${hutoolVersion}"
+    implementation "com.github.oshi:oshi-core:${oshiVersion}"
+    implementation "cn.hutool:hutool-crypto:${hutoolVersion}"
+    implementation "cn.hutool:hutool-http:${hutoolVersion}"
+    implementation "cn.hutool:hutool-script:${hutoolVersion}"
+    implementation "cn.hutool:hutool-extra:${hutoolVersion}"
+    implementation "com.vdurmont:emoji-java:${emojiVersion}"
+    implementation "com.google.zxing:core:${zxingVersion}"
+    implementation "com.belerweb:pinyin4j:${pinyinVersion}"
+    implementation "com.alibaba:fastjson:${fastjsonVersion}"
+    implementation "org.javassist:javassist:${javassistVersion}"
+    testImplementation "junit:junit:${junitVersion}"
 }
 
 group = 'org.code4everything'

@@ -60,11 +60,11 @@ public final class Hutool {
 
     private static final String PARAM_KEY = "paramTypes";
 
-    private static final String COMMAND_JSON = "command.json";
+    static final String COMMAND_JSON = "command.json";
 
-    private static final String VERSION = "v1.2";
+    private static final String VERSION = "v1.3";
 
-    private static final String HUTOOL_USER_HOME = System.getProperty("user.home") + File.separator + "hutool-cli";
+    static final String HUTOOL_USER_HOME = System.getProperty("user.home") + File.separator + "hutool-cli";
 
     private static final Map<String, JSONObject> ALIAS_CACHE = new HashMap<>(4, 1);
 
@@ -312,14 +312,15 @@ public final class Hutool {
             debugOutput("getting method ignore case by method name and param types");
             method = ReflectUtil.getMethod(clazz, true, ARG.methodName, paramTypes);
         }
-        if (Objects.isNull(method)) {
-            String msg = "static method not found(ignore case): %s#%s(%s)";
+        if (Objects.isNull(method) || !Modifier.isPublic(method.getModifiers())) {
+            String msg = "static method not found(ignore case) or is not a public method: %s#%s(%s)";
             String[] paramTypeArray = ARG.paramTypes.toArray(new String[0]);
             debugOutput(msg, clazz.getName(), ARG.methodName, ArrayUtil.join(paramTypeArray, ", "));
             ARG.methodName = "";
             resolveResultByClassMethod(clazz, fixName, methodAliasPaths);
             return;
         }
+
         paramTypes = method.getParameterTypes();
         debugOutput("get method success");
 
