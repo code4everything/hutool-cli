@@ -1,23 +1,31 @@
 package org.code4everything.hutool.converter;
 
 import cn.hutool.core.io.FileUtil;
-import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.http.HttpUtil;
-import com.alibaba.fastjson.JSON;
 import org.code4everything.hutool.Converter;
 import org.code4everything.hutool.Hutool;
 import org.code4everything.hutool.Utils;
 
 import java.io.File;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
+import java.util.StringJoiner;
 
 /**
  * @author pantao
  * @since 2020/11/10
  */
 public class ListStringConverter implements Converter<List<String>> {
+
+    public boolean directLineSep = false;
+
+    public ListStringConverter useLineSep() {
+        directLineSep = true;
+        return this;
+    }
 
     @Override
     public List<String> string2Object(String string) {
@@ -35,6 +43,10 @@ public class ListStringConverter implements Converter<List<String>> {
             string = HttpUtil.get(string);
         }
 
+        if (directLineSep) {
+            return StrUtil.splitTrim(string, "\n");
+        }
+
         char[] chars = string.toCharArray();
         int iterCnt = chars.length >> 1;
         for (int i = 0; i < iterCnt; i++) {
@@ -47,7 +59,31 @@ public class ListStringConverter implements Converter<List<String>> {
     }
 
     @Override
-    public String object2String(Object object) {
-        return object instanceof List ? JSON.toJSONString(object) : ObjectUtil.toString(object);
+    public String object2String(Object object) throws Exception {
+        if (!(object instanceof Collection)) {
+            return "";
+        }
+
+        Collection<?> list = (Collection<?>) object;
+        if (Utils.isCollectionEmpty(list)) {
+            return "[]";
+        }
+
+        Iterator<?> iterator = list.iterator();
+        if (list.size() == 1) {
+            return Hutool.convertResult(iterator.next(), null);
+        }
+
+        StringJoiner joiner;
+        if (directLineSep || list.size() > 10) {
+            joiner = new StringJoiner("\n");
+        } else {
+            joiner = new StringJoiner(",", "[", "]");
+        }
+
+        while (iterator.hasNext()) {
+            joiner.add(Hutool.convertResult(iterator.next(), null));
+        }
+        return joiner.toString();
     }
 }

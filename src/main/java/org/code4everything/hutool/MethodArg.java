@@ -47,9 +47,6 @@ public class MethodArg {
     @Parameter(names = {"-a", "--auto-param"}, description = "clipboard string into indexed parameter", order = 6)
     public int paramIdxFromClipboard = -1;
 
-    @Parameter(names = {"-o", "--output-format"}, description = "output use converter", order = 7)
-    public boolean formatOutput;
-
     @Parameter(names = {"-v", "--version"}, description = "the current version of hutool command line tool", order = 8)
     public boolean version;
 

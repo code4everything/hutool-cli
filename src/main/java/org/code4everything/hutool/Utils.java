@@ -56,7 +56,7 @@ public final class Utils {
 
     private Utils() {}
 
-    public static String listFiles(@ParamConverter(FileConverter.class) File file) {
+    public static String listFiles(@IOConverter(FileConverter.class) File file) {
         if (!FileUtil.exist(file)) {
             return "file not found!";
         }
@@ -107,7 +107,7 @@ public final class Utils {
         return template;
     }
 
-    private static String getDayProcessString(@ParamConverter double process) {
+    private static String getDayProcessString(@IOConverter double process) {
         int p = (int) process;
         char[] cs = new char[100];
         Arrays.fill(cs, 0, p, 'o');
@@ -136,7 +136,7 @@ public final class Utils {
         return sb.toString();
     }
 
-    public static String getFieldNames(@ParamConverter(ClassConverter.class) Class<?> clazz) throws Exception {
+    public static String getFieldNames(@IOConverter(ClassConverter.class) Class<?> clazz) throws Exception {
         if (clazz.isPrimitive()) {
             clazz = parseClass0(parseClassName0("j." + clazz.getName()));
         }
@@ -193,7 +193,7 @@ public final class Utils {
         return joiner.toString();
     }
 
-    public static Object getStaticFieldValue(@ParamConverter(ClassConverter.class) Class<?> clazz, String fieldName) throws Exception {
+    public static Object getStaticFieldValue(@IOConverter(ClassConverter.class) Class<?> clazz, String fieldName) throws Exception {
         if (clazz.isPrimitive()) {
             clazz = parseClass0(parseClassName0("j." + clazz.getName()));
         }
@@ -201,7 +201,8 @@ public final class Utils {
         return ReflectUtil.getStaticFieldValue(field);
     }
 
-    public static List<String> getMatchedItems(@ParamConverter(PatternConverter.class) Pattern regex, String content) {
+    @IOConverter(ListStringConverter.class)
+    public static List<String> getMatchedItems(@IOConverter(PatternConverter.class) Pattern regex, String content) {
         ArrayList<String> result = new ArrayList<>();
         Matcher matcher = regex.matcher(content);
         while (matcher.find()) {
@@ -210,7 +211,7 @@ public final class Utils {
         return result;
     }
 
-    public static String getSupperClass(@ParamConverter(ClassConverter.class) Class<?> clazz) {
+    public static String getSupperClass(@IOConverter(ClassConverter.class) Class<?> clazz) {
         StringJoiner joiner = new StringJoiner("\n");
         getSupperClass(joiner, "", clazz);
         return joiner.toString();
@@ -229,20 +230,20 @@ public final class Utils {
         }
     }
 
-    public static boolean assignableFrom(@ParamConverter(ClassConverter.class) Class<?> sourceClass, @ParamConverter(ClassConverter.class) Class<?> testClass) {
+    public static boolean assignableFrom(@IOConverter(ClassConverter.class) Class<?> sourceClass, @IOConverter(ClassConverter.class) Class<?> testClass) {
         return sourceClass.isAssignableFrom(testClass);
     }
 
-    public static String calc(String expression,@ParamConverter int scale) {
+    public static String calc(String expression, @IOConverter int scale) {
         double res = Calculator.conversion(expression);
         return String.format("%." + scale + "f", res);
     }
 
-    public static String lunar(@ParamConverter(DateConverter.class) Date date) {
+    public static String lunar(@IOConverter(DateConverter.class) Date date) {
         return new ChineseDate(date).toString();
     }
 
-    public static long date2Millis(Date date) {
+    public static long date2Millis(@IOConverter(DateConverter.class) Date date) {
         return Objects.isNull(date) ? 0 : date.getTime();
     }
 
@@ -254,7 +255,7 @@ public final class Utils {
         return isStringEmpty(str) ? "" : str.toLowerCase();
     }
 
-    public static String grep(Pattern pattern, @ParamConverter(ListStringConverter.class) List<String> lines) {
+    public static String grep(@IOConverter(PatternConverter.class) Pattern pattern, @IOConverter(ListStringConverter.class) List<String> lines) {
         StringJoiner joiner = new StringJoiner("\n");
         for (String line : lines) {
             if (pattern.matcher(line).find()) {
@@ -449,7 +450,7 @@ public final class Utils {
         return str == null || str.length() == 0;
     }
 
-    static <T> boolean isCollectionEmpty(Collection<T> collection) {
+    public static <T> boolean isCollectionEmpty(Collection<T> collection) {
         return collection == null || collection.isEmpty();
     }
 

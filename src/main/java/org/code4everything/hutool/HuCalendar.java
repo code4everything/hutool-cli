@@ -43,7 +43,7 @@ public class HuCalendar {
         }
     }
 
-    public static String calendar(@ParamConverter(ArrayConverter.class) String[] yearMonths) {
+    public static String calendar(@IOConverter(ArrayConverter.class) String[] yearMonths) {
         if (Objects.isNull(yearMonths) || yearMonths.length == 0) {
             return new HuCalendar(null).getCalenderStr();
         }

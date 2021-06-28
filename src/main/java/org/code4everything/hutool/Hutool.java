@@ -1,5 +1,6 @@
 package org.code4everything.hutool;
 
+import cn.hutool.core.date.Week;
 import cn.hutool.core.exceptions.ExceptionUtil;
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.lang.Holder;
@@ -19,19 +20,25 @@ import javassist.CtClass;
 import javassist.CtMethod;
 import javassist.NotFoundException;
 import org.code4everything.hutool.converter.ArrayConverter;
+import org.code4everything.hutool.converter.CharsetConverter;
+import org.code4everything.hutool.converter.DateConverter;
+import org.code4everything.hutool.converter.FileConverter;
 import org.code4everything.hutool.converter.ListStringConverter;
 import org.code4everything.hutool.converter.MapConverter;
-import org.code4everything.hutool.converter.ObjectPropertyConverter;
+import org.code4everything.hutool.converter.PatternConverter;
 import org.code4everything.hutool.converter.SetStringConverter;
+import org.code4everything.hutool.converter.WeekConverter;
 
 import java.io.File;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Parameter;
+import java.nio.charset.Charset;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -42,6 +49,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.StringJoiner;
 import java.util.TreeMap;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
@@ -84,6 +92,8 @@ public final class Hutool {
 
     private static SimpleDateFormat simpleDateFormat = null;
 
+    private static IOConverter outputConverter = null;
+
     private Hutool() {}
 
     public static SimpleDateFormat getSimpleDateFormat() {
@@ -120,11 +130,7 @@ public final class Hutool {
         resolveResult();
         debugOutput("result handled success");
 
-        if (result == null) {
-            return "";
-        }
-        convertResult();
-        resultString = ObjectUtil.toString(result);
+        resultString = convertResult();
         if (ARG.copy) {
             debugOutput("copying result into clipboard");
             ClipboardUtil.setStr(resultString);
@@ -327,6 +333,7 @@ public final class Hutool {
         }
 
         Parameter[] parameters = method.getParameters();
+        outputConverter = method.getAnnotation(IOConverter.class);
         debugOutput("get method success");
 
         if (ARG.params.size() < parameters.length) {
@@ -339,12 +346,11 @@ public final class Hutool {
         debugOutput("casting parameter to class type");
         Object[] params = new Object[parameters.length];
         StringJoiner paramJoiner = new StringJoiner(", ");
-        JSONObject converterJson = parameters.length > 0 ? getAlias("", homeDir, CONVERTER_JSON) : null;
         for (int i = 0; i < parameters.length; i++) {
             String param = ARG.params.get(i);
             paramJoiner.add(param);
             Parameter parameter = parameters[i];
-            params[i] = castParam2JavaType(converterJson, parameter.getAnnotation(ParamConverter.class), param, parameter.getType(), true);
+            params[i] = castParam2JavaType(parameter.getAnnotation(IOConverter.class), param, parameter.getType(), true);
         }
 
         debugOutput("cast parameter success");
@@ -412,7 +418,7 @@ public final class Hutool {
         return method;
     }
 
-    public static Object castParam2JavaType(JSONObject convertJson, ParamConverter paramConverter, String param, Class<?> type, boolean replace) {
+    public static Object castParam2JavaType(IOConverter inputConverter, String param, Class<?> type, boolean replace) {
         if ("nil".equals(param)) {
             return null;
         }
@@ -426,14 +432,14 @@ public final class Hutool {
             }
         }
 
-        if (Objects.isNull(paramConverter) && CharSequence.class.isAssignableFrom(type)) {
+        if (Objects.isNull(inputConverter) && CharSequence.class.isAssignableFrom(type)) {
             return param;
         }
 
         // 转换参数类型
         Converter<?> converter = null;
         try {
-            converter = getConverter(convertJson, paramConverter, type);
+            converter = getConverter(inputConverter, type);
             if (converter != null) {
                 debugOutput("cast param[%s] using converter: %s", param, converter.getClass().getName());
                 return converter.string2Object(param);
@@ -446,23 +452,10 @@ public final class Hutool {
         return TypeUtils.cast(param, type, null);
     }
 
-    @SuppressWarnings({"rawtypes", "unchecked"})
-    private static Converter<?> getConverter(JSONObject convertJson, ParamConverter paramConverter, Class<?> type) throws Exception {
-        if (Objects.nonNull(paramConverter)) {
-            Class<? extends Converter<?>> value = paramConverter.value();
-            if (value == ParamConverter.WithoutConverter.class) {
-                if (!Utils.isStringEmpty(paramConverter.className())) {
-                    value = (Class<? extends Converter<?>>) Utils.parseClass(paramConverter.className());
-                }
-                if (value == ParamConverter.WithoutConverter.class) {
-                    return new ParamConverter.WithoutConverter(type);
-                }
-            }
-
-            if (value == ArrayConverter.class) {
-                return new ArrayConverter(type.getTypeName(), convertJson);
-            }
-            return ReflectUtil.newInstance(value);
+    @SuppressWarnings({"unchecked"})
+    private static Converter<?> getConverter(IOConverter inputConverter, Class<?> type) throws Exception {
+        if (Objects.nonNull(inputConverter)) {
+            Converter.getConverter(inputConverter, type);
         }
 
         if (List.class.isAssignableFrom(type)) {
@@ -472,16 +465,14 @@ public final class Hutool {
             return new SetStringConverter();
         }
         if (type.isArray()) {
-            return new ArrayConverter(type.getTypeName(), convertJson);
+            return new ArrayConverter(type);
         }
 
-        String converterName = convertJson.getString(type.getName());
+        String converterName = getAlias("", homeDir, CONVERTER_JSON).getString(type.getName());
         if (Utils.isStringEmpty(converterName)) {
             return null;
         }
-
-        Class<?> converterClass = Utils.parseClass(converterName);
-        return (Converter) ReflectUtil.newInstance(converterClass);
+        return Converter.newConverter((Class<? extends Converter<?>>) Utils.parseClass(converterName), type);
     }
 
     private static void fixMethodName(boolean fixName, List<String> methodAliasPaths) {
@@ -605,56 +596,70 @@ public final class Hutool {
         return (outClassName ? ctClass.getName() + "#" : "") + Utils.getMethodFullInfo(ctMethod, defaultValueMap);
     }
 
-    @SuppressWarnings("rawtypes")
-    private static void convertResult() {
-        if (Objects.isNull(result) || result instanceof CharSequence) {
-            return;
+    private static String convertResult() {
+        debugOutput("converting result");
+        try {
+            String res = convertResult(result, outputConverter);
+            debugOutput("result convert success");
+            return res;
+        } catch (Exception e) {
+            debugOutput("convert result error: " + e.getMessage());
+        }
+        return "";
+    }
+
+    @SuppressWarnings({"unchecked"})
+    public static String convertResult(Object obj, IOConverter ioConverter) throws Exception {
+        if (Objects.isNull(obj)) {
+            return "";
         }
 
-        if (!ARG.formatOutput) {
-            autoConvert();
-            return;
+        Class<?> resClass = obj.getClass();
+        if (Objects.isNull(ioConverter)) {
+            if (obj instanceof CharSequence) {
+                return obj.toString();
+            }
+            if (obj instanceof File) {
+                return new FileConverter().object2String(obj);
+            }
+            if (obj instanceof Date) {
+                return new DateConverter().object2String(obj);
+            }
+            if (obj instanceof Map) {
+                return new MapConverter().object2String(obj);
+            }
+            if (obj instanceof Double) {
+                return String.format("%.2f", obj);
+            }
+            if (obj instanceof Charset) {
+                return new CharsetConverter().object2String(obj);
+            }
+            if (obj instanceof Collection) {
+                return new ListStringConverter().object2String(obj);
+            }
+            if (obj instanceof Pattern) {
+                return new PatternConverter().object2String(obj);
+            }
+            if (obj instanceof Week) {
+                return new WeekConverter().object2String(obj);
+            }
+            if (obj.getClass().isArray()) {
+                return new ArrayConverter(resClass).object2String(obj);
+            }
         }
 
-        String name = result.getClass().getName();
+        if (Objects.nonNull(ioConverter)) {
+            return Converter.getConverter(ioConverter, resClass).object2String(obj);
+        }
+
+        String name = resClass.getName();
         JSONObject converterJson = getAlias("", homeDir, CONVERTER_JSON);
         String converterName = converterJson.getString(name);
 
-        try {
-            if (Utils.isStringEmpty(converterName)) {
-                for (Map.Entry<String, Object> entry : converterJson.entrySet()) {
-                    Class<?> clazz = Utils.parseClass(entry.getKey());
-                    if (clazz.isAssignableFrom(result.getClass())) {
-                        converterName = entry.getValue().toString();
-                        break;
-                    }
-                }
-            }
-            Converter<?> converter;
-            if (Utils.isStringEmpty(converterName)) {
-                converter = new ObjectPropertyConverter();
-            } else {
-                Class<?> converterClz = Utils.parseClass(converterName);
-                converter = (Converter) ReflectUtil.newInstance(converterClz);
-            }
-            debugOutput("converting result");
-            result = converter.object2String(result);
-            debugOutput("result convert success");
-        } catch (Exception e) {
-            debugOutput("converter[%s] not found!", converterName);
+        if (Utils.isStringEmpty(converterName)) {
+            return ObjectUtil.toString(obj);
         }
-    }
-
-    private static void autoConvert() {
-        if (result instanceof File) {
-            result = ((File) result).getAbsolutePath();
-        } else if (result instanceof Date) {
-            result = getSimpleDateFormat().format((Date) result);
-        } else if (result instanceof Map) {
-            result = new MapConverter().object2String(result);
-        } else if (result instanceof Double) {
-            result = String.format("%.2f", result);
-        }
+        return Converter.newConverter((Class<? extends Converter<?>>) Utils.parseClass(converterName), resClass).object2String(obj);
     }
 
     public static JSONObject getAlias(String aliasKey, String parentDir, String... paths) {

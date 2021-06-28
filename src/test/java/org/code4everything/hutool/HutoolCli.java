@@ -56,8 +56,8 @@ public class HutoolCli {
 
     @Test
     public void value() {
-        Assert.assertEquals(String.valueOf(Integer.MAX_VALUE), test("maxint"));
-        Assert.assertEquals(String.valueOf(Long.MAX_VALUE), test("maxlong"));
+        Assert.assertEquals(String.valueOf(Integer.MAX_VALUE), test("intmax -d"));
+        Assert.assertEquals(String.valueOf(Long.MAX_VALUE), test("longmax"));
         Assert.assertEquals(String.valueOf(Integer.MIN_VALUE), test("value j.int MIN_VALUE"));
         Assert.assertEquals(String.valueOf(Short.MIN_VALUE), test("value j.short MIN_VALUE"));
     }

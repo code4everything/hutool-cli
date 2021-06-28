@@ -11,14 +11,16 @@ import java.lang.annotation.Target;
 import java.util.Objects;
 
 /**
+ * 输入输出转换器
+ *
  * @author pantao
  * @since 2021/6/28
  */
 @Documented
 @Inherited
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.PARAMETER)
-public @interface ParamConverter {
+@Target({ElementType.PARAMETER, ElementType.METHOD})
+public @interface IOConverter {
 
     /**
      * 使用自定义转换器
@@ -39,7 +41,7 @@ public @interface ParamConverter {
         }
 
         @Override
-        public Object string2Object(String string) throws Exception {
+        public Object string2Object(String string) {
             return TypeUtils.cast(string, objType, null);
         }
 
