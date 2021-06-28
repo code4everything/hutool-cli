@@ -1,7 +1,6 @@
 package org.code4everything.hutool.converter;
 
 import com.alibaba.fastjson.JSONObject;
-import com.alibaba.fastjson.parser.ParserConfig;
 import org.code4everything.hutool.Hutool;
 import org.code4everything.hutool.Utils;
 import org.junit.Assert;
@@ -14,7 +13,7 @@ public class ArrayConverterTest {
     @Test
     public void string2Object() throws Exception {
         JSONObject converterJson = Hutool.getAlias("", "", Hutool.CONVERTER_JSON);
-        ArrayConverter converter = new ArrayConverter(Utils.parseClass("[B").getTypeName(), converterJson, new ParserConfig());
+        ArrayConverter converter = new ArrayConverter(Utils.parseClass("[B").getTypeName(), converterJson);
         Assert.assertArrayEquals(new byte[]{1, 2, 3}, (byte[]) converter.string2Object("1,2,3"));
 
         converter.setElementClass(Utils.parseClass("[C").getTypeName());

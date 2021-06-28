@@ -2,7 +2,6 @@ package org.code4everything.hutool.converter;
 
 import cn.hutool.core.util.ObjectUtil;
 import com.alibaba.fastjson.JSONObject;
-import com.alibaba.fastjson.parser.ParserConfig;
 import org.code4everything.hutool.CliException;
 import org.code4everything.hutool.Converter;
 import org.code4everything.hutool.Hutool;
@@ -21,14 +20,11 @@ public class ArrayConverter implements Converter<Object> {
 
     private final JSONObject convertJson;
 
-    private final ParserConfig parserConfig;
-
     private Class<?> elementClass;
 
-    public ArrayConverter(String arrayTypeName, JSONObject convertJson, ParserConfig parserConfig) throws Exception {
+    public ArrayConverter(String arrayTypeName, JSONObject convertJson) throws Exception {
         setElementClass(arrayTypeName);
         this.convertJson = convertJson;
-        this.parserConfig = parserConfig;
     }
 
     public void setElementClass(String arrayTypeName) throws Exception {
@@ -50,7 +46,7 @@ public class ArrayConverter implements Converter<Object> {
         List<String> segments = Arrays.asList(string.split(","));
         Object array = Array.newInstance(elementClass, segments.size());
         for (int i = 0; i < segments.size(); i++) {
-            Array.set(array, i, Hutool.castParam2JavaType(convertJson, parserConfig, segments.get(i), elementClass, false));
+            Array.set(array, i, Hutool.castParam2JavaType(convertJson, null, segments.get(i), elementClass, false));
         }
         return array;
     }

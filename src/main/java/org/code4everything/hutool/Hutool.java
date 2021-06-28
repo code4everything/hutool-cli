@@ -12,7 +12,6 @@ import cn.hutool.log.level.Level;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.TypeReference;
-import com.alibaba.fastjson.parser.ParserConfig;
 import com.alibaba.fastjson.util.TypeUtils;
 import com.beust.jcommander.JCommander;
 import javassist.ClassPool;
@@ -28,6 +27,7 @@ import org.code4everything.hutool.converter.SetStringConverter;
 import java.io.File;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.lang.reflect.Parameter;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -263,6 +263,11 @@ public final class Hutool {
             return;
         }
 
+        if (clazz == Hutool.class) {
+            System.out.println("class not support: org.code4everything.hutool.Hutool");
+            return;
+        }
+
         debugOutput("load class success");
         resolveResultByClassMethod(clazz, fixName, methodAliasPaths);
     }
@@ -287,31 +292,31 @@ public final class Hutool {
             ARG.params.add(Math.min(ARG.params.size(), ARG.paramIdxFromClipboard), ClipboardUtil.getStr());
         }
 
-        debugOutput("parsing parameter types");
-        Class<?>[] paramTypes = new Class<?>[ARG.paramTypes.size()];
-        boolean parseDefaultValue = ARG.params.size() < paramTypes.length;
-        for (int i = 0; i < ARG.paramTypes.size(); i++) {
-            // 解析默认值，默认值要么都填写，要么都不填写
-            String paramType = parseParamType(i, ARG.paramTypes.get(i), parseDefaultValue);
-            try {
-                paramTypes[i] = Utils.parseClass(paramType);
-            } catch (Exception e) {
-                debugOutput(ExceptionUtil.stacktraceToString(e, Integer.MAX_VALUE));
-                System.out.println("param type not found: " + paramType);
-                return;
-            }
-        }
-        debugOutput("parse parameter types success");
-
         Method method;
-        if (omitParamType && Utils.isArrayEmpty(paramTypes) && !Utils.isCollectionEmpty(ARG.params)) {
+        if (omitParamType && Utils.isCollectionEmpty(ARG.paramTypes) && !Utils.isCollectionEmpty(ARG.params)) {
             // 缺省方法参数类型，自动匹配方法
             debugOutput("getting method ignore case by method name and param count");
             method = autoMatchMethod(clazz);
         } else {
+            debugOutput("parsing parameter types");
+            Class<?>[] paramTypes = new Class<?>[ARG.paramTypes.size()];
+            boolean parseDefaultValue = ARG.params.size() < paramTypes.length;
+            for (int i = 0; i < ARG.paramTypes.size(); i++) {
+                // 解析默认值，默认值要么都填写，要么都不填写
+                String paramType = parseParamType(i, ARG.paramTypes.get(i), parseDefaultValue);
+                try {
+                    paramTypes[i] = Utils.parseClass(paramType);
+                } catch (Exception e) {
+                    debugOutput(ExceptionUtil.stacktraceToString(e, Integer.MAX_VALUE));
+                    System.out.println("param type not found: " + paramType);
+                    return;
+                }
+            }
+            debugOutput("parse parameter types success");
             debugOutput("getting method ignore case by method name and param types");
             method = ReflectUtil.getMethod(clazz, true, ARG.methodName, paramTypes);
         }
+
         if (Objects.isNull(method) || !Modifier.isPublic(method.getModifiers())) {
             String msg = "static method not found(ignore case) or is not a public method: %s#%s(%s)";
             String[] paramTypeArray = ARG.paramTypes.toArray(new String[0]);
@@ -321,25 +326,25 @@ public final class Hutool {
             return;
         }
 
-        paramTypes = method.getParameterTypes();
+        Parameter[] parameters = method.getParameters();
         debugOutput("get method success");
 
-        if (ARG.params.size() < paramTypes.length) {
-            String[] paramTypeArray = ARG.paramTypes.stream().map(Utils::parseClassName).toArray(String[]::new);
+        if (ARG.params.size() < parameters.length) {
+            String[] paramTypeArray = Arrays.stream(parameters).map(e -> e.getType().getName()).toArray(String[]::new);
             System.out.println("parameter error, required: (" + ArrayUtil.join(paramTypeArray, ", ") + ")");
             return;
         }
 
         // 转换参数类型
         debugOutput("casting parameter to class type");
-        ParserConfig parserConfig = new ParserConfig();
-        Object[] params = new Object[paramTypes.length];
+        Object[] params = new Object[parameters.length];
         StringJoiner paramJoiner = new StringJoiner(", ");
-        JSONObject converterJson = paramTypes.length > 0 ? getAlias("", homeDir, CONVERTER_JSON) : null;
-        for (int i = 0; i < paramTypes.length; i++) {
+        JSONObject converterJson = parameters.length > 0 ? getAlias("", homeDir, CONVERTER_JSON) : null;
+        for (int i = 0; i < parameters.length; i++) {
             String param = ARG.params.get(i);
             paramJoiner.add(param);
-            params[i] = castParam2JavaType(converterJson, parserConfig, param, paramTypes[i], true);
+            Parameter parameter = parameters[i];
+            params[i] = castParam2JavaType(converterJson, parameter.getAnnotation(ParamConverter.class), param, parameter.getType(), true);
         }
 
         debugOutput("cast parameter success");
@@ -407,8 +412,7 @@ public final class Hutool {
         return method;
     }
 
-    @SuppressWarnings("rawtypes")
-    public static Object castParam2JavaType(JSONObject convertJson, ParserConfig parserConfig, String param, Class<?> type, boolean replace) {
+    public static Object castParam2JavaType(JSONObject convertJson, ParamConverter paramConverter, String param, Class<?> type, boolean replace) {
         if ("nil".equals(param)) {
             return null;
         }
@@ -422,24 +426,14 @@ public final class Hutool {
             }
         }
 
-        if (CharSequence.class.isAssignableFrom(type)) {
+        if (Objects.isNull(paramConverter) && CharSequence.class.isAssignableFrom(type)) {
             return param;
         }
 
         // 转换参数类型
-        String converterName = convertJson.getString(type.getName());
         Converter<?> converter = null;
         try {
-            if (List.class.isAssignableFrom(type)) {
-                converter = new ListStringConverter();
-            } else if (Set.class.isAssignableFrom(type)) {
-                converter = new SetStringConverter();
-            } else if (type.isArray()) {
-                converter = new ArrayConverter(type.getTypeName(), convertJson, parserConfig);
-            } else if (!Utils.isStringEmpty(converterName)) {
-                Class<?> converterClass = Utils.parseClass(converterName);
-                converter = (Converter) ReflectUtil.newInstance(converterClass);
-            }
+            converter = getConverter(convertJson, paramConverter, type);
             if (converter != null) {
                 debugOutput("cast param[%s] using converter: %s", param, converter.getClass().getName());
                 return converter.string2Object(param);
@@ -449,7 +443,45 @@ public final class Hutool {
             debugOutput("cast param[%s] to type[%s] using converter[%s] failed: %s", param, type.getName(), converter.getClass().getName(), ExceptionUtil.stacktraceToString(e, Integer.MAX_VALUE));
         }
         debugOutput("auto convert param[%s] to type: %s", param, type.getName());
-        return TypeUtils.cast(param, type, parserConfig);
+        return TypeUtils.cast(param, type, null);
+    }
+
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    private static Converter<?> getConverter(JSONObject convertJson, ParamConverter paramConverter, Class<?> type) throws Exception {
+        if (Objects.nonNull(paramConverter)) {
+            Class<? extends Converter<?>> value = paramConverter.value();
+            if (value == ParamConverter.WithoutConverter.class) {
+                if (!Utils.isStringEmpty(paramConverter.className())) {
+                    value = (Class<? extends Converter<?>>) Utils.parseClass(paramConverter.className());
+                }
+                if (value == ParamConverter.WithoutConverter.class) {
+                    return new ParamConverter.WithoutConverter(type);
+                }
+            }
+
+            if (value == ArrayConverter.class) {
+                return new ArrayConverter(type.getTypeName(), convertJson);
+            }
+            return ReflectUtil.newInstance(value);
+        }
+
+        if (List.class.isAssignableFrom(type)) {
+            return new ListStringConverter();
+        }
+        if (Set.class.isAssignableFrom(type)) {
+            return new SetStringConverter();
+        }
+        if (type.isArray()) {
+            return new ArrayConverter(type.getTypeName(), convertJson);
+        }
+
+        String converterName = convertJson.getString(type.getName());
+        if (Utils.isStringEmpty(converterName)) {
+            return null;
+        }
+
+        Class<?> converterClass = Utils.parseClass(converterName);
+        return (Converter) ReflectUtil.newInstance(converterClass);
     }
 
     private static void fixMethodName(boolean fixName, List<String> methodAliasPaths) {

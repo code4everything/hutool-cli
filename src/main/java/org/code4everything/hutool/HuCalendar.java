@@ -5,6 +5,7 @@ import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.text.StrJoiner;
 import cn.hutool.core.util.StrUtil;
+import org.code4everything.hutool.converter.ArrayConverter;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -42,7 +43,7 @@ public class HuCalendar {
         }
     }
 
-    public static String calendar(String[] yearMonths) {
+    public static String calendar(@ParamConverter(ArrayConverter.class) String[] yearMonths) {
         if (Objects.isNull(yearMonths) || yearMonths.length == 0) {
             return new HuCalendar(null).getCalenderStr();
         }
