@@ -78,6 +78,8 @@ public final class Hutool {
 
     public static MethodArg ARG;
 
+    public static Object result;
+
     static String homeDir = System.getenv("HUTOOL_PATH");
 
     private static String resultString;
@@ -85,8 +87,6 @@ public final class Hutool {
     private static boolean omitParamType = true;
 
     private static JCommander commander;
-
-    private static Object result;
 
     private static List<String> resultContainer = null;
 
@@ -209,14 +209,14 @@ public final class Hutool {
 
             JSONObject methodJson = aliasJson.getJSONObject(command);
             if (Objects.isNull(methodJson) || !methodJson.containsKey(methodKey)) {
-                System.out.println("command[" + command + "] not found!");
+                result = "command[" + command + "] not found!";
                 return;
             }
 
             String classMethod = methodJson.getString(methodKey);
             idx = classMethod.lastIndexOf(sharp);
             if (idx < 1) {
-                System.out.println("method[" + classMethod + "] format error, required: com.example.Main#main");
+                result = "method[" + classMethod + "] format error, required: com.example.Main#main";
                 return;
             }
 
@@ -270,7 +270,7 @@ public final class Hutool {
         }
 
         if (clazz == Hutool.class) {
-            System.out.println("class not support: org.code4everything.hutool.Hutool");
+            result = "class not support: org.code4everything.hutool.Hutool";
             return;
         }
 
@@ -314,7 +314,7 @@ public final class Hutool {
                     paramTypes[i] = Utils.parseClass(paramType);
                 } catch (Exception e) {
                     debugOutput(ExceptionUtil.stacktraceToString(e, Integer.MAX_VALUE));
-                    System.out.println("param type not found: " + paramType);
+                    result = "param type not found: " + paramType;
                     return;
                 }
             }
@@ -337,8 +337,13 @@ public final class Hutool {
         debugOutput("get method success");
 
         if (ARG.params.size() < parameters.length) {
-            String[] paramTypeArray = Arrays.stream(parameters).map(e -> e.getType().getName()).toArray(String[]::new);
-            System.out.println("parameter error, required: (" + ArrayUtil.join(paramTypeArray, ", ") + ")");
+            try {
+                String methodFullInfo = parseMethodFullInfo(clazz.getName(), method.getName(), ARG.paramTypes);
+                result = "parameter error, method request: " + methodFullInfo;
+            } catch (Exception e) {
+                String[] paramTypeArray = Arrays.stream(parameters).map(x -> x.getType().getName()).toArray(String[]::new);
+                result = "parameter error, required: (" + ArrayUtil.join(paramTypeArray, ", ") + ")";
+            }
             return;
         }
 
@@ -705,7 +710,7 @@ public final class Hutool {
         cs[0] = '\n';
         String separator = new String(cs);
         System.out.println(separator + "\n>> hu " + cmd + " <<" + separator);
-        Hutool.main(cmd.split(" "));
+        Hutool.main((cmd + " --work-dir " + Paths.get(".").toAbsolutePath().normalize().toString()).split(" "));
         return Hutool.resultString;
     }
 }

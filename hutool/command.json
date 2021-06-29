@@ -330,5 +330,8 @@
     },
     "calendar": {
         "method": "org.code4everything.hutool.HuCalendar#calendar(str.arr=nil)"
+    },
+    "tree": {
+        "method": "org.code4everything.hutool.FileTree#treeFile(file,int=-1)"
     }
 }
