@@ -98,4 +98,9 @@ public class HutoolCli {
     public void usage() {
         test("");
     }
+
+    @Test
+    public void treeFile() {
+        test("tree ./build/classes 5");
+    }
 }

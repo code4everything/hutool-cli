@@ -8,7 +8,7 @@ import java.util.List;
  * @author pantao
  * @since 2021/6/28
  */
-public class LineStringConverter implements Converter<List<String>> {
+public class LineSepConverter implements Converter<List<String>> {
 
     private final ListStringConverter converter = new ListStringConverter().useLineSep();
 

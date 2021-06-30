@@ -24,7 +24,10 @@ public class FileConverter implements Converter<File> {
         if ("$".equals(string)) {
             return FileUtil.file(System.getenv("JAVA_HOME"));
         }
-        return FileUtil.isAbsolutePath(string) ? FileUtil.file(string) : Paths.get(Hutool.ARG.workDir, string).toFile();
+        if (".".equals(string)) {
+            return FileUtil.file(Hutool.ARG.workDir);
+        }
+        return FileUtil.isAbsolutePath(string) ? FileUtil.file(string) : Paths.get(Hutool.ARG.workDir, string).toAbsolutePath().toFile();
     }
 
     @Override

@@ -88,9 +88,9 @@ git clone https://gitee.com/code4everything/hutool-cli.git
 
 ```text
 ├─bin
-│  ├─hu
-│  ├─hu-mac
-│  └─hu.exe
+│ ├─hu
+│ ├─hu-mac
+│ └─hu.exe
 └─hutool.jar
 ```
 
@@ -102,7 +102,7 @@ git clone https://gitee.com/code4everything/hutool-cli.git
 
 ```text
 ├─bin
-│  └─hu(.exe)
+│ └─hu(.exe)
 ├─method
 ├─class.json
 ├─command.json
