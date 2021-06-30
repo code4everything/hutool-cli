@@ -72,7 +72,8 @@ public class HutoolCli {
 
     @Test
     public void dayp() {
-        test("dayp");
+        test("dayp yesterday");
+        test("dayp 2021-06-27T23:59:59");
     }
 
     @Test

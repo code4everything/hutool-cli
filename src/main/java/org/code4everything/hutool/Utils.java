@@ -88,18 +88,17 @@ public final class Utils {
         return joiner.toString();
     }
 
-    public static String dayProcess() {
-        DateTime now = DateUtil.date();
-        DateTime date = DateUtil.beginOfDay(now);
-        double todayProcess = (System.currentTimeMillis() - date.getTime()) * 100 / 24D / 60 / 60 / 1000;
+    public static String dayProcess(@IOConverter(DateConverter.class) DateTime specificDate) {
+        DateTime date = DateUtil.beginOfDay(specificDate);
+        double todayProcess = (specificDate.getTime() - date.getTime()) * 100 / 24D / 60 / 60 / 1000;
         Week weekEnum = DateUtil.dayOfWeekEnum(date);
         int week = weekEnum.getValue() - 1;
         week = (week == 0 ? 7 : week) * 24 - 24;
-        double weekProcess = (week + now.hour(true)) * 100 / 7D / 24;
+        double weekProcess = (week + specificDate.hour(true)) * 100 / 7D / 24;
         double monthProcess = DateUtil.dayOfMonth(date) * 100 / (double) DateUtil.endOfMonth(date).dayOfMonth();
         double yearProcess = DateUtil.dayOfYear(date) * 100 / (double) DateUtil.endOfYear(date).dayOfYear();
 
-        String template = String.format("%s %s %s%n", lunar(now), weekEnum.toChinese("周"), Hutool.getSimpleDateFormat().format(now));
+        String template = String.format("%s %s %s%n", lunar(specificDate), weekEnum.toChinese("周"), Hutool.getSimpleDateFormat().format(specificDate));
         template += String.format("%n今日 [%s]: %05.2f%%", getDayProcessString(todayProcess), todayProcess);
         template += String.format("%n本周 [%s]: %05.2f%%", getDayProcessString(weekProcess), weekProcess);
         template += String.format("%n本月 [%s]: %05.2f%%", getDayProcessString(monthProcess), monthProcess);
@@ -108,7 +107,7 @@ public final class Utils {
     }
 
     private static String getDayProcessString(@IOConverter double process) {
-        int p = (int) process;
+        int p = (int) (Math.ceil(process * 100) / 100);
         char[] cs = new char[100];
         Arrays.fill(cs, 0, p, 'o');
         Arrays.fill(cs, p, 100, ' ');

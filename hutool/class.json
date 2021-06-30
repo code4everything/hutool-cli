@@ -181,5 +181,8 @@
     },
     "utils": {
         "clazz": "org.code4everything.hutool.Utils"
+    },
+    "datetime": {
+        "clazz": "cn.hutool.core.date.DateTime"
     }
 }

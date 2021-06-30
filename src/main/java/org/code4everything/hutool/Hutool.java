@@ -460,7 +460,7 @@ public final class Hutool {
     @SuppressWarnings({"unchecked"})
     private static Converter<?> getConverter(IOConverter inputConverter, Class<?> type) throws Exception {
         if (Objects.nonNull(inputConverter)) {
-            Converter.getConverter(inputConverter, type);
+            return Converter.getConverter(inputConverter, type);
         }
 
         if (List.class.isAssignableFrom(type)) {
@@ -564,12 +564,19 @@ public final class Hutool {
             String[] split = ARG.methodName.substring(idx + 1, ARG.methodName.length() - 1).split(",");
             ARG.paramTypes = Arrays.stream(split).filter(e -> !Utils.isStringEmpty(e)).collect(Collectors.toList());
             ARG.methodName = ARG.methodName.substring(0, idx);
-            return;
-        }
-        if (Objects.nonNull(json)) {
+        } else if (Objects.nonNull(json)) {
             List<String> paramTypes = json.getObject(PARAM_KEY, new TypeReference<List<String>>() {});
             ARG.paramTypes = ObjectUtil.defaultIfNull(paramTypes, Collections.emptyList());
         }
+
+        if (Objects.isNull(json)) {
+            return;
+        }
+        String specificTypes = json.getString(String.valueOf(ARG.params.size()));
+        if (Utils.isStringEmpty(specificTypes)) {
+            return;
+        }
+        ARG.paramTypes = Arrays.asList(specificTypes.split(","));
     }
 
     private static String parseMethodFullInfo(String className, String methodName, List<String> paramTypes) throws NotFoundException {
