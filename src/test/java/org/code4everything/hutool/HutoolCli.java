@@ -101,6 +101,6 @@ public class HutoolCli {
 
     @Test
     public void treeFile() {
-        test("tree ./build/classes 5");
+        test("tree ~ 3");
     }
 }

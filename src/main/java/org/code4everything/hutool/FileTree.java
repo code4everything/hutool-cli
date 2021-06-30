@@ -31,9 +31,6 @@ public class FileTree {
         if (maxDepth > -1 && currDepth > maxDepth) {
             return Collections.emptyList();
         }
-        if (file.isHidden() || (file.isDirectory() && file.getName().startsWith("."))) {
-            return Collections.emptyList();
-        }
         if (file.isFile()) {
             return Collections.singletonList((isLast ? "└─" : "├─") + file.getName());
         }
@@ -43,17 +40,21 @@ public class FileTree {
             return Collections.emptyList();
         }
 
-        Arrays.sort(files, Comparator.comparing(File::isDirectory).reversed());
-        int last = files.length - 1;
+        List<File> fileList = Arrays.stream(files).filter(f -> !f.isHidden() && (!f.isDirectory() || !f.getName().startsWith("."))).sorted(Comparator.comparing(File::isDirectory).reversed()).collect(Collectors.toList());
+        if (Utils.isCollectionEmpty(fileList)) {
+            return Collections.emptyList();
+        }
+
+        int last = fileList.size() - 1;
         List<String> list = new ArrayList<>();
         for (int i = 0; i <= last; i++) {
-            File f = files[i];
+            File f = fileList.get(i);
             boolean isLastInner = i == last;
             boolean directory = f.isDirectory();
             if (directory) {
                 list.add((isLastInner ? "└─" : "├─") + f.getName());
             }
-            List<String> innerList = treeFile(f, currDepth + 1, maxDepth, isLastInner);
+            List<String> innerList = treeFile(f, directory ? currDepth + 1 : currDepth, maxDepth, isLastInner);
             if (directory) {
                 list.addAll(innerList.stream().map(e -> (isLastInner ? " " : "│") + " " + e).collect(Collectors.toList()));
             } else {

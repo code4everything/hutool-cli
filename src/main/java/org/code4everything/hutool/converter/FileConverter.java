@@ -3,6 +3,7 @@ package org.code4everything.hutool.converter;
 import cn.hutool.core.io.FileUtil;
 import org.code4everything.hutool.Converter;
 import org.code4everything.hutool.Hutool;
+import org.code4everything.hutool.Utils;
 
 import java.io.File;
 import java.nio.file.Paths;
@@ -15,8 +16,8 @@ public class FileConverter implements Converter<File> {
 
     @Override
     public File string2Object(String string) {
-        if ("~".equals(string)) {
-            return FileUtil.getUserHomeDir();
+        if (!Utils.isStringEmpty(string) && string.startsWith("~")) {
+            return FileUtil.file(FileUtil.getUserHomePath() + string.substring(1));
         }
         if ("!".equals(string)) {
             return FileUtil.file(System.getenv("HUTOOL_PATH"));
