@@ -93,4 +93,9 @@ public class HutoolCli {
     public void charSequenceUtil$format() {
         test("csu#format -t j.char.seq -t obj.arr {}#{} csu,format");
     }
+
+    @Test
+    public void usage() {
+        test("");
+    }
 }

@@ -1,12 +1,13 @@
 package org.code4everything.hutool.converter;
 
-import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.ArrayUtil;
 import org.code4everything.hutool.CliException;
 import org.code4everything.hutool.Converter;
 import org.code4everything.hutool.Hutool;
 import org.code4everything.hutool.Utils;
 
 import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -47,7 +48,15 @@ public class ArrayConverter implements Converter<Object> {
     }
 
     @Override
-    public String object2String(Object object) {
-        return ObjectUtil.toString(object);
+    public String object2String(Object object) throws Exception {
+        if (!ArrayUtil.isArray(object)) {
+            return "";
+        }
+        int length = Array.getLength(object);
+        List<Object> list = new ArrayList<>();
+        for (int i = 0; i < length; i++) {
+            list.add(Array.get(object, i));
+        }
+        return ArrayUtil.isArray(object) ? new ListStringConverter().object2String(list) : "";
     }
 }

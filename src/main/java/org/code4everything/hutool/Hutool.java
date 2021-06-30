@@ -496,6 +496,12 @@ public final class Hutool {
 
     private static void seeUsage() {
         System.out.println();
+        if (Objects.isNull(ARG)) {
+            ARG = new MethodArg();
+        }
+        if (Objects.isNull(commander)) {
+            commander = JCommander.newBuilder().addObject(ARG).build();
+        }
         commander.usage();
     }
 
@@ -705,7 +711,7 @@ public final class Hutool {
         cs[0] = '\n';
         String separator = new String(cs);
         System.out.println(separator + "\n>> hu " + cmd + " <<" + separator);
-        Hutool.main(cmd.split(" "));
+        Hutool.main(Utils.isStringEmpty(cmd) ? null : cmd.split(" "));
         return Hutool.resultString;
     }
 }
