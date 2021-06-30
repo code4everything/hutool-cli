@@ -1,33 +1,18 @@
 {
     "encode32": {
-        "method": "cn.hutool.core.codec.Base32#encode",
-        "paramTypes": [
-            "string"
-        ]
+        "method": "cn.hutool.core.codec.Base32#encode(string)"
     },
     "decode32": {
-        "method": "cn.hutool.core.codec.Base32#decodeStr",
-        "paramTypes": [
-            "string"
-        ]
+        "method": "cn.hutool.core.codec.Base32#decodeStr(string)"
     },
     "encode64": {
-        "method": "cn.hutool.core.codec.Base64#encode",
-        "paramTypes": [
-            "j.char.seq"
-        ]
+        "method": "cn.hutool.core.codec.Base64#encode(j.char.seq)"
     },
     "decode64": {
-        "method": "cn.hutool.core.codec.Base64#decodeStr",
-        "paramTypes": [
-            "j.char.seq"
-        ]
+        "method": "cn.hutool.core.codec.Base64#decodeStr(j.char.seq)"
     },
     "encode64url": {
-        "method": "cn.hutool.core.codec.Base64#encodeUrlSafe",
-        "paramTypes": [
-            "j.char.seq"
-        ]
+        "method": "cn.hutool.core.codec.Base64#encodeUrlSafe(j.char.seq)"
     },
     "now": {
         "method": "cn.hutool.core.date.DateUtil#date"
@@ -36,87 +21,49 @@
         "method": "cn.hutool.core.date.DateUtil#currentSeconds"
     },
     "week": {
-        "method": "cn.hutool.core.date.DateUtil#dayOfWeekEnum",
-        "paramTypes": [
-            "date"
-        ]
+        "method": "cn.hutool.core.date.DateUtil#dayOfWeekEnum(date)"
     },
     "weekend": {
-        "method": "cn.hutool.core.date.DateUtil#endOfWeek",
-        "paramTypes": [
-            "date"
-        ]
+        "method": "cn.hutool.core.date.DateUtil#endOfWeek(date)"
     },
     "between": {
-        "method": "cn.hutool.core.date.DateUtil#between",
-        "paramTypes": [
-            "date",
-            "date",
-            "cn.hutool.core.date.DateUnit=day"
-        ]
+        "method": "cn.hutool.core.date.DateUtil#between(date,date,cn.hutool.core.date.DateUnit=day)"
     },
     "ms2date": {
-        "method": "cn.hutool.core.date.DateUtil#date",
-        "paramTypes": [
-            "long"
-        ]
+        "method": "cn.hutool.core.date.DateUtil#date(long)"
     },
     "date2ms": {
-        "method": "utils#date2Millis",
-        "paramTypes": [
-            "date"
-        ]
+        "method": "utils#date2Millis(date)"
     },
     "ftype": {
-        "method": "cn.hutool.core.io.FileUtil#getType",
-        "paramTypes": [
-            "file"
-        ]
+        "method": "cn.hutool.core.io.FileUtil#getType(file)"
     },
     "fr": {
-        "method": "cn.hutool.core.io.FileUtil#readUtf8String",
-        "paramTypes": [
-            "file"
-        ]
+        "method": "cn.hutool.core.io.FileUtil#readUtf8String(file)"
+    },
+    "cat": {
+        "method": "cn.hutool.core.io.FileUtil#readUtf8String(file)"
     },
     "fw": {
-        "method": "cn.hutool.core.io.FileUtil#writeUtf8String",
-        "paramTypes": [
-            "string",
-            "file"
-        ]
+        "method": "cn.hutool.core.io.FileUtil#writeUtf8String(string,file)"
+    },
+    "write": {
+        "method": "cn.hutool.core.io.FileUtil#writeUtf8String(string,file)"
     },
     "unicode2str": {
-        "method": "cn.hutool.core.text.UnicodeUtil#toString",
-        "paramTypes": [
-            "string"
-        ]
+        "method": "cn.hutool.core.text.UnicodeUtil#toString(string)"
     },
     "str2unicode": {
-        "method": "cn.hutool.core.text.UnicodeUtil#toUnicode",
-        "paramTypes": [
-            "string"
-        ]
+        "method": "cn.hutool.core.text.UnicodeUtil#toUnicode(string)"
     },
     "fconvert": {
-        "method": "cn.hutool.core.util.CharsetUtil#convert",
-        "paramTypes": [
-            "file",
-            "charset",
-            "charset"
-        ]
+        "method": "cn.hutool.core.util.CharsetUtil#convert(file,charset,charset)"
     },
     "hex": {
-        "method": "cn.hutool.core.util.HexUtil#encodeHexStr",
-        "paramTypes": [
-            "string"
-        ]
+        "method": "cn.hutool.core.util.HexUtil#encodeHexStr(string)"
     },
     "idcard": {
-        "method": "cn.hutool.core.util.IdcardUtil#getIdcardInfo",
-        "paramTypes": [
-            "string"
-        ]
+        "method": "cn.hutool.core.util.IdcardUtil#getIdcardInfo(string)"
     },
     "creditc": {
         "method": "cn.hutool.core.util.CreditCodeUtil#randomCreditCode"
@@ -137,10 +84,7 @@
         "method": "cn.hutool.core.util.RandomUtil#randomDouble(double=0,double=9223372036854775807)"
     },
     "rands": {
-        "method": "cn.hutool.core.util.RandomUtil#randomString",
-        "paramTypes": [
-            "int=16"
-        ]
+        "method": "cn.hutool.core.util.RandomUtil#randomString(int=16)"
     },
     "randpass": {
         "method": "cn.hutool.core.util.RandomUtil#randomString(string=abcdefghijkmnpqrstuvwxyzABCDEFGHJKMNPQRSTUVWXYZ234567892345678923456789,int=16)"
@@ -149,36 +93,19 @@
         "method": "cn.hutool.core.img.ImgUtil#randomColor"
     },
     "methods": {
-        "method": "utils#outputPublicStaticMethods",
-        "paramTypes": [
-            "string"
-        ]
+        "method": "utils#outputPublicStaticMethods(string)"
     },
     "class": {
-        "method": "utils#parseClassName",
-        "paramTypes": [
-            "string"
-        ]
+        "method": "utils#parseClassName(string)"
     },
     "assignable": {
-        "method": "utils#assignableFrom",
-        "paramTypes": [
-            "class",
-            "class"
-        ]
+        "method": "utils#assignableFrom(class,class)"
     },
     "suppers": {
-        "method": "utils#getSupperClass",
-        "paramTypes": [
-            "class"
-        ]
+        "method": "utils#getSupperClass(class)"
     },
     "grep": {
-        "method": "utils#grep",
-        "paramTypes": [
-            "reg.pattern",
-            "list"
-        ]
+        "method": "utils#grep(reg.pattern,list)"
     },
     "match": {
         "method": "utils#getMatchedItems(reg.pattern,string)"
@@ -190,16 +117,10 @@
         "method": "cn.hutool.core.util.ReUtil#isMatch(reg.pattern,j.char.seq)"
     },
     "upper": {
-        "method": "utils#toUpperCase",
-        "paramTypes": [
-            "string"
-        ]
+        "method": "utils#toUpperCase(string)"
     },
     "lower": {
-        "method": "utils#toLowerCase",
-        "paramTypes": [
-            "string"
-        ]
+        "method": "utils#toLowerCase(string)"
     },
     "jinfo": {
         "method": "cn.hutool.system.SystemUtil#props"
@@ -211,101 +132,49 @@
         "method": "cn.hutool.system.oshi.OshiUtil#getCpuInfo"
     },
     "md5": {
-        "method": "cn.hutool.crypto.SecureUtil#md5",
-        "paramTypes": [
-            "string"
-        ]
+        "method": "cn.hutool.crypto.SecureUtil#md5(string)"
     },
     "sha1": {
-        "method": "cn.hutool.crypto.SecureUtil#sha1",
-        "paramTypes": [
-            "string"
-        ]
+        "method": "cn.hutool.crypto.SecureUtil#sha1(string)"
     },
     "sha256": {
-        "method": "cn.hutool.crypto.SecureUtil#sha256",
-        "paramTypes": [
-            "string"
-        ]
+        "method": "cn.hutool.crypto.SecureUtil#sha256(string)"
     },
     "get": {
-        "method": "cn.hutool.http.HttpUtil#get",
-        "paramTypes": [
-            "string"
-        ]
+        "method": "cn.hutool.http.HttpUtil#get(string)"
     },
     "post": {
-        "method": "cn.hutool.http.HttpUtil#post",
-        "paramTypes": [
-            "string",
-            "string={}"
-        ]
+        "method": "cn.hutool.http.HttpUtil#post(string,string={})"
     },
     "download": {
-        "method": "cn.hutool.http.HttpUtil#downloadFileFromUrl",
-        "paramTypes": [
-            "string",
-            "file=."
-        ]
+        "method": "cn.hutool.http.HttpUtil#downloadFileFromUrl(string,file=.)"
     },
     "eval": {
-        "method": "cn.hutool.script.ScriptUtil#eval",
-        "paramTypes": [
-            "string"
-        ]
+        "method": "cn.hutool.script.ScriptUtil#eval(string)"
     },
     "pinyin": {
-        "method": "cn.hutool.extra.pinyin.PinyinUtil#getPinyin",
-        "paramTypes": [
-            "string"
-        ]
+        "method": "cn.hutool.extra.pinyin.PinyinUtil#getPinyin(string)"
     },
     "qrcode": {
-        "method": "cn.hutool.extra.qrcode.QrCodeUtil#generate",
-        "paramTypes": [
-            "string",
-            "int=1000",
-            "int=1000",
-            "file"
-        ]
+        "method": "cn.hutool.extra.qrcode.QrCodeUtil#generate(string,int=1000,int=1000,file)"
     },
     "decodeqr": {
-        "method": "cn.hutool.extra.qrcode.QrCodeUtil#decode",
-        "paramTypes": [
-            "file"
-        ]
+        "method": "cn.hutool.extra.qrcode.QrCodeUtil#decode(file)"
     },
     "lunar": {
-        "method": "utils#lunar",
-        "paramTypes": [
-            "date"
-        ]
+        "method": "utils#lunar(date)"
     },
     "split": {
-        "method": "cn.hutool.core.text.CharSequenceUtil#splitTrim",
-        "paramTypes": [
-            "j.char.seq",
-            "j.char.seq=,"
-        ]
+        "method": "cn.hutool.core.text.CharSequenceUtil#splitTrim(j.char.seq,j.char.seq=,)"
     },
     "mkdir": {
-        "method": "cn.hutool.core.io.FileUtil#mkdir",
-        "paramTypes": [
-            "file"
-        ]
+        "method": "cn.hutool.core.io.FileUtil#mkdir(file)"
     },
     "calc": {
-        "method": "utils#calc",
-        "paramTypes": [
-            "string",
-            "int=0"
-        ]
+        "method": "utils#calc(string,int=0)"
     },
     "fopen": {
-        "method": "cn.hutool.core.swing.DesktopUtil#open",
-        "paramTypes": [
-            "file=."
-        ]
+        "method": "cn.hutool.core.swing.DesktopUtil#open(file=.)"
     },
     "value": {
         "method": "utils#getStaticFieldValue(class,string)"
