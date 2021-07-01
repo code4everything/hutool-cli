@@ -82,7 +82,7 @@ public final class Hutool {
 
     static String homeDir = System.getenv("HUTOOL_PATH");
 
-    private static String resultString;
+    static String resultString;
 
     private static boolean omitParamType = true;
 

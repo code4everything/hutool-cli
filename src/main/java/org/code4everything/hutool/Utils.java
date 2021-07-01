@@ -255,6 +255,9 @@ public final class Utils {
     }
 
     public static String grep(@IOConverter(PatternConverter.class) Pattern pattern, @IOConverter(ListStringConverter.class) List<String> lines) {
+        if (isCollectionEmpty(lines) && !isStringEmpty(Hutool.resultString)) {
+            lines = new ListStringConverter().useLineSep().string2Object(Hutool.resultString);
+        }
         StringJoiner joiner = new StringJoiner("\n");
         for (String line : lines) {
             if (pattern.matcher(line).find()) {

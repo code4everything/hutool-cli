@@ -108,7 +108,7 @@
         "method": "utils#getSupperClass(class)"
     },
     "grep": {
-        "method": "utils#grep(reg.pattern,list)"
+        "method": "utils#grep(reg.pattern,list=nil)"
     },
     "match": {
         "method": "utils#getMatchedItems(reg.pattern,string)"
