@@ -79,18 +79,18 @@
     },
     "rand": {
         "method": "cn.hutool.core.util.RandomUtil#randomLong(long=0,long=9223372036854775807)",
-        "1": "long=0,long"
+        "1param": "long=0,long"
     },
     "randd": {
         "method": "cn.hutool.core.util.RandomUtil#randomDouble(double=0,double=9223372036854775807)",
-        "1": "double=0,double"
+        "1param": "double=0,double"
     },
     "rands": {
         "method": "cn.hutool.core.util.RandomUtil#randomString(int=16)"
     },
     "randpass": {
         "method": "cn.hutool.core.util.RandomUtil#randomString(string=abcdefghijkmnpqrstuvwxyzABCDEFGHJKMNPQRSTUVWXYZ234567892345678923456789,int=16)",
-        "1": "string=abcdefghijkmnpqrstuvwxyzABCDEFGHJKMNPQRSTUVWXYZ234567892345678923456789,int"
+        "1param": "string=abcdefghijkmnpqrstuvwxyzABCDEFGHJKMNPQRSTUVWXYZ234567892345678923456789,int"
     },
     "randc": {
         "method": "cn.hutool.core.img.ImgUtil#randomColor"
@@ -160,7 +160,7 @@
     },
     "qrcode": {
         "method": "cn.hutool.extra.qrcode.QrCodeUtil#generate(string,int=1000,int=1000,file=qrcode.png)",
-        "2": "string,int=1000,int=1000,file"
+        "2param": "string,int=1000,int=1000,file"
     },
     "decodeqr": {
         "method": "cn.hutool.extra.qrcode.QrCodeUtil#decode(file)"
@@ -206,7 +206,7 @@
     },
     "tree": {
         "method": "org.code4everything.hutool.FileTree#treeFile(file=.,int=-1)",
-        "1": "file,int=-1"
+        "1param": "file,int=-1"
     },
     "len": {
         "method": "csu#length(string)"

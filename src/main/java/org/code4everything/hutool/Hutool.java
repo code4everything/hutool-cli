@@ -572,7 +572,9 @@ public final class Hutool {
         if (Objects.isNull(json)) {
             return;
         }
-        String specificTypes = json.getString(String.valueOf(ARG.params.size()));
+
+        // 重载方法
+        String specificTypes = json.getString(ARG.params.size() + "param");
         if (Utils.isStringEmpty(specificTypes)) {
             return;
         }
