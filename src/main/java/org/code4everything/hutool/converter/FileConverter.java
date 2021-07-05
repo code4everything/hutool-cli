@@ -19,14 +19,14 @@ public class FileConverter implements Converter<File> {
         if (!Utils.isStringEmpty(string) && string.startsWith("~")) {
             return FileUtil.file(FileUtil.getUserHomePath() + string.substring(1));
         }
+        if (!Utils.isStringEmpty(string) && string.startsWith(".")) {
+            return FileUtil.file(Hutool.ARG.workDir, string.substring(1));
+        }
         if ("!".equals(string)) {
             return FileUtil.file(System.getenv("HUTOOL_PATH"));
         }
         if ("$".equals(string)) {
             return FileUtil.file(System.getenv("JAVA_HOME"));
-        }
-        if (".".equals(string)) {
-            return FileUtil.file(Hutool.ARG.workDir);
         }
         return FileUtil.isAbsolutePath(string) ? FileUtil.file(string) : Paths.get(Hutool.ARG.workDir, string).toAbsolutePath().toFile();
     }
