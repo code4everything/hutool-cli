@@ -209,6 +209,6 @@
         "1param": "file,int=-1"
     },
     "len": {
-        "method": "csu#length(string)"
+        "method": "csu#length(j.char.seq)"
     }
 }

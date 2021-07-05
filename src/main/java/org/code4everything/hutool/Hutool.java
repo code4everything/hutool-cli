@@ -103,6 +103,10 @@ public final class Hutool {
         return simpleDateFormat;
     }
 
+    public static boolean isDebug() {
+        return Objects.nonNull(ARG) && ARG.debug;
+    }
+
     private static String resolveCmd(String[] args) {
         commander = JCommander.newBuilder().addObject(ARG).build();
         commander.setProgramName("hutool-cli");
@@ -114,7 +118,7 @@ public final class Hutool {
             return "";
         }
 
-        if (ARG.debug && ARG.exception) {
+        if (isDebug() && ARG.exception) {
             throw new CliException();
         }
 
@@ -136,7 +140,7 @@ public final class Hutool {
             ClipboardUtil.setStr(resultString);
             debugOutput("result copied");
         }
-        if (ARG.debug) {
+        if (isDebug()) {
             System.out.println();
         }
         return resultString;
@@ -157,7 +161,7 @@ public final class Hutool {
             if ("//".equals(arg)) {
                 // 处理上条命令，并记录结果
                 String res = resolveCmd(list.toArray(new String[0]));
-                if (ARG.debug) {
+                if (isDebug()) {
                     System.out.println(res);
                 }
                 if (Objects.isNull(resultContainer)) {
@@ -708,7 +712,7 @@ public final class Hutool {
     }
 
     public static void debugOutput(String msg, Object... params) {
-        if (Objects.nonNull(ARG) && ARG.debug) {
+        if (isDebug()) {
             StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
             String className = stackTrace.length > 2 ? stackTrace[2].getClassName() : "Unknown";
             String lineNumber = stackTrace.length > 2 ? String.valueOf(stackTrace[2].getLineNumber()) : "NaN";

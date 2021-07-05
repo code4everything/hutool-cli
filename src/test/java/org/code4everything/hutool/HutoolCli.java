@@ -27,6 +27,11 @@ public class HutoolCli {
     }
 
     @Test
+    public void alias() {
+        test("alias -d");
+    }
+
+    @Test
     public void multiCmd() {
         String test = "test_multi_cmd";
         Assert.assertEquals(test, test("encode64 %s // decode64 \\\\0", test));

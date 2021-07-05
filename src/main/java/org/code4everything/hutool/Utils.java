@@ -69,12 +69,15 @@ public final class Utils {
             return "";
         }
 
-        Arrays.sort(files, ComparatorChain.of(Comparator.comparingInt(f -> f.isDirectory() ? 0 : 1), Comparator.comparing(File::getName)));
+        Arrays.sort(files, ComparatorChain.of(Comparator.comparingInt(f -> f.isDirectory() ? 0 : 1), Comparator.comparingLong(File::length), Comparator.comparing(File::getName)));
         StringJoiner joiner = new StringJoiner("\n");
         int maxLen = 0;
         String[] size = new String[files.length];
         for (int i = 0; i < files.length; i++) {
-            size[i] = FileUtil.readableFileSize(files[i]);
+            size[i] = addSuffixIfNot(FileUtil.readableFileSize(files[i]).replace(" ", ""), "B");
+            if (!Character.isDigit(size[i].charAt(size[i].length() - 2))) {
+                size[i] = size[i].substring(0, size[i].length() - 1);
+            }
             if (size[i].length() > maxLen) {
                 maxLen = size[i].length();
             }
@@ -82,7 +85,7 @@ public final class Utils {
 
         for (int i = 0; i < files.length; i++) {
             file = files[i];
-            joiner.add(DateUtil.formatDateTime(new Date(file.lastModified())) + "\t" + StrUtil.padPre(size[i], maxLen, " ") + "\t" + file.getName());
+            joiner.add(DateUtil.formatDateTime(new Date(file.lastModified())) + " " + StrUtil.padPre(size[i], maxLen, " ") + " " + file.getName());
         }
 
         return joiner.toString();
@@ -515,10 +518,16 @@ public final class Utils {
     }
 
     static String getMethodFullInfo(CtMethod method, Map<String, String> defaultValueMap) throws NotFoundException {
+        CtClass[] parameterTypes = method.getParameterTypes();
+        if (Hutool.isDebug()) {
+            StringJoiner joiner = new StringJoiner(",");
+            Arrays.stream(parameterTypes).forEach(e -> joiner.add(e.getName()));
+            Hutool.debugOutput("parse method full info: %s#%s(%s)", method.getDeclaringClass().getName(), method.getName(), joiner);
+        }
+
         StringJoiner paramJoiner = new StringJoiner(", ");
         LocalVariableAttribute attribute = (LocalVariableAttribute) method.getMethodInfo().getCodeAttribute().getAttribute(LocalVariableAttribute.tag);
 
-        CtClass[] parameterTypes = method.getParameterTypes();
         for (int i = 0; i < parameterTypes.length; i++) {
             CtClass parameterType = parameterTypes[i];
             String paramType = parameterType.getName();
