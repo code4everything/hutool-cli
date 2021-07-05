@@ -50,35 +50,35 @@
             "caesar.json"
         ]
     },
-    "date": {
+    "date.u": {
         "clazz": "cn.hutool.core.date.DateUtil",
         "methodAliasPaths": [
             "method",
             "date-util.json"
         ]
     },
-    "file": {
+    "file.u": {
         "clazz": "cn.hutool.core.io.FileUtil",
         "methodAliasPaths": [
             "method",
             "file-util.json"
         ]
     },
-    "math": {
+    "math.u": {
         "clazz": "cn.hutool.core.math.MathUtil",
         "methodAliasPaths": [
             "method",
             "math-util.json"
         ]
     },
-    "net": {
+    "net.u": {
         "clazz": "cn.hutool.core.net.NetUtil",
         "methodAliasPaths": [
             "method",
             "net-util.json"
         ]
     },
-    "unicode": {
+    "unicode.u": {
         "clazz": "cn.hutool.core.text.UnicodeUtil",
         "methodAliasPaths": [
             "method",
@@ -88,95 +88,95 @@
     "csu": {
         "clazz": "cn.hutool.core.text.CharSequenceUtil"
     },
-    "charset": {
+    "charset.u": {
         "clazz": "cn.hutool.core.util.CharsetUtil",
         "methodAliasPaths": [
             "method",
             "charset-util.json"
         ]
     },
-    "hash": {
+    "hash.u": {
         "clazz": "cn.hutool.core.util.HashUtil"
     },
-    "hex": {
+    "hex.u": {
         "clazz": "cn.hutool.core.util.HexUtil",
         "methodAliasPaths": [
             "method",
             "hex-util.json"
         ]
     },
-    "id": {
+    "id.u": {
         "clazz": "cn.hutool.core.util.IdUtil"
     },
-    "phone": {
+    "phone.u": {
         "clazz": "cn.hutool.core.util.PhoneUtil"
     },
-    "random": {
+    "random.u": {
         "clazz": "cn.hutool.core.util.RandomUtil"
     },
-    "reflect": {
+    "reflect.u": {
         "clazz": "cn.hutool.core.util.ReflectUtil"
     },
-    "regex": {
+    "regex.u": {
         "clazz": "cn.hutool.core.util.ReUtil",
         "methodAliasPaths": [
             "method",
             "re-util.json"
         ]
     },
-    "str": {
+    "str.u": {
         "clazz": "cn.hutool.core.util.StrUtil"
     },
-    "system": {
+    "system.u": {
         "clazz": "cn.hutool.system.SystemUtil",
         "methodAliasPaths": [
             "method",
             "system-util.json"
         ]
     },
-    "secure": {
+    "secure.u": {
         "clazz": "cn.hutool.crypto.SecureUtil"
     },
-    "http": {
+    "http.u": {
         "clazz": "cn.hutool.http.HttpUtil"
     },
-    "script": {
+    "script.u": {
         "clazz": "cn.hutool.script.ScriptUtil"
     },
-    "emoji": {
+    "emoji.u": {
         "clazz": "cn.hutool.extra.emoji.EmojiUtil"
     },
     "qrcode": {
         "clazz": "cn.hutool.extra.qrcode.QrCodeUtil"
     },
-    "pinyin": {
+    "pinyin.u": {
         "clazz": "cn.hutool.extra.pinyin.PinyinUtil"
     },
-    "list": {
+    "list.u": {
         "clazz": "cn.hutool.core.collection.ListUtil"
     },
-    "img": {
+    "img.u": {
         "clazz": "cn.hutool.core.img.ImgUtil"
     },
-    "p": {
+    "desk": {
         "clazz": "cn.hutool.core.swing.DesktopUtil"
     },
-    "robot": {
+    "robot.u": {
         "clazz": "cn.hutool.core.swing.RobotUtil"
     },
-    "screen": {
+    "screen.u": {
         "clazz": "cn.hutool.core.swing.ScreenUtil"
     },
-    "clipboard": {
+    "clipboard.u": {
         "clazz": "cn.hutool.core.swing.clipboard.ClipboardUtil"
     },
-    "credit": {
+    "credit.u": {
         "clazz": "cn.hutool.core.util.CreditCodeUtil"
     },
     "desensitize": {
         "clazz": "cn.hutool.core.util.DesensitizedUtil"
     },
-    "zip": {
+    "zip.u": {
         "clazz": "cn.hutool.core.util.ZipUtil"
     },
     "utils": {

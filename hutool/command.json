@@ -210,5 +210,8 @@
     },
     "len": {
         "method": "csu#length(string)"
+    },
+    "touch": {
+        "method": "cn.hutool.core.io.FileUtil#touch(file=NewFile.txt)"
     }
 }
