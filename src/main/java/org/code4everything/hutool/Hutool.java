@@ -437,10 +437,15 @@ public final class Hutool {
 
         if (replace && resultContainer != null) {
             // 替换连续命令中的结果记录值，格式：\\0,\\1,\\2...
-            for (int i = 0; i < resultContainer.size(); i++) {
+            int endIds = resultContainer.size() - 1;
+            for (int i = 0; i <= endIds; i++) {
                 String key = "\\\\" + i;
                 String value = resultContainer.get(i);
                 param = param.replace(key, value);
+
+                if (i == endIds) {
+                    param = param.replace("\\\\p", value);
+                }
             }
         }
 
