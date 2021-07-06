@@ -69,7 +69,7 @@ public final class Utils {
             return "";
         }
 
-        Arrays.sort(files, ComparatorChain.of(Comparator.comparingInt(f -> f.isDirectory() ? 0 : 1), Comparator.comparingLong(File::length), Comparator.comparing(File::getName)));
+        Arrays.sort(files, ComparatorChain.of(Comparator.comparingInt(f -> f.isDirectory() ? 0 : 1), Comparator.comparingLong(File::lastModified)));
         StringJoiner joiner = new StringJoiner("\n");
         int maxLen = 0;
         String[] size = new String[files.length];
@@ -85,7 +85,7 @@ public final class Utils {
 
         for (int i = 0; i < files.length; i++) {
             file = files[i];
-            joiner.add(DateUtil.formatDateTime(new Date(file.lastModified())) + " " + StrUtil.padPre(size[i], maxLen, " ") + " " + file.getName());
+            joiner.add(DateUtil.formatDateTime(new Date(file.lastModified())) + "  " + StrUtil.padPre(size[i], maxLen, " ") + "  " + file.getName());
         }
 
         return joiner.toString();

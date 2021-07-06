@@ -16,8 +16,14 @@ public class FileConverter implements Converter<File> {
 
     @Override
     public File string2Object(String string) {
+        if ("~".equals(string)) {
+            return FileUtil.getUserHomeDir();
+        }
         if (!Utils.isStringEmpty(string) && string.startsWith("~")) {
-            return FileUtil.file(FileUtil.getUserHomePath() + string.substring(1));
+            return FileUtil.file(FileUtil.getUserHomePath(), string.substring(1));
+        }
+        if (".".equals(string)) {
+            return FileUtil.file(Hutool.ARG.workDir);
         }
         if (!Utils.isStringEmpty(string) && string.startsWith(".")) {
             return FileUtil.file(Hutool.ARG.workDir, string.substring(1));
