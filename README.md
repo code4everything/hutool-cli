@@ -18,7 +18,7 @@ hu uuid
 
 现在不仅仅是终端里的Hutool了，更多功能等待你来探索哦。
 
-## 封装命令
+## 内置指令
 
 查看时间进度
 
@@ -69,6 +69,23 @@ Mo Tu We Th Fr Sa Su
 # hu calendar 2020
 # hu calendar 202101,2,3,4,5
 # hu calendar 6,7,8
+```
+
+文件树
+
+```shell
+hu tree
+
+# output:
+├─bin
+│ └─hu.exe
+├─external
+├─method
+├─class.json
+├─command.json
+├─converter.json
+├─external.conf
+└─hutool.jar
 ```
 
 ## ZIP包安装
@@ -433,7 +450,7 @@ hutool-cli 提供了很多常用的别名，参考下面文件：
 
 > v1.2支持定义私有别名啦，定义路径 `{user.home}/hutool-cli/`，文件名和别名格式参照上面说明，程序会优先读取用户定义的私有别名。
 
-### 支持加载外部类
+## 加载外部类
 
 方法一，在 `HUTOOL_PATH` 对应的目录下新建external目录，将类class类文件（包含报名目录）拷贝到external文件夹中即可，如类 `com.example.Test` 对应的路径 `external/com/example/Test.class`。
 
@@ -450,11 +467,11 @@ mvn:org.code4everything:wetool-plugin-support:1.6.0,
 
 > 你可以基于此功能开发适用于本地的指令。
 
-### 最后
+## 最后
 
 如果你觉得项目还不错，记得Star哟，欢迎 pr。
 
-### 常用类名简写对照表
+## 常用类名简写对照表
 
 |简写名|类全名|
 |---|---|
@@ -478,3 +495,40 @@ mvn:org.code4everything:wetool-plugin-support:1.6.0,
 |set|java.util.Set|
 
 > 查看简写是否正确，可通过查看命名 `hu class` 返回的结果是否是一个合法Java类名来判断，如 `hu class j.float` 返回 `java.lang.Float`，`hu class no.class` 返回 `no.class` 就不是一个合法的类名，此方法也可用来判断类别名哦。
+
+## 参数格式说明
+
+#### 日期格式
+
+转换器支持对日期参数进行偏移计算，如把当前日期挪后5天：`hu date now+5d` 或 `hu date now+7-2d`，第一个加号表示需要进行偏移计算，后面紧跟偏移量的计算公式，以及偏移单位。
+
+同时我们还可以对日期进行begin和end计算，比如今天的开始：`hu date now<d`，本周的结束时间：`hu date now>w`，符号 `<` 表示begin运算，`>` 表示end运算，其后紧跟偏移单位。
+
+日期简写表
+
+|简写名|说明|
+|---|---|
+|now|当前时间|
+|today|今天的开始时间|
+|yesterday|昨天的开始时间|
+|tomorrow|明天的开始时间|
+
+偏移单位对照表
+
+|单位名称|说明|
+|---|---|
+|ms|毫秒|
+|s|秒|
+|sec|秒|
+|min|分钟|
+|h|小时|
+|hour|小时|
+|d|天|
+|day|天|
+|w|周|
+|week|周|
+|m|月|
+|mon|月|
+|month|月|
+|y|年|
+|year|年|

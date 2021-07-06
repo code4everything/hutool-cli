@@ -340,6 +340,7 @@ public final class Hutool {
         outputConverter = method.getAnnotation(IOConverter.class);
         debugOutput("get method success");
 
+        ARG.params.add(ClipboardUtil.getStr());
         if (ARG.params.size() < parameters.length) {
             try {
                 String methodFullInfo = parseMethodFullInfo(clazz.getName(), method.getName(), ARG.paramTypes);

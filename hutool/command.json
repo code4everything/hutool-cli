@@ -34,7 +34,7 @@
         "method": "cn.hutool.core.date.DateUtil#date(long)"
     },
     "date": {
-        "method": "cn.hutool.core.date.DateUtil#date(datetime)"
+        "method": "cn.hutool.core.date.DateUtil#date(datetime=now)"
     },
     "date2ms": {
         "method": "utils#date2Millis(date=now)"
@@ -220,5 +220,8 @@
     },
     "touch": {
         "method": "cn.hutool.core.io.FileUtil#touch(file=NewFile.txt)"
+    },
+    "clipboard": {
+        "method": "cn.hutool.core.swing.clipboard.ClipboardUtil#getStr()"
     }
 }

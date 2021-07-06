@@ -109,4 +109,9 @@ public class HutoolCli {
     public void treeFile() {
         test("tree ~ 3");
     }
+
+    @Test
+    public void date() {
+        test("date now+(-2+7)d");
+    }
 }
