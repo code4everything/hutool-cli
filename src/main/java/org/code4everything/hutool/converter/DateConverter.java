@@ -96,7 +96,7 @@ public class DateConverter implements Converter<DateTime> {
         int idx = string.indexOf("+");
         if (idx > 0) {
             DateTime dateTime = parseDate(string.substring(0, idx));
-            String offsetStr = string.substring(idx + 1).toLowerCase();
+            String offsetStr = string.substring(idx + 1);
             if (offsetStr.startsWith(">")) {
                 return DateUtil.endOfDay(dateTime);
             }
@@ -127,17 +127,22 @@ public class DateConverter implements Converter<DateTime> {
     }
 
     private DateTime parseDate(String string) {
-        if (StrUtil.equalsIgnoreCase("now", string)) {
+        if ("now".equals(string)) {
             return DateUtil.date();
         }
-        if (StrUtil.equalsIgnoreCase("today", string)) {
+        if ("today".equals(string)) {
             return DateUtil.beginOfDay(DateUtil.date());
         }
-        if (StrUtil.equalsIgnoreCase("yesterday", string)) {
+        if ("yesterday".equals(string)) {
             return DateUtil.beginOfDay(DateUtil.offsetDay(DateUtil.date(), -1));
         }
-        if (StrUtil.equalsIgnoreCase("tomorrow", string)) {
+        if ("tomorrow".equals(string)) {
             return DateUtil.beginOfDay(DateUtil.offsetDay(DateUtil.date(), 1));
+        }
+        if (string.length() == 2) {
+            string = DateUtil.format(DateUtil.date(), "yyyy-MM-") + string;
+        } else if (string.length() == 5) {
+            string = DateUtil.format(DateUtil.date(), "yyyy-") + string;
         }
         return DateUtil.parse(string.replace('T', ' '));
     }

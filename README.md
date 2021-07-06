@@ -504,6 +504,8 @@ mvn:org.code4everything:wetool-plugin-support:1.6.0,
 
 同时我们还可以对日期进行begin和end计算，比如今天的开始：`hu date now<d`，本周的结束时间：`hu date now>w`，符号 `<` 表示begin运算，`>` 表示end运算，其后紧跟偏移单位。
 
+日期自动补全机制，如本月6号输入 `hu date 06` 即可，本年3月13号输入 `hu date 03-13` 即可，简化输入。
+
 日期简写表
 
 |简写名|说明|
