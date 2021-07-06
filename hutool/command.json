@@ -26,11 +26,15 @@
     "weekend": {
         "method": "cn.hutool.core.date.DateUtil#endOfWeek(date=now)"
     },
-    "between": {
-        "method": "cn.hutool.core.date.DateUtil#between(date,date,cn.hutool.core.date.DateUnit=day)"
+    "daydiff": {
+        "method": "cn.hutool.core.date.DateUtil#between(date,date=now,cn.hutool.core.date.DateUnit=day)",
+        "2param": "date,date,cn.hutool.core.date.DateUnit=day"
     },
     "ms2date": {
         "method": "cn.hutool.core.date.DateUtil#date(long)"
+    },
+    "date": {
+        "method": "cn.hutool.core.date.DateUtil#date(datetime)"
     },
     "date2ms": {
         "method": "utils#date2Millis(date=now)"
@@ -199,6 +203,9 @@
         "method": "csu#repeat(j.char.seq,int=2)"
     },
     "ll": {
+        "method": "utils#listFiles(file=.)"
+    },
+    "ls": {
         "method": "utils#listFiles(file=.)"
     },
     "calendar": {
