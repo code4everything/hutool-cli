@@ -43,6 +43,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -189,12 +190,12 @@ public final class Hutool {
         if (!Utils.isCollectionEmpty(ARG.command)) {
             String command = ARG.command.get(0);
             debugOutput("get command: %s", command);
+            ARG.params.addAll(ARG.command.subList(1, ARG.command.size()));
             if (ALIAS.equals(command)) {
                 seeAlias("", COMMAND_JSON);
                 return;
             }
 
-            ARG.params.addAll(ARG.command.subList(1, ARG.command.size()));
 
             char sharp = '#';
             int idx = command.indexOf(sharp);
@@ -526,6 +527,16 @@ public final class Hutool {
         // 用户自定义别名会覆盖工作目录定义的别名
         JSONObject aliasJson = getAlias("", homeDir, paths);
         aliasJson.putAll(getAlias("", "", paths));
+        if (!Utils.isCollectionEmpty(ARG.params)) {
+            Iterator<Map.Entry<String, Object>> iterator = aliasJson.entrySet().iterator();
+            while (iterator.hasNext()) {
+                String key = iterator.next().getKey();
+                if (ARG.params.stream().noneMatch(key::contains)) {
+                    iterator.remove();
+                }
+            }
+        }
+
         StringJoiner joiner = new StringJoiner("\n");
         Holder<Integer> maxLength = Holder.of(0);
         Map<String, String> map = new TreeMap<>();
@@ -555,7 +566,7 @@ public final class Hutool {
                     // 这里只能输出方法参数类型，无法输出形参类型
                     debugOutput("parse method param name error: %s", ExceptionUtil.stacktraceToString(e, Integer.MAX_VALUE));
                     String typeString = ArrayUtil.join(ARG.paramTypes.toArray(new String[0]), ", ");
-                    map.put(k, methodName + "(" + typeString + ")");
+                    map.put(k, ARG.methodName + "(" + typeString + ")");
                 }
             }
         });

@@ -28,7 +28,10 @@ public class HutoolCli {
 
     @Test
     public void alias() {
-        test("alias -d");
+        test("alias date");
+        test("-c alias -p .u");
+        test("file.u#alias type");
+        test("-c file.u -m alias -p type");
     }
 
     @Test

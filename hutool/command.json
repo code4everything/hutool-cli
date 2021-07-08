@@ -34,7 +34,7 @@
         "method": "cn.hutool.core.date.DateUtil#date(long)"
     },
     "date": {
-        "method": "cn.hutool.core.date.DateUtil#date(datetime=now)"
+        "method": "cn.hutool.core.date.DateUtil#date(date=now)"
     },
     "date2ms": {
         "method": "utils#date2Millis(date=now)"
