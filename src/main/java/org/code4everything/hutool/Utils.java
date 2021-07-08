@@ -64,7 +64,14 @@ public final class Utils {
             return DateUtil.formatDateTime(new Date(file.lastModified())) + "\t" + FileUtil.readableFileSize(file) + "\t" + file.getName();
         }
 
-        File[] files = file.listFiles();
+        List<String> filter = MethodArg.getSubParams(Hutool.ARG, 1);
+        File[] files = file.listFiles((dir, name) -> {
+            if (Utils.isCollectionEmpty(filter)) {
+                return true;
+            }
+            String filename = name.toLowerCase();
+            return filter.stream().anyMatch(filename::contains);
+        });
         if (Objects.isNull(files) || files.length == 0) {
             return "";
         }
@@ -155,7 +162,15 @@ public final class Utils {
 
         List<String> modifierList = new ArrayList<>();
         Holder<String> holder = Holder.of("");
-        Arrays.stream(fields).map(field -> {
+        List<String> filter = MethodArg.getSubParams(Hutool.ARG, 1);
+
+        Arrays.stream(fields).filter(e -> {
+            if (Utils.isCollectionEmpty(filter)) {
+                return true;
+            }
+            String fieldName = e.getName().toLowerCase();
+            return filter.stream().anyMatch(fieldName::contains);
+        }).map(field -> {
             String line = "";
             int modifiers = field.getModifiers();
             if (Modifier.isPrivate(modifiers)) {
@@ -498,6 +513,8 @@ public final class Utils {
     private static String outputPublicStaticMethods0(String className) {
         ClassPool pool = ClassPool.getDefault();
         StringJoiner joiner = new StringJoiner("\n");
+        List<String> filter = MethodArg.getSubParams(Hutool.ARG, 1);
+
         try {
             CtClass ctClass = pool.get(parseClassName(className));
             CtMethod[] methods = ctClass.getMethods();
@@ -507,6 +524,14 @@ public final class Utils {
                 if (!Modifier.isPublic(modifiers) || !Modifier.isStatic(modifiers)) {
                     continue;
                 }
+
+                if (!isCollectionEmpty(filter)) {
+                    String methodName = method.getName().toLowerCase();
+                    if (filter.stream().noneMatch(methodName::contains)) {
+                        continue;
+                    }
+                }
+
                 lineList.add(getMethodFullInfo(method, null));
             }
             lineList.stream().sorted(String::compareTo).forEach(joiner::add);

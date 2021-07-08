@@ -5,7 +5,9 @@ import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @author pantao
@@ -65,5 +67,9 @@ public class MethodArg {
     @Override
     public String toString() {
         return JSON.toJSONString(this, true);
+    }
+
+    public static List<String> getSubParams(MethodArg methodArg, int fromIdx) {
+        return Objects.isNull(methodArg) ? Collections.emptyList() : methodArg.params.subList(fromIdx, methodArg.params.size());
     }
 }
