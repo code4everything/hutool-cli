@@ -97,16 +97,7 @@ public class DateConverter implements Converter<DateTime> {
         if (idx > 0) {
             DateTime dateTime = parseDate(string.substring(0, idx));
             String offsetStr = string.substring(idx + 1);
-            if (offsetStr.startsWith(">")) {
-                return DateUtil.endOfDay(dateTime);
-            }
-            for (Entry<String, DateField> entry : getOffsetMap().entrySet()) {
-                if (offsetStr.endsWith(entry.getKey())) {
-                    int offset = (int) Calculator.conversion(StrUtil.removeSuffix(offsetStr, entry.getKey()));
-                    return dateTime.offset(entry.getValue(), offset);
-                }
-            }
-            return dateTime.offset(DateField.MILLISECOND, (int) Calculator.conversion(offsetStr));
+            return getOffsetDate(dateTime, offsetStr);
         }
 
         idx = string.indexOf(">");
@@ -124,6 +115,16 @@ public class DateConverter implements Converter<DateTime> {
         }
 
         return parseDate(string);
+    }
+
+    public DateTime getOffsetDate(DateTime dateTime, String offsetStr) {
+        for (Entry<String, DateField> entry : getOffsetMap().entrySet()) {
+            if (offsetStr.endsWith(entry.getKey())) {
+                int offset = (int) Calculator.conversion(StrUtil.removeSuffix(offsetStr, entry.getKey()));
+                return dateTime.offset(entry.getValue(), offset);
+            }
+        }
+        return dateTime.offset(DateField.MILLISECOND, (int) Calculator.conversion(offsetStr));
     }
 
     private DateTime parseDate(String string) {

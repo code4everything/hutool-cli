@@ -37,7 +37,7 @@ hu dayp
 列出目录文件
 
 ```shell
-hu ll
+hu ls
 
 # output:
 2021-05-30 00:46:38	      0	bin
@@ -86,6 +86,16 @@ hu tree
 ├─converter.json
 ├─external.conf
 └─hutool.jar
+```
+
+计算倒计时
+
+```shell
+hu countdown 123456789 ms
+# 时间单位可以参考最下方的对照表
+
+# output:
+1天10小时17分36秒789毫秒
 ```
 
 ## ZIP包安装

@@ -92,7 +92,7 @@
     "randoms": {
         "method": "cn.hutool.core.util.RandomUtil#randomString(int=16)"
     },
-    "randpass": {
+    "randompass": {
         "method": "cn.hutool.core.util.RandomUtil#randomString(string=abcdefghijkmnpqrstuvwxyzABCDEFGHJKMNPQRSTUVWXYZ234567892345678923456789,int=16)",
         "1param": "string=abcdefghijkmnpqrstuvwxyzABCDEFGHJKMNPQRSTUVWXYZ234567892345678923456789,int"
     },
@@ -223,5 +223,8 @@
     },
     "clipboard": {
         "method": "cn.hutool.core.swing.clipboard.ClipboardUtil#getStr()"
+    },
+    "countdown": {
+        "method": "org.code4everything.hutool.Countdown#countdown(long,string=sec)"
     }
 }

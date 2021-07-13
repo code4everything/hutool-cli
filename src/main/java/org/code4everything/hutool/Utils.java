@@ -76,7 +76,7 @@ public final class Utils {
             return "";
         }
 
-        Arrays.sort(files, ComparatorChain.of(Comparator.comparingInt(f -> f.isDirectory() ? 0 : 1), Comparator.comparingLong(File::lastModified)));
+        Arrays.sort(files, ComparatorChain.of(Comparator.comparingInt(f -> f.isDirectory() ? 0 : 1), Comparator.comparing(File::getName), Comparator.comparingLong(File::lastModified)));
         StringJoiner joiner = new StringJoiner("\n");
         int maxLen = 0;
         String[] size = new String[files.length];
