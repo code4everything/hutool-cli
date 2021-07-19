@@ -19,6 +19,7 @@ String pinyinVersion = "2.5.1"
 String fastjsonVersion = "1.2.76"
 String javassistVersion = "3.28.0-GA"
 String junitVersion = "4.13.2"
+String chalkVersion = "1.0.2"
 
 dependencies {
     implementation "com.beust:jcommander:${jcommanderVersion}"
@@ -34,6 +35,7 @@ dependencies {
     implementation "com.belerweb:pinyin4j:${pinyinVersion}"
     implementation "com.alibaba:fastjson:${fastjsonVersion}"
     implementation "org.javassist:javassist:${javassistVersion}"
+    implementation "com.github.tomas-langer:chalk:${chalkVersion}"
     testImplementation "junit:junit:${junitVersion}"
 }
 

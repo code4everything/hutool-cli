@@ -5,6 +5,7 @@ import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.text.StrJoiner;
 import cn.hutool.core.util.StrUtil;
+import com.github.tomaslanger.chalk.Ansi;
 import org.code4everything.hutool.converter.ArrayConverter;
 
 import java.util.ArrayList;
@@ -20,14 +21,17 @@ public class HuCalendar {
 
     private int month = 0;
 
-    private int currentMonth;
+    private int currMonth;
+
+    private int currDay;
 
     private DateTime beginDate;
 
     public HuCalendar(String yearMonth) {
         DateTime now = DateUtil.date();
         beginDate = DateUtil.beginOfMonth(now);
-        currentMonth = beginDate.getField(DateField.MONTH);
+        currMonth = beginDate.getField(DateField.MONTH);
+        currDay = now.getField(DateField.DAY_OF_MONTH);
         int length = StrUtil.length(yearMonth);
         if (length == 4) {
             month = -1;
@@ -82,21 +86,27 @@ public class HuCalendar {
 
         String[] line = null;
         List<String> result = new ArrayList<>();
-        if (begin.getField(DateField.MONTH) == currentMonth) {
-            result.add("     " + DateUtil.format(DateUtil.date(), "yyyy-MM-dd") + "    ");
-        } else {
-            result.add("      " + DateUtil.format(begin, "yyyy-MM") + "       ");
-        }
+        result.add("      " + DateUtil.format(begin, "yyyy-MM") + "       ");
         result.add("Mo Tu We Th Fr Sa Su");
 
         int end = DateUtil.endOfMonth(begin).dayOfMonth();
+        boolean isCurrentMonth = begin.getField(DateField.MONTH) == currMonth;
         for (int start = 1; start <= end; start++) {
             if (Objects.isNull(line)) {
                 line = new String[7];
                 Arrays.fill(line, "  ");
             }
 
-            line[week] = StrUtil.padPre(String.valueOf(start), 2, ' ');
+            boolean isCurrentDay = isCurrentMonth && start == currDay;
+            String dayStr = "";
+            if (isCurrentDay) {
+                dayStr += Ansi.Color.YELLOW.getStart();
+            }
+            dayStr += StrUtil.padPre(String.valueOf(start), 2, ' ');
+            if (isCurrentDay) {
+                dayStr += Ansi.Color.YELLOW.getEnd();
+            }
+            line[week] = dayStr;
 
             if (week >= 6) {
                 result.add(StrJoiner.of(" ").append(line).toString());
