@@ -21,15 +21,18 @@ public class HuCalendar {
 
     private int month = 0;
 
-    private int currMonth;
+    private final int currMonth;
 
-    private int currDay;
+    private final int currYear;
+
+    private final int currDay;
 
     private DateTime beginDate;
 
     public HuCalendar(String yearMonth) {
         DateTime now = DateUtil.date();
         beginDate = DateUtil.beginOfMonth(now);
+        currYear = beginDate.getField(DateField.YEAR);
         currMonth = beginDate.getField(DateField.MONTH);
         currDay = now.getField(DateField.DAY_OF_MONTH);
         int length = StrUtil.length(yearMonth);
@@ -90,7 +93,7 @@ public class HuCalendar {
         result.add("Mo Tu We Th Fr Sa Su");
 
         int end = DateUtil.endOfMonth(begin).dayOfMonth();
-        boolean isCurrentMonth = begin.getField(DateField.MONTH) == currMonth;
+        boolean isCurrentMonth = begin.getField(DateField.YEAR) == currYear && begin.getField(DateField.MONTH) == currMonth;
         for (int start = 1; start <= end; start++) {
             if (Objects.isNull(line)) {
                 line = new String[7];
