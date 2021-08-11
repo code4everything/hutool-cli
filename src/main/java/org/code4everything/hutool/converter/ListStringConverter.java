@@ -5,6 +5,7 @@ import cn.hutool.core.util.StrUtil;
 import cn.hutool.http.HttpUtil;
 import org.code4everything.hutool.Converter;
 import org.code4everything.hutool.Hutool;
+import org.code4everything.hutool.MethodArg;
 import org.code4everything.hutool.Utils;
 
 import java.io.File;
@@ -47,15 +48,11 @@ public class ListStringConverter implements Converter<List<String>> {
             return StrUtil.splitTrim(string, "\n");
         }
 
-        char[] chars = string.toCharArray();
-        int iterCnt = chars.length >> 1;
-        for (int i = 0; i < iterCnt; i++) {
-            if (chars[i] == '\n') {
-                // has line sep
-                return StrUtil.splitTrim(string, "\n");
-            }
+        String separator = MethodArg.getSeparator();
+        if (!separator.contains("\n")) {
+            string = StrUtil.strip(string, "[", "]");
         }
-        return StrUtil.splitTrim(StrUtil.strip(string, "[", "]"), ",");
+        return StrUtil.splitTrim(string, separator);
     }
 
     @Override
@@ -75,8 +72,9 @@ public class ListStringConverter implements Converter<List<String>> {
         }
 
         StringJoiner joiner;
-        if (directLineSep || list.size() > 10) {
-            joiner = new StringJoiner("\n");
+        String separator = MethodArg.getSeparator();
+        if (directLineSep || separator.contains("\n")) {
+            joiner = new StringJoiner(separator);
         } else {
             joiner = new StringJoiner(",", "[", "]");
         }

@@ -4,6 +4,7 @@ import cn.hutool.core.util.ArrayUtil;
 import org.code4everything.hutool.CliException;
 import org.code4everything.hutool.Converter;
 import org.code4everything.hutool.Hutool;
+import org.code4everything.hutool.MethodArg;
 import org.code4everything.hutool.Utils;
 
 import java.lang.reflect.Array;
@@ -39,7 +40,7 @@ public class ArrayConverter implements Converter<Object> {
         if (Utils.isStringEmpty(string)) {
             return Array.newInstance(componentClass, 0);
         }
-        List<String> segments = Arrays.asList(string.split(","));
+        List<String> segments = Arrays.asList(string.split(MethodArg.getSeparator()));
         Object array = Array.newInstance(componentClass, segments.size());
         for (int i = 0; i < segments.size(); i++) {
             Array.set(array, i, Hutool.castParam2JavaType(null, segments.get(i), componentClass, false));

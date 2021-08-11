@@ -3,6 +3,7 @@ package org.code4everything.hutool.converter;
 import cn.hutool.core.lang.Holder;
 import cn.hutool.core.util.ObjectUtil;
 import org.code4everything.hutool.Converter;
+import org.code4everything.hutool.MethodArg;
 import org.code4everything.hutool.Utils;
 
 import java.util.HashMap;
@@ -24,7 +25,7 @@ public class MapConverter implements Converter<Map<Object, Object>> {
         if (Utils.isStringEmpty(string)) {
             return map;
         }
-        StringTokenizer tokenizer = new StringTokenizer(string, ",");
+        StringTokenizer tokenizer = new StringTokenizer(string, MethodArg.getSeparator());
         while (tokenizer.hasMoreTokens()) {
             String token = tokenizer.nextToken();
             if (Utils.isStringEmpty(token)) {

@@ -1,8 +1,10 @@
 package org.code4everything.hutool;
 
+import cn.hutool.core.io.FileUtil;
 import com.alibaba.fastjson.JSON;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
+import com.beust.jcommander.Strings;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -25,6 +27,8 @@ public class MethodArg {
     private static final String EXCEPTION_DESC = "thrown an exception, only work on debug mode";
 
     private static final String COMMAND_DESC = "build in method(can miss '-r')";
+
+    private static String separator = null;
 
     // @formatter:on
 
@@ -64,9 +68,44 @@ public class MethodArg {
     @Parameter(names = "--work-dir", description = "current work dir", hidden = true, order = 12)
     public String workDir = ".";
 
+    @Parameter(names = {"--sep", "-s"}, description = "separator for array, list, etc. system line sep use '%n'.", order = 13)
+    public String sep = "";
+
+    public String getSep() {
+        if (Utils.isStringEmpty(sep)) {
+            return ",";
+        }
+        if ("%n".equals(sep)) {
+            return FileUtil.getLineSeparator();
+        }
+        if ("\\n".equals(sep)) {
+            return "\n";
+        }
+        if ("\\r".equals(sep)) {
+            return "\r";
+        }
+        if ("\\r\\n".equals(sep)) {
+            return "\r\n";
+        }
+        return sep;
+    }
+
     @Override
     public String toString() {
         return JSON.toJSONString(this, true);
+    }
+
+    public static String getSeparator() {
+        MethodArg arg = Hutool.ARG;
+        if (Objects.isNull(arg)) {
+            arg = new MethodArg();
+        }
+
+        if (!Strings.isStringEmpty(arg.sep)) {
+            separator = arg.getSep();
+        }
+
+        return separator;
     }
 
     public static List<String> getSubParams(MethodArg methodArg, int fromIdx) {
