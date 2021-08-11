@@ -196,7 +196,6 @@ public final class Hutool {
                 return;
             }
 
-
             char sharp = '#';
             int idx = command.indexOf(sharp);
             if (idx > 0) {
@@ -311,7 +310,7 @@ public final class Hutool {
         } else {
             debugOutput("parsing parameter types");
             Class<?>[] paramTypes = new Class<?>[ARG.paramTypes.size()];
-            boolean parseDefaultValue = ARG.params.size() < paramTypes.length;
+            boolean parseDefaultValue = ARG.params.size() < paramTypes.length || clazz.getSimpleName().equals("QLE");
             for (int i = 0; i < ARG.paramTypes.size(); i++) {
                 // 解析默认值，默认值要么都填写，要么都不填写
                 String paramType = parseParamType(i, ARG.paramTypes.get(i), parseDefaultValue);
@@ -742,13 +741,23 @@ public final class Hutool {
 
     public static String test(String cmd, Object... formatArgs) {
         cmd = String.format(cmd, formatArgs);
-        int len = cmd.length() + 10;
-        char[] cs = new char[len + 1];
+        return test(cmd.split(" "));
+    }
+
+    public static String test(String... args) {
+        String cmd = String.join(" ", args);
+
+        char[] cs = new char[cmd.length() + 11];
         Arrays.fill(cs, '=');
         cs[0] = '\n';
         String separator = new String(cs);
         System.out.println(separator + "\n>> hu " + cmd + " <<" + separator);
-        Hutool.main((cmd + " --work-dir " + Paths.get(".").toAbsolutePath().normalize().toString()).split(" "));
+
+        int idx = args.length;
+        String[] newArgs = Arrays.copyOf(args, idx + 2);
+        newArgs[idx++] = "--work-dir";
+        newArgs[idx] = Paths.get(".").toAbsolutePath().normalize().toString();
+        Hutool.main(newArgs);
         return Hutool.resultString;
     }
 }

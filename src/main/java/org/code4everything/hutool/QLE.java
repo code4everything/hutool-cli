@@ -1,8 +1,10 @@
 package org.code4everything.hutool;
 
+import cn.hutool.core.util.RuntimeUtil;
 import com.ql.util.express.DefaultContext;
 import com.ql.util.express.ExpressRunner;
-import com.ql.util.express.parse.ExpressPackage;
+
+import java.util.List;
 
 /**
  * @author pantao
@@ -13,20 +15,19 @@ public final class QLE {
     private QLE() {}
 
     public static Object run(String express) throws Exception {
+        List<String> params = MethodArg.getSubParams(Hutool.ARG, 1);
+        for (int i = 0; i < params.size(); i++) {
+            express = express.replace("${" + i + "}", params.get(i));
+        }
         ExpressRunner runner = new ExpressRunner();
-        ExpressPackage expressPackage = runner.getRootExpressPackage();
-
-        Hutool.debugOutput("import default package");
-        expressPackage.addPackage("com.alibaba.fastjson");
-        expressPackage.addPackage("cn.hutool.core.util");
-        expressPackage.addPackage("cn.hutool.core.collection");
-        expressPackage.addPackage("cn.hutool.core.date");
-        expressPackage.addPackage("cn.hutool.core.io");
-        expressPackage.addPackage("cn.hutool.core.lang");
-        expressPackage.addPackage("cn.hutool.core.map");
-
+        runner.addFunctionOfClassMethod("cmd", QLE.class, "cmd", new Class<?>[]{String.class}, null);
         DefaultContext<String, Object> context = new DefaultContext<>();
         Hutool.debugOutput("execute expression");
         return runner.execute(express, context, null, true, false);
+    }
+
+    public static String cmd(String cmd) {
+        String result = RuntimeUtil.execForStr(cmd);
+        return Utils.isStringEmpty(result) ? "" : result.trim();
     }
 }

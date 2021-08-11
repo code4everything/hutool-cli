@@ -184,5 +184,8 @@
     },
     "datetime": {
         "clazz": "cn.hutool.core.date.DateTime"
+    },
+    "qe": {
+        "clazz": "org.code4everything.hutool.QLE"
     }
 }

@@ -71,6 +71,23 @@ public class MethodArg {
     @Parameter(names = {"--sep", "-s"}, description = "separator for array, list, etc. system line sep use '%n'.", order = 13)
     public String sep = "";
 
+    public static String getSeparator() {
+        MethodArg arg = Hutool.ARG;
+        if (Objects.isNull(arg)) {
+            arg = new MethodArg();
+        }
+
+        if (!Strings.isStringEmpty(arg.sep) || Strings.isStringEmpty(separator)) {
+            separator = arg.getSep();
+        }
+
+        return separator;
+    }
+
+    public static List<String> getSubParams(MethodArg methodArg, int fromIdx) {
+        return Objects.isNull(methodArg) ? Collections.emptyList() : methodArg.params.subList(fromIdx, methodArg.params.size());
+    }
+
     public String getSep() {
         if (Utils.isStringEmpty(sep)) {
             return ",";
@@ -93,22 +110,5 @@ public class MethodArg {
     @Override
     public String toString() {
         return JSON.toJSONString(this, true);
-    }
-
-    public static String getSeparator() {
-        MethodArg arg = Hutool.ARG;
-        if (Objects.isNull(arg)) {
-            arg = new MethodArg();
-        }
-
-        if (!Strings.isStringEmpty(arg.sep)) {
-            separator = arg.getSep();
-        }
-
-        return separator;
-    }
-
-    public static List<String> getSubParams(MethodArg methodArg, int fromIdx) {
-        return Objects.isNull(methodArg) ? Collections.emptyList() : methodArg.params.subList(fromIdx, methodArg.params.size());
     }
 }

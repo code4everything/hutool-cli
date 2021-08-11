@@ -117,4 +117,9 @@ public class HutoolCli {
     public void date() {
         test("date now+(-2+7)d");
     }
+
+    @Test
+    public void run() {
+        Hutool.test("run", "cmd(\"hu calc (${1}-${0})/${0}*100 2\").concat(\"%\")", "1.629", "1.616");
+    }
 }

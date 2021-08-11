@@ -226,5 +226,8 @@
     },
     "countdown": {
         "method": "org.code4everything.hutool.Countdown#countdown(long,string=sec)"
+    },
+    "run": {
+        "method": "qe#run(string)"
     }
 }
