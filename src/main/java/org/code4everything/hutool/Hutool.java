@@ -310,7 +310,7 @@ public final class Hutool {
         } else {
             debugOutput("parsing parameter types");
             Class<?>[] paramTypes = new Class<?>[ARG.paramTypes.size()];
-            boolean parseDefaultValue = ARG.params.size() < paramTypes.length || clazz.getSimpleName().equals("QLE");
+            boolean parseDefaultValue = ARG.params.size() < paramTypes.length;
             for (int i = 0; i < ARG.paramTypes.size(); i++) {
                 // 解析默认值，默认值要么都填写，要么都不填写
                 String paramType = parseParamType(i, ARG.paramTypes.get(i), parseDefaultValue);
@@ -377,7 +377,13 @@ public final class Hutool {
             return paramType;
         }
 
-        String type = paramType.substring(0, idx);
+        String type;
+        if (paramType.charAt(0) == '@') {
+            parseDefaultValue = true;
+            type = paramType.substring(1, idx);
+        } else {
+            type = paramType.substring(0, idx);
+        }
 
         // 解析默认值
         if (parseDefaultValue) {
@@ -624,10 +630,11 @@ public final class Hutool {
         Map<String, String> defaultValueMap = new HashMap<>(4, 1);
         for (int i = 0; i < paramTypes.size(); i++) {
             String paramTypeClass = paramTypes.get(i);
-            int idx = paramTypeClass.indexOf("=");
+            int idx = paramTypeClass.indexOf('=');
             if (idx > 0) {
                 String old = paramTypeClass;
-                paramTypeClass = Utils.parseClassName(old.substring(0, idx));
+                String typeName = old.substring(old.charAt(0) == '@' ? 1 : 0, idx);
+                paramTypeClass = Utils.parseClassName(typeName);
                 defaultValueMap.put(paramTypeClass + i, old.substring(idx + 1));
             } else {
                 paramTypeClass = Utils.parseClassName(paramTypeClass);

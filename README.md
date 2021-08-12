@@ -308,11 +308,11 @@ objectid    = cn.hutool.core.util.IdUtil#objectId()
 pinyin      = cn.hutool.extra.pinyin.PinyinUtil#getPinyin(str:java.lang.String)
 post        = cn.hutool.http.HttpUtil#post(urlString:java.lang.String, body:java.lang.String={})
 qrcode      = cn.hutool.extra.qrcode.QrCodeUtil#generate(content:java.lang.String, width:int=1000, height:int=1000, targetFile:java.io.File)
-rand        = cn.hutool.core.util.RandomUtil#randomLong(min:long=0, max:long=9223372036854775807)
-randc       = cn.hutool.core.img.ImgUtil#randomColor()
-randd       = cn.hutool.core.util.RandomUtil#randomDouble(min:double=0, max:double=9223372036854775807)
-randpass    = cn.hutool.core.util.RandomUtil#randomString(number:java.lang.String=abcdefghijkmnpqrstuvwxyzABCDEFGHJKMNPQRSTUVWXYZ234567892345678923456789, i:int=16)
-rands       = cn.hutool.core.util.RandomUtil#randomString(length:int=16)
+random      = cn.hutool.core.util.RandomUtil#randomLong(min:long=0, max:long=9223372036854775807)
+randomc     = cn.hutool.core.img.ImgUtil#randomColor()
+randomd     = cn.hutool.core.util.RandomUtil#randomDouble(min:double=0, max:double=9223372036854775807)
+randompass  = cn.hutool.core.util.RandomUtil#randomString(number:java.lang.String=abcdefghijkmnpqrstuvwxyzABCDEFGHJKMNPQRSTUVWXYZ234567892345678923456789, i:int=16)
+randoms     = cn.hutool.core.util.RandomUtil#randomString(length:int=16)
 regex       = cn.hutool.core.util.ReUtil#isMatch(pattern:java.util.regex.Pattern, content:java.lang.CharSequence)
 second      = cn.hutool.core.date.DateUtil#currentSeconds()
 sha1        = cn.hutool.crypto.SecureUtil#sha1(data:java.lang.String)
@@ -412,7 +412,7 @@ hu alias // grep qr \\0
 # output:
 decodeqr    = cn.hutool.extra.qrcode.QrCodeUtil#decode(qrCodeFile:java.io.File)
 qrcode      = cn.hutool.extra.qrcode.QrCodeUtil#generate(content:java.lang.String, width:int=1000, height:int=1000, targetFile:java.io.File)
-randpass    = cn.hutool.core.util.RandomUtil#randomString(number:java.lang.String=abcdefghijkmnpqrstuvwxyzABCDEFGHJKMNPQRSTUVWXYZ234567892345678923456789, i:int=16)
+randompass    = cn.hutool.core.util.RandomUtil#randomString(number:java.lang.String=abcdefghijkmnpqrstuvwxyzABCDEFGHJKMNPQRSTUVWXYZ234567892345678923456789, i:int=16)
 ```
 
 然后执行
@@ -440,6 +440,10 @@ hu qrcode 'qrcode test' 600 600 /home/test.png
         "paramTypes": [
             "j.char.seq"
         ]
+    },
+    "echo": {
+        /*@符号表示总是解析参数默认值*/
+        "method": "qe#run(@string=return \"${0}\")"
     }
 }
 ```

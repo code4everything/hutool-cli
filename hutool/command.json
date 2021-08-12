@@ -229,5 +229,8 @@
     },
     "run": {
         "method": "qe#run(string)"
+    },
+    "echo": {
+        "method": "qe#run(@string=return \"${0}\")"
     }
 }

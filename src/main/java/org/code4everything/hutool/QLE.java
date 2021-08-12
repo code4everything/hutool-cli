@@ -19,6 +19,7 @@ public final class QLE {
         for (int i = 0; i < params.size(); i++) {
             express = express.replace("${" + i + "}", params.get(i));
         }
+        Hutool.debugOutput("get ql script: " + express);
         ExpressRunner runner = new ExpressRunner();
         runner.addFunctionOfClassMethod("cmd", QLE.class, "cmd", new Class<?>[]{String.class}, null);
         DefaultContext<String, Object> context = new DefaultContext<>();
