@@ -602,11 +602,16 @@ public final class Hutool {
         }
 
         // 重载方法
-        String specificTypes = json.getString(ARG.params.size() + "param");
-        if (Utils.isStringEmpty(specificTypes)) {
+        Object specificTypes = json.get(ARG.params.size() + "param");
+        if (specificTypes == null) {
             return;
         }
-        ARG.paramTypes = Arrays.asList(specificTypes.split(","));
+
+        if (specificTypes instanceof List) {
+            ARG.paramTypes = ((List<?>) specificTypes).stream().map(String::valueOf).collect(Collectors.toList());
+        } else {
+            ARG.paramTypes = Arrays.asList(String.valueOf(specificTypes).split(","));
+        }
     }
 
     private static String parseMethodFullInfo(String className, String methodName, List<String> paramTypes) throws NotFoundException {

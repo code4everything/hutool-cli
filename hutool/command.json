@@ -173,7 +173,8 @@
         "method": "utils#lunar(date=now)"
     },
     "split": {
-        "method": "cn.hutool.core.text.CharSequenceUtil#splitTrim(j.char.seq,j.char.seq=,)"
+        "method": "cn.hutool.core.text.CharSequenceUtil#splitTrim",
+        "paramTypes": ["j.char.seq", "j.char.seq=,"]
     },
     "mkdir": {
         "method": "cn.hutool.core.io.FileUtil#mkdir(file)"
