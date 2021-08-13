@@ -443,7 +443,7 @@ hu qrcode 'qrcode test' 600 600 /home/test.png
     },
     "echo": {
         /*@符号表示总是解析参数默认值*/
-        "method": "qe#run(@string=return \"${0}\")"
+        "method": "qe#run(@string=return args,@boolean=false)"
     }
 }
 ```

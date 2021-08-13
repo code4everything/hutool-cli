@@ -120,6 +120,6 @@ public class HutoolCli {
 
     @Test
     public void run() {
-        Hutool.test("run", "cmd(\"hu calc (${1}-${0})/${0}*100 2\").concat(\"%\")", "1.629", "1.616");
+        Hutool.test("run", "cmd(\"hu calc (${1}-${0})/${0}*100 2\").concat(\"%\")", "true", "1.629", "1.616", "-d");
     }
 }

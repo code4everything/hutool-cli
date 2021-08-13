@@ -36,7 +36,7 @@ public class ListStringConverter implements Converter<List<String>> {
 
         if (string.startsWith("file:")) {
             File file = new FileConverter().string2Object(string.substring(5));
-            Hutool.debugOutput("get file path: " + file.getAbsolutePath());
+            Hutool.debugOutput("get file path: %s", file.getAbsolutePath());
             if (FileUtil.exist(file)) {
                 string = FileUtil.readUtf8String(file);
             }

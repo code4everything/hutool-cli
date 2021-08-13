@@ -321,7 +321,7 @@ public final class Utils {
             // ignore
         }
 
-        Hutool.debugOutput("loading class: " + className);
+        Hutool.debugOutput("loading class: %s", className);
         if (Objects.isNull(classLoader)) {
             classLoader = new JarClassLoader();
             classLoader.addJar(FileUtil.file(Hutool.homeDir, "external"));
@@ -331,7 +331,7 @@ public final class Utils {
                 for (String externalPath : externalPaths) {
                     File external = parseClasspath(externalPath);
                     if (FileUtil.exist(external)) {
-                        Hutool.debugOutput("add class path: " + external.getAbsolutePath());
+                        Hutool.debugOutput("add class path: %s", external.getAbsolutePath());
                         classLoader.addURL(external);
                     }
                 }
@@ -354,7 +354,7 @@ public final class Utils {
             }
             String[] coordinates = path.split(":", 3);
             if (coordinates.length != 3) {
-                Hutool.debugOutput("mvn coordinate format error: " + path);
+                Hutool.debugOutput("mvn coordinate format error: %s", path);
                 return null;
             }
             if (Objects.isNull(mvnRepositoryHome)) {
@@ -368,7 +368,7 @@ public final class Utils {
             paths.add(version);
             paths.add(name + "-" + version + ".jar");
             File file = FileUtil.file(paths.toArray(new String[0]));
-            Hutool.debugOutput("get mvn path: " + file.getAbsolutePath());
+            Hutool.debugOutput("get mvn path: %s", file.getAbsolutePath());
             return file;
         }
 

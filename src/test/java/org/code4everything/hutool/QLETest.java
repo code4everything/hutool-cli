@@ -6,7 +6,7 @@ public class QLETest {
 
     @Test
     public void run() throws Exception {
-        System.out.println(QLE.run("cmd(\"hu now\").concat(\" 你好\")"));
+        System.out.println(QLE.run("cmd(\"hu now\").concat(\" 你好\")", false));
     }
 
     @Test

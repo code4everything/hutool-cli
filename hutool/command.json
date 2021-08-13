@@ -174,7 +174,10 @@
     },
     "split": {
         "method": "cn.hutool.core.text.CharSequenceUtil#splitTrim",
-        "paramTypes": ["j.char.seq", "j.char.seq=,"]
+        "paramTypes": [
+            "j.char.seq",
+            "j.char.seq=,"
+        ]
     },
     "mkdir": {
         "method": "cn.hutool.core.io.FileUtil#mkdir(file)"
@@ -228,10 +231,14 @@
     "countdown": {
         "method": "org.code4everything.hutool.Countdown#countdown(long,string=sec)"
     },
-    "run": {
-        "method": "qe#run(string)"
-    },
     "echo": {
-        "method": "qe#run(@string=return \"${0}\")"
+        "method": "qe#run(@string=return args,@boolean=false)"
+    },
+    "env": {
+        "method": "qe#run",
+        "paramTypes": [
+            "@string=System.getenv(nullto(args.getString(0),\"\").toUpperCase())",
+            "@boolean=false"
+        ]
     }
 }

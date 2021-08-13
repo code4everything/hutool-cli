@@ -126,10 +126,10 @@ public final class Hutool {
         if (ARG.version) {
             return "hutool-cli: " + VERSION;
         } else {
-            debugOutput("hutool-cli: " + VERSION);
+            debugOutput("hutool-cli: %s", VERSION);
         }
 
-        debugOutput("received arguments: " + ArrayUtil.toString(args));
+        debugOutput("received arguments: %s", ArrayUtil.toString(args));
         debugOutput("starting resolve");
         ARG.command.addAll(ARG.main);
         resolveResult();
@@ -586,7 +586,7 @@ public final class Hutool {
         if (ARG.methodName.endsWith(")")) {
             int idx = ARG.methodName.indexOf("(");
             if (idx < 1) {
-                debugOutput("method format error: " + ARG.methodName);
+                debugOutput("method format error: %s", ARG.methodName);
                 return;
             }
             String[] split = ARG.methodName.substring(idx + 1, ARG.methodName.length() - 1).split(",");
@@ -657,7 +657,7 @@ public final class Hutool {
             debugOutput("result convert success");
             return res;
         } catch (Exception e) {
-            debugOutput("convert result error: " + e.getMessage());
+            debugOutput("convert result error: %s", e.getMessage());
         }
         return "";
     }
@@ -746,7 +746,10 @@ public final class Hutool {
             StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
             String className = stackTrace.length > 2 ? stackTrace[2].getClassName() : "Unknown";
             String lineNumber = stackTrace.length > 2 ? String.valueOf(stackTrace[2].getLineNumber()) : "NaN";
-            msg = getSimpleDateFormat().format(new Date()) + " " + className + ":" + lineNumber + " - " + String.format(msg, params);
+            if (params != null && params.length > 0) {
+                msg = String.format(msg, params);
+            }
+            msg = getSimpleDateFormat().format(new Date()) + " " + className + ":" + lineNumber + " - " + msg;
             System.out.println(msg);
         }
     }
