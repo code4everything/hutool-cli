@@ -229,7 +229,7 @@
         "method": "cn.hutool.core.swing.clipboard.ClipboardUtil#getStr()"
     },
     "countdown": {
-        "method": "org.code4everything.hutool.Countdown#countdown(long,string=sec)"
+        "method": "org.code4everything.hutool.Countdown#countdown(string,string=sec)"
     },
     "echo": {
         "method": "qe#run(@string=return args,@boolean=false)"
@@ -237,7 +237,7 @@
     "env": {
         "method": "qe#run",
         "paramTypes": [
-            "@string=System.getenv(nullto(args.getString(0),\"\").toUpperCase())",
+            "@string=System.getenv(nullto(arg0,\"\").toUpperCase())",
             "@boolean=false"
         ]
     }

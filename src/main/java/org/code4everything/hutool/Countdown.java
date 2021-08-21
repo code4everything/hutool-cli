@@ -1,6 +1,7 @@
 package org.code4everything.hutool;
 
 import cn.hutool.core.date.DateTime;
+import cn.hutool.core.util.NumberUtil;
 import org.code4everything.hutool.converter.DateConverter;
 
 /**
@@ -9,9 +10,20 @@ import org.code4everything.hutool.converter.DateConverter;
  */
 public class Countdown {
 
-    public static String countdown(@IOConverter long number, String unit) {
-        DateTime dateTime = new DateTime(0);
-        long count = new DateConverter().getOffsetDate(dateTime, number + unit).getTime();
+    public static String countdown(@IOConverter String deadline, String unit) throws Exception {
+        DateConverter dateConverter = new DateConverter();
+        long count;
+        if (NumberUtil.isNumber(deadline)) {
+            DateTime dateTime = new DateTime(0);
+            count = dateConverter.getOffsetDate(dateTime, deadline + unit).getTime();
+        } else {
+            DateTime dateTime = dateConverter.string2Object(deadline);
+            count = dateTime.getTime() - dateConverter.getBaseDate().getTime();
+        }
+
+        if (count <= 0) {
+            return "倒计时已过期";
+        }
 
         long ms = count % 1000;
         long sec = count / 1000 % 60;

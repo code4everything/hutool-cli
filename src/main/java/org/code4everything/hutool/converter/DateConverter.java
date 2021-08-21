@@ -27,6 +27,8 @@ public class DateConverter implements Converter<DateTime> {
 
     private static Map<String, String> beginMethodMap = null;
 
+    private DateTime baseDate;
+
     public static Map<String, String> getEndMethodMap() {
         if (Objects.isNull(endMethodMap)) {
             endMethodMap = new HashMap<>(16);
@@ -91,12 +93,26 @@ public class DateConverter implements Converter<DateTime> {
         return offsetMap;
     }
 
+    /**
+     * 仅解析后，未经计算的时间
+     */
+    public DateTime getBaseDate() {
+        return baseDate;
+    }
+
     @Override
     public DateTime string2Object(String string) throws Exception {
         int idx = string.indexOf("+");
         if (idx > 0) {
             DateTime dateTime = parseDate(string.substring(0, idx));
             String offsetStr = string.substring(idx + 1);
+            return getOffsetDate(dateTime, offsetStr);
+        }
+
+        idx = string.indexOf("-");
+        if (idx > 0) {
+            DateTime dateTime = parseDate(string.substring(0, idx));
+            String offsetStr = string.substring(idx);
             return getOffsetDate(dateTime, offsetStr);
         }
 
@@ -128,24 +144,26 @@ public class DateConverter implements Converter<DateTime> {
     }
 
     private DateTime parseDate(String string) {
+        baseDate = null;
         if ("now".equals(string)) {
-            return DateUtil.date();
-        }
-        if ("today".equals(string)) {
-            return DateUtil.beginOfDay(DateUtil.date());
-        }
-        if ("yesterday".equals(string)) {
-            return DateUtil.beginOfDay(DateUtil.offsetDay(DateUtil.date(), -1));
-        }
-        if ("tomorrow".equals(string)) {
-            return DateUtil.beginOfDay(DateUtil.offsetDay(DateUtil.date(), 1));
-        }
-        if (string.length() == 2) {
+            baseDate = DateUtil.date();
+        } else if ("today".equals(string)) {
+            baseDate = DateUtil.beginOfDay(DateUtil.date());
+        } else if (string.length() == 2) {
             string = DateUtil.format(DateUtil.date(), "yyyy-MM-") + string;
         } else if (string.length() == 5) {
-            string = DateUtil.format(DateUtil.date(), "yyyy-") + string;
+            char sep = string.charAt(2);
+            if (sep == '-') {
+                string = DateUtil.format(DateUtil.date(), "yyyy-") + string;
+            } else if (sep == ':') {
+                string = DateUtil.format(DateUtil.date(), "yyyy-MM-dd ") + string;
+            }
         }
-        return DateUtil.parse(string.replace('T', ' '));
+
+        if (baseDate == null) {
+            baseDate = DateUtil.parse(string.replace('T', ' '));
+        }
+        return baseDate;
     }
 
     @Override
