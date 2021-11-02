@@ -4,10 +4,6 @@ import cn.hutool.core.codec.Base64
 import org.junit.Assert
 import org.junit.Test
 
-/**
- * @author pantao
- * @since 2020/10/30
- */
 class HutoolCli {
 
     @Test
@@ -116,8 +112,6 @@ class HutoolCli {
 
     companion object {
 
-        fun test(cmd: String, vararg params: String): String {
-            return Hutool.test(*(cmd.split(" ").toTypedArray() + params))
-        }
+        fun test(cmd: String, vararg params: String): String = Hutool.test(*(cmd.split(" ").toTypedArray() + params))
     }
 }

@@ -2,10 +2,6 @@ package org.code4everything.hutool
 
 import org.junit.Test
 
-/**
- * @author pantao
- * @since 2021/6/23
- */
 class Tester {
 
     @Test
@@ -18,5 +14,11 @@ class Tester {
         println(FloatArray::class.java.name)
         println(DoubleArray::class.java.name)
         println(CharArray::class.java.name)
+    }
+
+    @Test
+    fun kotlin() {
+        var t: String? = null
+        t.also { if (it == null) println("null") }
     }
 }

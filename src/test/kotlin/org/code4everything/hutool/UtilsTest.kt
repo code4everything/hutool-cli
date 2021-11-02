@@ -4,10 +4,6 @@ import cn.hutool.core.util.RandomUtil
 import javassist.ClassPool
 import org.junit.Test
 
-/**
- * @author pantao
- * @since 2021/7/2
- */
 class UtilsTest {
 
     @Test

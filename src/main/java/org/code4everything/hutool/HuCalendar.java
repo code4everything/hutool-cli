@@ -19,13 +19,13 @@ import java.util.Objects;
  */
 public class HuCalendar {
 
-    private int month = 0;
-
     private final int currMonth;
 
     private final int currYear;
 
     private final int currDay;
+
+    private int month = 0;
 
     private DateTime beginDate;
 

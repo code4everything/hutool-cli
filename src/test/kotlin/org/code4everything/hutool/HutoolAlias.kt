@@ -3,10 +3,6 @@ package org.code4everything.hutool
 import cn.hutool.core.io.FileUtil
 import com.alibaba.fastjson.JSON
 
-/**
- * @author pantao
- * @since 2021/5/11
- */
 object HutoolAlias {
 
     @JvmStatic
