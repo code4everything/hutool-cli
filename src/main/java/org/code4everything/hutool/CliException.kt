@@ -1,16 +1,11 @@
-package org.code4everything.hutool;
+package org.code4everything.hutool
 
 /**
  * @author pantao
  * @since 2020/10/29
  */
-public class CliException extends RuntimeException {
+class CliException : RuntimeException {
 
-    public CliException() {
-        super("hutool-cli exception test in debug mode");
-    }
-
-    public CliException(String msg) {
-        super(msg);
-    }
+    constructor() : super("hutool-cli exception test in debug mode")
+    constructor(msg: String?) : super(msg)
 }

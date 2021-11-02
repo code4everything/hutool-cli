@@ -109,13 +109,6 @@ public class DateConverter implements Converter<DateTime> {
             return getOffsetDate(dateTime, offsetStr);
         }
 
-        idx = string.indexOf("-");
-        if (idx > 0) {
-            DateTime dateTime = parseDate(string.substring(0, idx));
-            String offsetStr = string.substring(idx);
-            return getOffsetDate(dateTime, offsetStr);
-        }
-
         idx = string.indexOf(">");
         if (idx > 0) {
             DateTime dateTime = parseDate(string.substring(0, idx));

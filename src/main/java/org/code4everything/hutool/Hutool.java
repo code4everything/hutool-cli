@@ -754,11 +754,6 @@ public final class Hutool {
         }
     }
 
-    public static String test(String cmd, Object... formatArgs) {
-        cmd = String.format(cmd, formatArgs);
-        return test(cmd.split(" "));
-    }
-
     public static String test(String... args) {
         String cmd = String.join(" ", args);
 

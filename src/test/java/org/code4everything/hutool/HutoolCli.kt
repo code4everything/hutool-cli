@@ -1,125 +1,123 @@
-package org.code4everything.hutool;
+package org.code4everything.hutool
 
-import cn.hutool.core.codec.Base64;
-import org.junit.Assert;
-import org.junit.Test;
+import cn.hutool.core.codec.Base64
+import org.junit.Assert
+import org.junit.Test
 
 /**
  * @author pantao
  * @since 2020/10/30
  */
-public class HutoolCli {
+class HutoolCli {
 
-    public static String test(String cmd, Object... params) {
-        return Hutool.test(cmd, params);
+    @Test
+    fun base64() {
+        var test = "123456789"
+        var res = test("-c cn.hutool.core.codec.Base64 -m encode -t j.char.seq -p $test")
+        Assert.assertEquals(Base64.encode(test), res)
+
+        test = "dd55122a5a5f4a"
+        Assert.assertEquals(Base64.encode(test), test("encode64 $test"))
+        test = Base64.encode(test)
+        Assert.assertEquals(Base64.decodeStr(test), test("decode64 $test"))
     }
 
     @Test
-    public void base64() {
-        String test = "123456789";
-        Assert.assertEquals(Base64.encode(test), test("-c cn.hutool.core.codec.Base64 -m encode -t j.char.seq -p %s", test));
-
-        test = "dd55122a5a5f4a";
-        Assert.assertEquals(Base64.encode(test), test("encode64 %s", test));
-
-        test = Base64.encode(test);
-        Assert.assertEquals(Base64.decodeStr(test), test("decode64 %s", test));
+    fun alias() {
+        test("alias date")
+        test("-c alias -p .u")
+        test("file.u#alias type")
+        test("-c file.u -m alias -p type")
     }
 
     @Test
-    public void alias() {
-        test("alias date");
-        test("-c alias -p .u");
-        test("file.u#alias type");
-        test("-c file.u -m alias -p type");
+    fun multiCmd() {
+        val test = "test_multi_cmd"
+        Assert.assertEquals(test, test("encode64 $test // decode64 \\\\0"))
     }
 
     @Test
-    public void multiCmd() {
-        String test = "test_multi_cmd";
-        Assert.assertEquals(test, test("encode64 %s // decode64 \\\\0", test));
+    fun calc() {
+        Assert.assertEquals("3", test("calc 9/3"))
     }
 
     @Test
-    public void calc() {
-        Assert.assertEquals("3", test("calc 9/3"));
+    fun getSupperClass() {
+        test("suppers string")
+        test("suppers java.util.ArrayList")
+        test("suppers str.u")
     }
 
     @Test
-    public void getSupperClass() {
-        test("suppers string");
-        test("suppers java.util.ArrayList");
-        test("suppers str");
+    fun externalPath() {
+        test("-c org.code4everything.wetool.plugin.support.util.WeUtils -m getCurrentPid -d")
     }
 
     @Test
-    public void externalPath() {
-        test("-c org.code4everything.wetool.plugin.support.util.WeUtils -m getCurrentPid");
+    fun random() {
+        test("random")
     }
 
     @Test
-    public void random() {
-        test("random");
+    fun value() {
+        Assert.assertEquals(Int.MAX_VALUE.toString(), test("intmax -d"))
+        Assert.assertEquals(Long.MAX_VALUE.toString(), test("longmax"))
+        Assert.assertEquals(Int.MIN_VALUE.toString(), test("value j.int MIN_VALUE"))
+        Assert.assertEquals(Short.MIN_VALUE.toString(), test("value j.short MIN_VALUE"))
     }
 
     @Test
-    public void value() {
-        Assert.assertEquals(String.valueOf(Integer.MAX_VALUE), test("intmax -d"));
-        Assert.assertEquals(String.valueOf(Long.MAX_VALUE), test("longmax"));
-        Assert.assertEquals(String.valueOf(Integer.MIN_VALUE), test("value j.int MIN_VALUE"));
-        Assert.assertEquals(String.valueOf(Short.MIN_VALUE), test("value j.short MIN_VALUE"));
+    fun fields() {
+        test("fields j.int")
+        test("fields string")
+        test("fields org.code4everything.hutool.MethodArg")
+        test("fields org.code4everything.hutool.Hutool")
     }
 
     @Test
-    public void fields() {
-        test("fields j.int");
-        test("fields string");
-        test("fields org.code4everything.hutool.MethodArg");
-        test("fields org.code4everything.hutool.Hutool");
+    fun dayp() {
+        test("dayp today+-1d")
+        test("dayp 2021-06-27T23:59:59")
     }
 
     @Test
-    public void dayp() {
-        test("dayp yesterday");
-        test("dayp 2021-06-27T23:59:59");
+    fun ll() {
+        test("ll build.gradle")
+        test("ll")
     }
 
     @Test
-    public void ll() {
-        test("ll build.gradle");
-        test("ll");
+    fun calendar() {
+        test("calendar")
+        test("calendar 4,5")
+        test("calendar 202001,2")
+        test("calendar 2021")
     }
 
     @Test
-    public void calendar() {
-        test("calendar");
-        test("calendar 4,5");
-        test("calendar 202001,2");
-        test("calendar 2021");
+    fun `charSequenceUtil$format`() {
+        test("csu#format -t j.char.seq -t obj.arr {}#{} csu,format")
     }
 
     @Test
-    public void charSequenceUtil$format() {
-        test("csu#format -t j.char.seq -t obj.arr {}#{} csu,format");
+    fun usage() {
+        test("")
     }
 
     @Test
-    public void usage() {
-        test("");
+    fun treeFile() {
+        test("tree ~ 3")
     }
 
     @Test
-    public void treeFile() {
-        test("tree ~ 3");
+    fun date() {
+        test("date now+(-2+7)d")
     }
 
-    @Test
-    public void date() {
-        test("date now+(-2+7)d");
-    }
+    companion object {
 
-    @Test
-    public void run() {
-        Hutool.test("run", "cmd(\"hu calc (${1}-${0})/${0}*100 2\").concat(\"%\")", "true", "1.629", "1.616", "-d");
+        fun test(cmd: String, vararg params: String): String {
+            return Hutool.test(*(cmd.split(" ").toTypedArray() + params))
+        }
     }
 }

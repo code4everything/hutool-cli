@@ -72,8 +72,8 @@ public class ListStringConverter implements Converter<List<String>> {
         }
 
         StringJoiner joiner;
-        String separator = MethodArg.getSeparator();
-        if (directLineSep || separator.contains("\n")) {
+        String separator = directLineSep ? FileUtil.getLineSeparator() : MethodArg.getSeparator();
+        if (separator.contains("\n")) {
             joiner = new StringJoiner(separator);
         } else {
             joiner = new StringJoiner(",", "[", "]");

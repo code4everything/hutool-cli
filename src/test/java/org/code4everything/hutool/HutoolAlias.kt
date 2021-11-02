@@ -1,20 +1,19 @@
-package org.code4everything.hutool;
+package org.code4everything.hutool
 
-import cn.hutool.core.io.FileUtil;
-import com.alibaba.fastjson.JSON;
+import cn.hutool.core.io.FileUtil
+import com.alibaba.fastjson.JSON
 
 /**
  * @author pantao
  * @since 2021/5/11
  */
-public class HutoolAlias {
+object HutoolAlias {
 
-    public static void main(String[] args) {
-        String json = FileUtil.readUtf8String(Hutool.homeDir + "\\class.json");
-        JSON.parseObject(json).forEach((k, v) -> {
-            String arg = k + "#alias -d";
-            Hutool.main(arg.split(" "));
-            System.out.println();
-        });
+    @JvmStatic
+    fun main(args: Array<String>) {
+        val json = FileUtil.readUtf8String("${Hutool.homeDir}\\class.json")
+        JSON.parseObject(json).forEach { k, _ ->
+            Hutool.main("$k#alias -d".split(" ").toTypedArray()).also { println() }
+        }
     }
 }
