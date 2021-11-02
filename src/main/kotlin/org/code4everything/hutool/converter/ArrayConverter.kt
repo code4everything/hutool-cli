@@ -1,6 +1,5 @@
 package org.code4everything.hutool.converter
 
-import cn.hutool.core.util.ArrayUtil
 import java.lang.reflect.Array
 import org.code4everything.hutool.CliException
 import org.code4everything.hutool.Converter
@@ -27,9 +26,10 @@ class ArrayConverter(arrayClass: Class<*>) : Converter<Any> {
     }
 
     override fun object2String(any: Any): String {
-        if (!ArrayUtil.isArray(any)) {
-            return ""
-        }
+        return if (any is Array) convert(any) else ""
+    }
+
+    private fun convert(any: Any): String {
         val list = List(Array.getLength(any)) { i -> Array.get(any, i) }
         return ListStringConverter().object2String(list)
     }
