@@ -81,6 +81,7 @@ jar {
     exclude 'META-INF/LICENSE'
     exclude 'META-INF/LICENSE.txt'
     exclude 'META-INF/NOTICE.txt'
+    exclude 'META-INF/versions/9/module-info.class'
 }
 
 boolean isWin = System.getProperty('os.name').toLowerCase(Locale.ROOT).contains('windows')

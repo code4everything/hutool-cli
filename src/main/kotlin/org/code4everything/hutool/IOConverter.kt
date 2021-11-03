@@ -1,53 +1,35 @@
-package org.code4everything.hutool;
+package org.code4everything.hutool
 
-import com.alibaba.fastjson.util.TypeUtils;
+import com.alibaba.fastjson.util.TypeUtils
+import java.lang.annotation.Documented
+import java.lang.annotation.Inherited
+import java.lang.annotation.Retention
+import java.lang.annotation.RetentionPolicy
+import java.util.Objects
+import kotlin.reflect.KClass
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Inherited;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-import java.util.Objects;
-
-/**
- * 输入输出转换器
- *
- * @author pantao
- * @since 2021/6/28
- */
+// 输入输出转换器
 @Documented
 @Inherited
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.PARAMETER, ElementType.METHOD})
-public @interface IOConverter {
+@Target(
+    AnnotationTarget.VALUE_PARAMETER,
+    AnnotationTarget.FUNCTION,
+    AnnotationTarget.PROPERTY_GETTER,
+    AnnotationTarget.PROPERTY_SETTER
+)
+annotation class IOConverter(
+    // 使用自定义转换器
+    val value: KClass<out Converter<*>> = WithoutConverter::class,
 
-    /**
-     * 使用自定义转换器
-     */
-    Class<? extends Converter<?>> value() default WithoutConverter.class;
+    // 当value是WithoutConverter类时，并且className不为空，那么解析className转换器
+    val className: String = "",
+) {
 
-    /**
-     * 当value是WithoutConverter类时，并且className不为空，那么解析className转换器
-     */
-    String className() default "";
+    class WithoutConverter(private val objType: Class<*>) : Converter<Any> {
 
-    class WithoutConverter implements Converter<Object> {
+        override fun string2Object(string: String): Any = TypeUtils.cast(string, objType, null)
 
-        private final Class<?> objType;
-
-        public WithoutConverter(Class<?> objType) {
-            this.objType = objType;
-        }
-
-        @Override
-        public Object string2Object(String string) {
-            return TypeUtils.cast(string, objType, null);
-        }
-
-        @Override
-        public String object2String(Object object) {
-            return Objects.toString(object);
-        }
+        override fun object2String(any: Any?): String = Objects.toString(any)
     }
 }

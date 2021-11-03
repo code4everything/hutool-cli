@@ -1,262 +1,177 @@
-package org.code4everything.hutool;
+package org.code4everything.hutool
 
-import cn.hutool.core.io.FileUtil;
-import cn.hutool.core.util.RuntimeUtil;
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
-import com.ql.util.express.DefaultContext;
-import com.ql.util.express.ExpressRunner;
+import cn.hutool.core.io.FileUtil
+import cn.hutool.core.util.RuntimeUtil
+import com.alibaba.fastjson.JSONArray
+import com.alibaba.fastjson.JSONObject
+import com.ql.util.express.DefaultContext
+import com.ql.util.express.ExpressRunner
+import java.lang.reflect.Type
+import java.math.BigDecimal
+import java.math.BigInteger
+import java.sql.Timestamp
+import java.util.Date
+import java.util.StringJoiner
 
-import java.io.File;
-import java.lang.reflect.Type;
-import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.StringJoiner;
+object QLE {
 
-/**
- * @author pantao
- * @since 2021/8/11
- */
-public final class QLE {
-
-    private QLE() {}
-
-    public static Object run(String express, boolean replaceArg) throws Exception {
-        express = handleExpression(express);
-        if (Utils.isStringEmpty(express)) {
-            return null;
+    @JvmStatic
+    fun run(express: String, replaceArg: Boolean): Any? {
+        var exp = handleExpression(express)
+        if (exp.isEmpty()) {
+            return null
         }
 
-        List<String> args = MethodArg.getSubParams(Hutool.ARG, 2);
+        val args = MethodArg.getSubParams(Hutool.ARG, 2)
         if (replaceArg) {
-            for (int i = 0; i < args.size(); i++) {
-                express = express.replace("${" + i + "}", args.get(i));
+            for (i in args.indices) {
+                exp = exp.replace("\${$i}", args[i])
             }
         }
 
-        Hutool.debugOutput("get ql script: %s", express);
-        ExpressRunner runner = new ExpressRunner();
+        Hutool.debugOutput("get ql script: %s", express)
+        val runner = ExpressRunner()
 
         // 绑定方法
-        runner.addFunctionOfClassMethod("cmd", QLE.class, "cmd", new Class<?>[]{String.class}, null);
-        runner.addFunctionOfClassMethod("nullto", QLE.class, "nullTo", new Class<?>[]{Object.class, Object.class}, null);
+        var clz = QLE::class.java
+        runner.addFunctionOfClassMethod("cmd", clz, "cmd", arrayOf<Class<*>>(String::class.java), null)
+        runner.addFunctionOfClassMethod("nullto", clz, "nullTo", Array(2) { Any::class.java }, null)
 
         // 绑定上下文环境
-        DefaultContext<String, Object> context = new DefaultContext<>();
-        context.put("args", ArgList.of(new ArrayList<>(args)));
-        StringJoiner joiner = new StringJoiner(",", "(", ")");
-        for (int i = 0; i < args.size(); i++) {
-            context.put("arg" + i, args.get(i));
-            joiner.add(args.get(i));
+        val context = DefaultContext<String, Any>()
+        context["args"] = ArgList.of(ArrayList<Any>(args))
+        val joiner = StringJoiner(",", "(", ")")
+        for (i in args.indices) {
+            context["arg$i"] = args[i]
+            joiner.add(args[i])
         }
 
         // 执行表达式
-        Hutool.debugOutput("execute expression with args: %s", joiner);
-        return runner.execute(express, context, null, true, false);
+        Hutool.debugOutput("execute expression with args: %s", joiner)
+        return runner.execute(express, context, null, true, false)
     }
 
-    public static String cmd(String cmd) {
-        String result = RuntimeUtil.execForStr(cmd);
-        return Utils.isStringEmpty(result) ? "" : result.trim();
+    @JvmStatic
+    fun cmd(cmd: String?): String {
+        val result = RuntimeUtil.execForStr(cmd)
+        return if (result?.isEmpty() != false) "" else result.trim()
     }
 
-    public static Object nullTo(Object v1, Object v2) {
-        return v1 == null ? v2 : v1;
-    }
+    @JvmStatic
+    fun nullTo(v1: Any?, v2: Any): Any = v1 ?: v2
 
-    private static String handleExpression(String expression) {
+    private fun handleExpression(expression: String): String {
         if (Utils.isStringEmpty(expression)) {
-            return "";
+            return ""
         }
-
         if (expression.startsWith("file:")) {
-            File file = FileUtil.file(expression.substring(5));
+            val file = FileUtil.file(expression.substring(5))
             if (FileUtil.exist(file)) {
-                Hutool.debugOutput("get script from file: %s", file.getAbsolutePath());
-                return FileUtil.readUtf8String(file);
+                Hutool.debugOutput("get script from file: %s", file.absolutePath)
+                return FileUtil.readUtf8String(file)
             }
         }
-
-        return expression;
+        return expression
     }
 
-    private static class ArgList extends JSONArray {
+    private class ArgList(list: List<Any>) : JSONArray(list) {
 
-        public ArgList(List<Object> list) {
-            super(list);
+        override fun get(index: Int): Any? {
+            return (if (index >= size) null else super.get(index))!!
         }
 
-        private static ArgList of(List<Object> list) {
-            return new ArgList(list);
+        override fun getJSONObject(index: Int): JSONObject? {
+            return if (index >= size) null else super.getJSONObject(index)
         }
 
-        @Override
-        public Object get(int index) {
-            return index >= size() ? null : super.get(index);
+        override fun getJSONArray(index: Int): JSONArray? {
+            return if (index >= size) null else super.getJSONArray(index)
         }
 
-        @Override
-        public JSONObject getJSONObject(int index) {
-            return index >= size() ? null : super.getJSONObject(index);
+        override fun <T> getObject(index: Int, clazz: Class<T>): T? {
+            return if (index >= size) null else super.getObject(index, clazz)
         }
 
-        @Override
-        public JSONArray getJSONArray(int index) {
-            return index >= size() ? null : super.getJSONArray(index);
+        override fun <T> getObject(index: Int, type: Type): T? {
+            return if (index >= size) null else super.getObject(index, type)
         }
 
-        @Override
-        public <T> T getObject(int index, Class<T> clazz) {
-            return index >= size() ? null : super.getObject(index, clazz);
+        override fun getBoolean(index: Int): Boolean? {
+            return if (index >= size) null else super.getBoolean(index)
         }
 
-        @Override
-        public <T> T getObject(int index, Type type) {
-            return index >= size() ? null : super.getObject(index, type);
+        override fun getBooleanValue(index: Int): Boolean {
+            return getBooleanValue(index, false)
         }
 
-        @Override
-        public Boolean getBoolean(int index) {
-            return index >= size() ? null : super.getBoolean(index);
+        fun getBooleanValue(index: Int, value: Boolean): Boolean {
+            return if (index >= size) value else super.getBooleanValue(index)
         }
 
-        @Override
-        public boolean getBooleanValue(int index) {
-            return getBooleanValue(index, false);
+        override fun getByte(index: Int): Byte? {
+            return if (index >= size) null else super.getByte(index)
         }
 
-        public boolean getBooleanValue(int index, boolean value) {
-            return index >= size() ? value : super.getBooleanValue(index);
+        override fun getByteValue(index: Int): Byte {
+            return getByteValue(index, index.toByte())
         }
 
-        @Override
-        public Byte getByte(int index) {
-            return index >= size() ? null : super.getByte(index);
+        fun getByteValue(index: Int, value: Byte): Byte {
+            return if (index >= size) value else super.getByteValue(index)
         }
 
-        @Override
-        public byte getByteValue(int index) {
-            byte value = 0;
-            return getByteValue(index, value);
+        override fun getShort(index: Int): Short? {
+            return if (index >= size) null else super.getShort(index)
         }
 
-        public byte getByteValue(int index, byte value) {
-            return index >= size() ? value : super.getByteValue(index);
+        override fun getShortValue(index: Int): Short {
+            return getShortValue(index, index.toShort())
         }
 
-        @Override
-        public Short getShort(int index) {
-            return index >= size() ? null : super.getShort(index);
-        }
+        fun getShortValue(index: Int, value: Short): Short = if (index >= size) value else super.getShortValue(index)
 
-        @Override
-        public short getShortValue(int index) {
-            short value = 0;
-            return getShortValue(index, value);
-        }
+        override fun getInteger(index: Int): Int? = if (index >= size) null else super.getInteger(index)
 
-        public short getShortValue(int index, short value) {
-            return index >= size() ? value : super.getShortValue(index);
-        }
+        override fun getIntValue(index: Int): Int = getIntValue(index, 0)
 
-        @Override
-        public Integer getInteger(int index) {
-            return index >= size() ? null : super.getInteger(index);
-        }
+        fun getIntValue(index: Int, value: Int): Int = if (index >= size) value else super.getIntValue(index)
 
-        @Override
-        public int getIntValue(int index) {
-            return getIntValue(index, 0);
-        }
+        override fun getLong(index: Int): Long? = if (index >= size) null else super.getLong(index)
 
-        public int getIntValue(int index, int value) {
-            return index >= size() ? value : super.getIntValue(index);
-        }
+        override fun getLongValue(index: Int): Long = getLongValue(index, 0)
 
-        @Override
-        public Long getLong(int index) {
-            return index >= size() ? null : super.getLong(index);
-        }
+        fun getLongValue(index: Int, value: Long): Long = if (index >= size) value else super.getLongValue(index)
 
-        @Override
-        public long getLongValue(int index) {
-            return getLongValue(index, 0);
-        }
+        override fun getFloat(index: Int): Float? = if (index >= size) null else super.getFloat(index)
 
-        public long getLongValue(int index, long value) {
-            return index >= size() ? value : super.getLongValue(index);
-        }
+        override fun getFloatValue(index: Int): Float = getFloatValue(index, 0f)
 
-        @Override
-        public Float getFloat(int index) {
-            return index >= size() ? null : super.getFloat(index);
-        }
+        fun getFloatValue(index: Int, value: Float): Float = if (index >= size) value else super.getFloatValue(index)
 
-        @Override
-        public float getFloatValue(int index) {
-            return getFloatValue(index, 0);
-        }
+        override fun getDouble(index: Int): Double? = if (index >= size) null else super.getDouble(index)
 
-        public float getFloatValue(int index, float value) {
-            return index >= size() ? value : super.getFloatValue(index);
-        }
+        override fun getDoubleValue(index: Int): Double = getDoubleValue(index, 0.0)
 
-        @Override
-        public Double getDouble(int index) {
-            return index >= size() ? null : super.getDouble(index);
-        }
+        fun getDoubleValue(idx: Int, value: Double): Double = if (idx >= size) value else super.getDoubleValue(idx)
 
-        @Override
-        public double getDoubleValue(int index) {
-            return getDoubleValue(index, 0);
-        }
+        override fun getBigDecimal(index: Int): BigDecimal? = if (index >= size) null else super.getBigDecimal(index)
 
-        public double getDoubleValue(int index, double value) {
-            return index >= size() ? value : super.getDoubleValue(index);
-        }
+        override fun getBigInteger(index: Int): BigInteger? = if (index >= size) null else super.getBigInteger(index)
 
-        @Override
-        public BigDecimal getBigDecimal(int index) {
-            return index >= size() ? null : super.getBigDecimal(index);
-        }
+        override fun getString(index: Int): String? = if (index >= size) null else super.getString(index)
 
-        @Override
-        public BigInteger getBigInteger(int index) {
-            return index >= size() ? null : super.getBigInteger(index);
-        }
+        override fun getDate(index: Int): Date? = if (index >= size) null else super.getDate(index)
 
-        @Override
-        public String getString(int index) {
-            return index >= size() ? null : super.getString(index);
-        }
+        override fun getSqlDate(index: Int): java.sql.Date? = if (index >= size) null else super.getSqlDate(index)
 
-        @Override
-        public Date getDate(int index) {
-            return index >= size() ? null : super.getDate(index);
-        }
+        override fun getTimestamp(index: Int): Timestamp? = if (index >= size) null else super.getTimestamp(index)
 
-        @Override
-        public java.sql.Date getSqlDate(int index) {
-            return index >= size() ? null : super.getSqlDate(index);
-        }
+        companion object {
 
-        @Override
-        public Timestamp getTimestamp(int index) {
-            return index >= size() ? null : super.getTimestamp(index);
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-            return super.equals(obj);
-        }
-
-        @Override
-        public int hashCode() {
-            return super.hashCode();
+            @JvmStatic
+            fun of(list: List<Any>): ArgList {
+                return ArgList(list)
+            }
         }
     }
 }

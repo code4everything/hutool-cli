@@ -1,76 +1,53 @@
-package org.code4everything.hutool.converter;
+package org.code4everything.hutool.converter
 
-import cn.hutool.core.lang.Holder;
-import cn.hutool.core.util.ObjectUtil;
-import org.code4everything.hutool.Converter;
-import org.code4everything.hutool.MethodArg;
-import org.code4everything.hutool.Utils;
+import cn.hutool.core.util.ObjectUtil
+import java.util.StringJoiner
+import java.util.StringTokenizer
+import java.util.TreeMap
+import org.code4everything.hutool.Converter
+import org.code4everything.hutool.MethodArg
+import org.code4everything.hutool.Utils
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.StringJoiner;
-import java.util.StringTokenizer;
-import java.util.TreeMap;
+class MapConverter : Converter<Map<Any?, Any?>> {
 
-/**
- * @author pantao
- * @since 2020/11/1
- */
-public class MapConverter implements Converter<Map<Object, Object>> {
-
-    @Override
-    public Map<Object, Object> string2Object(String string) {
-        Map<Object, Object> map = new HashMap<>(16);
-        if (Utils.isStringEmpty(string)) {
-            return map;
+    override fun string2Object(string: String): Map<Any?, Any?> {
+        val map: MutableMap<Any?, Any?> = HashMap(16)
+        if (string.isEmpty()) {
+            return map
         }
-        StringTokenizer tokenizer = new StringTokenizer(string, MethodArg.getSeparator());
+
+        val tokenizer = StringTokenizer(string, MethodArg.getSeparator())
         while (tokenizer.hasMoreTokens()) {
-            String token = tokenizer.nextToken();
-            if (Utils.isStringEmpty(token)) {
-                continue;
+            val token = tokenizer.nextToken()
+            if (token.isEmpty()) {
+                continue
             }
-
-            int idx = token.indexOf('=');
-            String key;
-            String value = "";
-
-            if (idx < 1) {
-                key = token;
-            } else {
-                key = token.substring(0, idx).trim();
-                value = token.substring(idx + 1).trim();
+            val idx = token.indexOf('=')
+            map[token] = ""
+            if (idx > 1) {
+                map[token.substring(0, idx).trim()] = token.substring(idx + 1).trim()
             }
-
-            map.put(key, value);
         }
-        return map;
+        return map
     }
 
-    @Override
-    @SuppressWarnings("unchecked")
-    public String object2String(Object object) {
-        if (!(object instanceof Map)) {
-            return "";
+    override fun object2String(any: Any): String {
+        if (any !is Map<*, *>) {
+            return ""
         }
 
-        Map<Object, Object> map = (Map<Object, Object>) object;
-        Holder<Integer> maxLen = Holder.of(0);
-        Map<String, String> tempMap = new TreeMap<>();
-        map.forEach((k, v) -> {
-            if (Objects.isNull(k)) {
-                return;
+        var maxLen = 0
+        val tempMap: MutableMap<String, String> = TreeMap()
+        any.forEach { (k: Any?, v: Any?) ->
+            k?.run { toString() }?.also {
+                if (it.length > maxLen) {
+                    maxLen = it.length
+                }
+                tempMap[it] = ObjectUtil.toString(v)
             }
-            String key = k.toString();
-            if (key.length() > maxLen.get()) {
-                maxLen.set(key.length());
-            }
-            tempMap.put(key, ObjectUtil.toString(v));
-        });
-
-        StringJoiner joiner = new StringJoiner("\n");
-        tempMap.forEach((k, v) -> joiner.add(Utils.padAfter(k, maxLen.get(), ' ') + " = " + v));
-        return joiner.toString();
+        }
+        val joiner = StringJoiner("\n")
+        tempMap.forEach { (k, v) -> joiner.add("${Utils.padAfter(k, maxLen, ' ')} = $v") }
+        return joiner.toString()
     }
 }
