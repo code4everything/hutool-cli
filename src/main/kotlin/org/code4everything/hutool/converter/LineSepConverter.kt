@@ -8,5 +8,5 @@ class LineSepConverter : Converter<List<String?>> {
 
     override fun string2Object(string: String): List<String> = converter.string2Object(string)
 
-    override fun object2String(any: Any): String = converter.object2String(any)
+    override fun object2String(any: Any?): String = converter.object2String(any)
 }

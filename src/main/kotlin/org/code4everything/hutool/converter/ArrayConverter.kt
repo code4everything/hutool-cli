@@ -21,11 +21,11 @@ class ArrayConverter(arrayClass: Class<*>) : Converter<Any> {
         if (Utils.isStringEmpty(string)) {
             return Array.newInstance(componentClass, 0)
         }
-        val segments = string.split(MethodArg.getSeparator())
+        val segments = string.split(MethodArg.separator)
         return Array(segments.size) { i -> Hutool.castParam2JavaType(null, segments[i], componentClass, false) }
     }
 
-    override fun object2String(any: Any): String {
+    override fun object2String(any: Any?): String {
         return if (any is Array) convert(any) else ""
     }
 

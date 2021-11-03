@@ -7,5 +7,5 @@ class PatternConverter : Converter<Pattern> {
 
     override fun string2Object(string: String): Pattern = Pattern.compile(string)
 
-    override fun object2String(any: Any): String = if (any is Pattern) any.pattern() else ""
+    override fun object2String(any: Any?): String = if (any is Pattern) any.pattern() else ""
 }

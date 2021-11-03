@@ -7,5 +7,5 @@ class WeekConverter : Converter<Week> {
 
     override fun string2Object(string: String): Week = Week.valueOf(string.uppercase())
 
-    override fun object2String(any: Any): String = if (any is Week) any.toChinese() else ""
+    override fun object2String(any: Any?): String = if (any is Week) any.toChinese() else ""
 }

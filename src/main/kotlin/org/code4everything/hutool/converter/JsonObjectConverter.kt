@@ -7,5 +7,5 @@ class JsonObjectConverter(private val type: Class<*>) : Converter<Any> {
 
     override fun string2Object(string: String): Any = JSON.parseObject(string, type)
 
-    override fun object2String(any: Any): String = JSON.toJSONString(any, true)
+    override fun object2String(any: Any?): String = JSON.toJSONString(any, true)
 }

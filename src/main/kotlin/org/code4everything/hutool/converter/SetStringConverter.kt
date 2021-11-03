@@ -8,5 +8,5 @@ class SetStringConverter : Converter<Set<String?>> {
 
     override fun string2Object(string: String): Set<String> = HashSet(converter.string2Object(string))
 
-    override fun object2String(any: Any): String = if (any is Set<*>) converter.object2String(any) else ""
+    override fun object2String(any: Any?): String = if (any is Set<*>) converter.object2String(any) else ""
 }

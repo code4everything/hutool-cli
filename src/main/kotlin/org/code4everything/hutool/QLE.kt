@@ -33,7 +33,7 @@ object QLE {
         val runner = ExpressRunner()
 
         // 绑定方法
-        var clz = QLE::class.java
+        val clz = QLE::class.java
         runner.addFunctionOfClassMethod("cmd", clz, "cmd", arrayOf<Class<*>>(String::class.java), null)
         runner.addFunctionOfClassMethod("nullto", clz, "nullTo", Array(2) { Any::class.java }, null)
 
@@ -54,16 +54,13 @@ object QLE {
     @JvmStatic
     fun cmd(cmd: String?): String {
         val result = RuntimeUtil.execForStr(cmd)
-        return if (result?.isEmpty() != false) "" else result.trim()
+        return if (result?.isNotEmpty() == true) result.trim() else ""
     }
 
     @JvmStatic
     fun nullTo(v1: Any?, v2: Any): Any = v1 ?: v2
 
     private fun handleExpression(expression: String): String {
-        if (Utils.isStringEmpty(expression)) {
-            return ""
-        }
         if (expression.startsWith("file:")) {
             val file = FileUtil.file(expression.substring(5))
             if (FileUtil.exist(file)) {
@@ -76,57 +73,31 @@ object QLE {
 
     private class ArgList(list: List<Any>) : JSONArray(list) {
 
-        override fun get(index: Int): Any? {
-            return (if (index >= size) null else super.get(index))!!
-        }
+        override fun get(index: Int): Any? = if (index >= size) null else super.get(index)
 
-        override fun getJSONObject(index: Int): JSONObject? {
-            return if (index >= size) null else super.getJSONObject(index)
-        }
+        override fun getJSONObject(index: Int): JSONObject? = if (index >= size) null else super.getJSONObject(index)
 
-        override fun getJSONArray(index: Int): JSONArray? {
-            return if (index >= size) null else super.getJSONArray(index)
-        }
+        override fun getJSONArray(index: Int): JSONArray? = if (index >= size) null else super.getJSONArray(index)
 
-        override fun <T> getObject(index: Int, clazz: Class<T>): T? {
-            return if (index >= size) null else super.getObject(index, clazz)
-        }
+        override fun <T> getObject(index: Int, clazz: Class<T>): T? = if (index >= size) null else super.getObject(index, clazz)
 
-        override fun <T> getObject(index: Int, type: Type): T? {
-            return if (index >= size) null else super.getObject(index, type)
-        }
+        override fun <T> getObject(index: Int, type: Type): T? = if (index >= size) null else super.getObject(index, type)
 
-        override fun getBoolean(index: Int): Boolean? {
-            return if (index >= size) null else super.getBoolean(index)
-        }
+        override fun getBoolean(index: Int): Boolean? = if (index >= size) null else super.getBoolean(index)
 
-        override fun getBooleanValue(index: Int): Boolean {
-            return getBooleanValue(index, false)
-        }
+        override fun getBooleanValue(index: Int): Boolean = getBooleanValue(index, false)
 
-        fun getBooleanValue(index: Int, value: Boolean): Boolean {
-            return if (index >= size) value else super.getBooleanValue(index)
-        }
+        fun getBooleanValue(index: Int, value: Boolean): Boolean = if (index >= size) value else super.getBooleanValue(index)
 
-        override fun getByte(index: Int): Byte? {
-            return if (index >= size) null else super.getByte(index)
-        }
+        override fun getByte(index: Int): Byte? = if (index >= size) null else super.getByte(index)
 
-        override fun getByteValue(index: Int): Byte {
-            return getByteValue(index, index.toByte())
-        }
+        override fun getByteValue(index: Int): Byte = getByteValue(index, 0)
 
-        fun getByteValue(index: Int, value: Byte): Byte {
-            return if (index >= size) value else super.getByteValue(index)
-        }
+        fun getByteValue(index: Int, value: Byte): Byte = if (index >= size) value else super.getByteValue(index)
 
-        override fun getShort(index: Int): Short? {
-            return if (index >= size) null else super.getShort(index)
-        }
+        override fun getShort(index: Int): Short? = if (index >= size) null else super.getShort(index)
 
-        override fun getShortValue(index: Int): Short {
-            return getShortValue(index, index.toShort())
-        }
+        override fun getShortValue(index: Int): Short = getShortValue(index, 0)
 
         fun getShortValue(index: Int, value: Short): Short = if (index >= size) value else super.getShortValue(index)
 

@@ -1,17 +1,14 @@
 package org.code4everything.hutool
 
 import com.alibaba.fastjson.util.TypeUtils
-import java.lang.annotation.Documented
 import java.lang.annotation.Inherited
-import java.lang.annotation.Retention
-import java.lang.annotation.RetentionPolicy
 import java.util.Objects
 import kotlin.reflect.KClass
 
 // 输入输出转换器
-@Documented
+@MustBeDocumented
 @Inherited
-@Retention(RetentionPolicy.RUNTIME)
+@kotlin.annotation.Retention(AnnotationRetention.RUNTIME)
 @Target(
     AnnotationTarget.VALUE_PARAMETER,
     AnnotationTarget.FUNCTION,

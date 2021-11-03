@@ -7,7 +7,7 @@ import org.code4everything.hutool.converter.ArrayConverter
 interface Converter<T> {
 
     // convert string to java type
-    fun string2Object(string: String): T
+    fun string2Object(string: String): T?
 
     // convert java object to string
     fun object2String(any: Any?): String

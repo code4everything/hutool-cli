@@ -8,6 +8,9 @@
     "encode64": {
         "method": "cn.hutool.core.codec.Base64#encode(j.char.seq)"
     },
+    "base64": {
+        "method": "cn.hutool.core.codec.Base64#encode(j.char.seq)"
+    },
     "decode64": {
         "method": "cn.hutool.core.codec.Base64#decodeStr(j.char.seq)"
     },

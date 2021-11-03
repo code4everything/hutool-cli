@@ -75,7 +75,7 @@ class DateConverter : Converter<DateTime> {
         }).also { baseDate = it }
     }
 
-    override fun object2String(any: Any): String = if (any is Date) Hutool.getSimpleDateFormat().format(any) else ""
+    override fun object2String(any: Any?): String = if (any is Date) Hutool.simpleDateFormat.format(any) else ""
 
     companion object {
 

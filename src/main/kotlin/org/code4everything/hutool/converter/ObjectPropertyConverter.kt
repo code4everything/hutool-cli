@@ -7,5 +7,5 @@ class ObjectPropertyConverter : Converter<Any> {
 
     override fun string2Object(string: String): Any = TODO("not implemented")
 
-    override fun object2String(any: Any): String = MapConverter().object2String(BeanUtil.beanToMap(any))
+    override fun object2String(any: Any?): String = MapConverter().object2String(BeanUtil.beanToMap(any))
 }

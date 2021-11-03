@@ -1,6 +1,5 @@
 package org.code4everything.hutool
 
-import cn.hutool.core.date.DateUtil
 import org.junit.Test
 
 class Tester {
@@ -19,6 +18,11 @@ class Tester {
 
     @Test
     fun kotlin() {
-        println(DateUtil.parse("2021-06-27 23:59:59"))
+        Array(5) { i -> i }.forEach {
+            if (it == 3) {
+                return@forEach
+            }
+            println(it)
+        }
     }
 }

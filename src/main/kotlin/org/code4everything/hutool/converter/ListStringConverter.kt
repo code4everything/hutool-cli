@@ -34,14 +34,14 @@ class ListStringConverter : Converter<List<String?>> {
             return StrUtil.splitTrim(str, "\n")
         }
 
-        val separator = MethodArg.getSeparator()
+        val separator = MethodArg.separator
         if (!separator.contains("\n")) {
             str = StrUtil.strip(str, "[", "]")
         }
         return StrUtil.splitTrim(str, separator)
     }
 
-    override fun object2String(any: Any): String {
+    override fun object2String(any: Any?): String {
         if (any !is Collection<*>) {
             return ""
         }
@@ -55,7 +55,7 @@ class ListStringConverter : Converter<List<String?>> {
         }
 
         val joiner: StringJoiner
-        val separator = if (directLineSep) FileUtil.getLineSeparator() else MethodArg.getSeparator()
+        val separator = if (directLineSep) FileUtil.getLineSeparator() else MethodArg.separator
         joiner = if (separator.contains("\n")) StringJoiner(separator) else StringJoiner(",", "[", "]")
 
         while (iterator.hasNext()) {

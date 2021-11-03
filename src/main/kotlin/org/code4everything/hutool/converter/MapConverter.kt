@@ -16,7 +16,7 @@ class MapConverter : Converter<Map<Any?, Any?>> {
             return map
         }
 
-        val tokenizer = StringTokenizer(string, MethodArg.getSeparator())
+        val tokenizer = StringTokenizer(string, MethodArg.separator)
         while (tokenizer.hasMoreTokens()) {
             val token = tokenizer.nextToken()
             if (token.isEmpty()) {
@@ -31,7 +31,7 @@ class MapConverter : Converter<Map<Any?, Any?>> {
         return map
     }
 
-    override fun object2String(any: Any): String {
+    override fun object2String(any: Any?): String {
         if (any !is Map<*, *>) {
             return ""
         }

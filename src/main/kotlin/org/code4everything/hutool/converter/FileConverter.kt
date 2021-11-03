@@ -30,5 +30,5 @@ class FileConverter : Converter<File> {
         return Paths.get(Hutool.ARG.workDir, path).toAbsolutePath().toFile()
     }
 
-    override fun object2String(any: Any): String = if (any is File) any.absolutePath else ""
+    override fun object2String(any: Any?): String = if (any is File) any.absolutePath else ""
 }
