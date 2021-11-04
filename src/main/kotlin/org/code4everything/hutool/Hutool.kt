@@ -33,7 +33,7 @@ import java.util.regex.Pattern
 import java.util.stream.Collectors
 import javassist.ClassPool
 import javassist.CtClass
-import javassist.NotFoundException
+import kotlin.math.min
 import org.code4everything.hutool.Converter.Companion.newConverter
 import org.code4everything.hutool.Utils.getMethodFullInfo
 import org.code4everything.hutool.Utils.isArrayEmpty
@@ -52,65 +52,70 @@ import org.code4everything.hutool.converter.PatternConverter
 import org.code4everything.hutool.converter.SetStringConverter
 import org.code4everything.hutool.converter.WeekConverter
 
-/**
- * @author pantao
- * @since 2020/10/27
- */
 object Hutool {
 
     const val CLASS_JSON = "class.json"
-    const val CONVERTER_JSON = "converter.json"
+    private const val CONVERTER_JSON = "converter.json"
     const val CLAZZ_KEY = "clazz"
-    const val COMMAND_JSON = "command.json"
-    val HUTOOL_USER_HOME = System.getProperty("user.home") + File.separator + "hutool-cli"
+    private const val COMMAND_JSON = "command.json"
+    private val HUTOOL_USER_HOME = "${System.getProperty("user.home")}${File.separator}hutool-cli"
     private const val ALIAS = "alias"
     private const val PARAM_KEY = "paramTypes"
     private const val VERSION = "v1.3"
-    private val ALIAS_CACHE: MutableMap<String, JSONObject?> = HashMap(4, 1f)
-    lateinit var ARG: MethodArg
-    var result: Any? = null
-    var homeDir = System.getenv("HUTOOL_PATH")
-    var resultString: String? = null
+    private val ALIAS_CACHE: MutableMap<String, JSONObject> = HashMap(4, 1f)
+
+    private var result: Any? = null
+    var homeDir: String = System.getenv("HUTOOL_PATH")
     private var omitParamType = true
-    private var commander: JCommander? = null
-    private var resultContainer: MutableList<String?>? = null
+
+    lateinit var ARG: MethodArg
+    lateinit var resultString: String
+    private lateinit var commander: JCommander
+    private val resultContainer: MutableList<String> by lazy { ArrayList(5) }
+    private var outputConverter: IOConverter? = null
+
+    val isDebug: Boolean get() = ARG.debug
     val simpleDateFormat: SimpleDateFormat by lazy { SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS") }
 
-    private var outputConverter: IOConverter? = null
-    val isDebug: Boolean
-        get() = Objects.nonNull(ARG) && ARG!!.debug
-
-    private fun resolveCmd(args: Array<String>): String? {
+    @JvmStatic
+    private fun resolveCmd(args: Array<String>): String {
         commander = JCommander.newBuilder().addObject(ARG).build()
-        commander!!.setProgramName("hutool-cli")
+        commander.programName = "hutool-cli"
+
         try {
-            commander!!.parse(*args)
+            commander.parse(*args)
         } catch (e: Exception) {
             seeUsage()
             return ""
         }
-        if (isDebug && ARG!!.exception) {
+
+        if (isDebug && ARG.exception) {
             throw CliException()
         }
-        if (ARG!!.version) {
-            return "hutool-cli: " + VERSION
+        if (ARG.version) {
+            return "hutool-cli: $VERSION"
         } else {
             debugOutput("hutool-cli: %s", VERSION)
         }
+
         debugOutput("received arguments: %s", ArrayUtil.toString(args))
         debugOutput("starting resolve")
-        ARG!!.command.addAll(ARG!!.main)
+        ARG.command.addAll(ARG.main)
+
         resolveResult()
         debugOutput("result handled success")
         resultString = convertResult()
-        if (ARG!!.copy) {
+
+        if (ARG.copy) {
             debugOutput("copying result into clipboard")
             ClipboardUtil.setStr(resultString)
             debugOutput("result copied")
         }
+
         if (isDebug) {
             println()
         }
+
         return resultString
     }
 
@@ -120,10 +125,11 @@ object Hutool {
             seeUsage()
             return
         }
+
         ConsoleLog.setLevel(Level.ERROR)
         ARG = MethodArg()
         val list: MutableList<String> = ArrayList(8)
-        resultContainer = null
+
         // 使用字符串 `//` 切割多条命令
         for (arg in args) {
             if ("//" == arg) {
@@ -132,19 +138,17 @@ object Hutool {
                 if (isDebug) {
                     println(res)
                 }
-                if (Objects.isNull(resultContainer)) {
-                    resultContainer = ArrayList(5)
-                }
-                resultContainer!!.add(res)
+                resultContainer.add(res)
                 list.clear()
                 val methodArg = ARG
                 ARG = MethodArg()
-                ARG!!.workDir = methodArg!!.workDir
+                ARG.workDir = methodArg.workDir
             } else {
                 list.add(arg)
             }
         }
-        if (!list.isEmpty()) {
+
+        if (list.isNotEmpty()) {
             println()
             println(resolveCmd(list.toTypedArray()))
         }
@@ -152,21 +156,23 @@ object Hutool {
 
     private fun resolveResult() {
         var fixClassName = true
-        if (!isCollectionEmpty(ARG!!.command)) {
-            val command = ARG!!.command[0]
+        if (ARG.command.isNotEmpty()) {
+            val command = ARG.command[0]
             debugOutput("get command: %s", command)
-            ARG!!.params.addAll(ARG!!.command.subList(1, ARG!!.command.size))
+            ARG.params.addAll(ARG.command.subList(1, ARG.command.size))
+
             if (ALIAS == command) {
                 seeAlias("", COMMAND_JSON)
                 return
             }
+
             val sharp = '#'
             var idx = command.indexOf(sharp)
             if (idx > 0) {
                 // 非类方法别名，使用类别名和方法别名调用
                 debugOutput("invoke use class name and method name combined in command mode")
-                ARG!!.className = command.substring(0, idx)
-                ARG!!.methodName = command.substring(idx + 1)
+                ARG.className = command.substring(0, idx)
+                ARG.methodName = command.substring(idx + 1)
                 resolveResultByClassMethod(true)
                 return
             }
@@ -174,99 +180,110 @@ object Hutool {
             // 从命令文件中找到类名和方法名以及参数类型，默认值
             val methodKey = "method"
             val aliasJson = getAlias(command, "", COMMAND_JSON)
-            val methodJson = aliasJson!!.getJSONObject(command)
-            if (Objects.isNull(methodJson) || !methodJson.containsKey(methodKey)) {
+            val methodJson = aliasJson.getJSONObject(command)
+            if (methodJson?.containsKey(methodKey) != true) {
                 result = "command[$command] not found!"
                 return
             }
+
             val classMethod = methodJson.getString(methodKey)
             idx = classMethod.lastIndexOf(sharp)
             if (idx < 1) {
                 result = "method[$classMethod] format error, required: com.example.Main#main"
                 return
             }
+
             debugOutput("parse method to class name and method name")
-            ARG!!.className = classMethod.substring(0, idx)
-            ARG!!.methodName = classMethod.substring(idx + 1)
+            ARG.className = classMethod.substring(0, idx)
+            ARG.methodName = classMethod.substring(idx + 1)
             parseMethod(methodJson)
-            debugOutput("get method: %s", ARG!!.methodName)
+            debugOutput("get method: %s", ARG.methodName)
             omitParamType = false
             fixClassName = omitParamType
         }
+
         resolveResultByClassMethod(fixClassName)
     }
 
     private fun resolveResultByClassMethod(fixName: Boolean) {
-        var fixName = fixName
-        if (isStringEmpty(ARG!!.className)) {
+        var innerFixName = fixName
+        if (isStringEmpty(ARG.className)) {
             seeUsage()
             return
         }
-        if (ALIAS == ARG!!.className) {
+
+        if (ALIAS == ARG.className) {
             seeAlias("", CLASS_JSON)
             return
         }
-        var methodAliasPaths: List<String>? = null
-        if (fixName) {
+
+        var methodAliasPaths: MutableList<String>? = null
+        if (innerFixName) {
             // 尝试从类别名文件中查找类全名
             val methodAliasKey = "methodAliasPaths"
-            val aliasJson = getAlias(ARG!!.className, "", CLASS_JSON)
-            val clazzJson = aliasJson!!.getJSONObject(ARG!!.className)
-            if (Objects.isNull(clazzJson) || !clazzJson.containsKey(CLAZZ_KEY)) {
-                fixName = false
+            val aliasJson = getAlias(ARG.className, "", CLASS_JSON)
+            val clazzJson = aliasJson.getJSONObject(ARG.className)
+            if (clazzJson?.containsKey(CLAZZ_KEY) != true) {
+                innerFixName = false
             } else {
-                ARG!!.className = clazzJson.getString(CLAZZ_KEY)
-                debugOutput("find class alias: %s", ARG!!.className)
-                methodAliasPaths = clazzJson.getObject(methodAliasKey, object : TypeReference<List<String?>?>() {})
+                ARG.className = clazzJson.getString(CLAZZ_KEY)
+                debugOutput("find class alias: %s", ARG.className)
+                methodAliasPaths = JSON.parseArray(clazzJson.getString(methodAliasKey), String::class.java)
             }
         }
+
         val clazz: Class<*>?
-        debugOutput("loading class: %s", ARG!!.className)
+        debugOutput("loading class: %s", ARG.className)
         try {
-            clazz = parseClass(ARG!!.className!!)
+            clazz = parseClass(ARG.className!!)
         } catch (e: Exception) {
             debugOutput(ExceptionUtil.stacktraceToString(e, Int.MAX_VALUE))
-            ARG!!.className = ""
+            ARG.className = ""
             resolveResultByClassMethod(false)
             return
         }
+
         if (clazz == Hutool::class.java) {
             result = "class not support: org.code4everything.hutool.Hutool"
             return
         }
+
         debugOutput("load class success")
-        resolveResultByClassMethod(clazz, fixName, methodAliasPaths)
+        resolveResultByClassMethod(clazz!!, innerFixName, methodAliasPaths)
     }
 
-    private fun resolveResultByClassMethod(clazz: Class<*>?, fixName: Boolean, methodAliasPaths: List<String>?) {
-        if (isStringEmpty(ARG!!.methodName)) {
+    private fun resolveResultByClassMethod(clazz: Class<*>, fixName: Boolean, methodAliasPaths: List<String>?) {
+        if (isStringEmpty(ARG.methodName)) {
             seeUsage()
             return
         }
-        if (ALIAS == ARG!!.methodName) {
+
+        if (ALIAS == ARG.methodName) {
             if (!isCollectionEmpty(methodAliasPaths)) {
-                seeAlias(clazz!!.name, *methodAliasPaths!!.toTypedArray())
+                seeAlias(clazz.name, *methodAliasPaths!!.toTypedArray())
             }
             return
         }
+
         fixMethodName(fixName, methodAliasPaths)
 
         // 将剪贴板字符内容注入到方法参数的指定索引位置
-        if (ARG!!.paramIdxFromClipboard >= 0) {
-            ARG!!.params.add(Math.min(ARG!!.params.size, ARG!!.paramIdxFromClipboard), ClipboardUtil.getStr())
+        if (ARG.paramIdxFromClipboard >= 0) {
+            ARG.params.add(min(ARG.params.size, ARG.paramIdxFromClipboard), ClipboardUtil.getStr())
         }
+
         val method: Method?
-        if (omitParamType && isCollectionEmpty(ARG!!.paramTypes) && !isCollectionEmpty(ARG!!.params)) {
+        if (omitParamType && isCollectionEmpty(ARG.paramTypes) && !isCollectionEmpty(ARG.params)) {
             // 缺省方法参数类型，自动匹配方法
             debugOutput("getting method ignore case by method name and param count")
             method = autoMatchMethod(clazz)
         } else {
             debugOutput("parsing parameter types")
-            val paramTypes = arrayOfNulls<Class<*>?>(ARG!!.paramTypes.size)
-            val parseDefaultValue = ARG!!.params.size < paramTypes.size
-            for (i in ARG!!.paramTypes.indices) {
+            val paramTypes = arrayOfNulls<Class<*>>(ARG.paramTypes.size)
+            val parseDefaultValue = ARG.params.size < paramTypes.size
+            for (i in ARG.paramTypes.indices) {
                 // 解析默认值，默认值要么都填写，要么都不填写
-                val paramType = parseParamType(i, ARG!!.paramTypes[i], parseDefaultValue)
+                val paramType = parseParamType(i, ARG.paramTypes[i], parseDefaultValue)
                 try {
                     paramTypes[i] = parseClass(paramType)
                 } catch (e: Exception) {
@@ -277,29 +294,32 @@ object Hutool {
             }
             debugOutput("parse parameter types success")
             debugOutput("getting method ignore case by method name and param types")
-            method = ReflectUtil.getMethod(clazz, true, ARG!!.methodName, *paramTypes)
+            method = ReflectUtil.getMethod(clazz, true, ARG.methodName, *paramTypes)
         }
-        if (Objects.isNull(method) || !Modifier.isPublic(method!!.modifiers)) {
+
+        if (method?.let { Modifier.isPublic(it.modifiers) } != true) {
             val msg = "static method not found(ignore case) or is not a public method: %s#%s(%s)"
-            val paramTypeArray = ARG!!.paramTypes.toTypedArray()
-            debugOutput(msg, clazz!!.name, ARG!!.methodName, ArrayUtil.join(paramTypeArray, ", "))
-            ARG!!.methodName = ""
+            val paramTypeArray = ARG.paramTypes.toTypedArray()
+            debugOutput(msg, clazz.name, ARG.methodName, ArrayUtil.join(paramTypeArray, ", "))
+            ARG.methodName = ""
             resolveResultByClassMethod(clazz, fixName, methodAliasPaths)
             return
         }
+
         val parameters = method.parameters
-        outputConverter = method!!.getAnnotation(IOConverter::class.java)
+        val converterClz = IOConverter::class.java
+        outputConverter = method.getAnnotation(converterClz)
         debugOutput("get method success")
-        if (ARG!!.params.size < parameters.size) {
-            ARG!!.params.add(ClipboardUtil.getStr())
+        if (ARG.params.size < parameters.size) {
+            ARG.params.add(ClipboardUtil.getStr())
         }
-        if (ARG!!.params.size < parameters.size) {
-            try {
-                val methodFullInfo = parseMethodFullInfo(clazz!!.name, method.name, ARG!!.paramTypes)
-                result = "parameter error, method request: $methodFullInfo"
+        if (ARG.params.size < parameters.size) {
+            result = try {
+                val methodFullInfo = parseMethodFullInfo(clazz.name, method.name, ARG.paramTypes)
+                "parameter error, method request: $methodFullInfo"
             } catch (e: Exception) {
                 val paramTypeArray = parameters.map { x: Parameter -> x.type.name }.toTypedArray()
-                result = "parameter error, required: (" + ArrayUtil.join(paramTypeArray, ", ") + ")"
+                "parameter error, required: (${ArrayUtil.join(paramTypeArray, ", ")})"
             }
             return
         }
@@ -309,49 +329,51 @@ object Hutool {
         val params = arrayOfNulls<Any>(parameters.size)
         val paramJoiner = StringJoiner(", ")
         for (i in parameters.indices) {
-            val param = ARG!!.params[i]
+            val param = ARG.params[i]
             paramJoiner.add(param)
             val parameter = parameters[i]
-            params[i] = castParam2JavaType(parameter.getAnnotation(IOConverter::class.java), param, parameter.type, true)
+            params[i] = castParam2JavaType(parameter.getAnnotation(converterClz), param, parameter.type, true)
         }
+
         debugOutput("cast parameter success")
-        debugOutput("invoking method: %s#%s(%s)", clazz!!.name, method.name, paramJoiner)
+        debugOutput("invoking method: %s#%s(%s)", clazz.name, method.name, paramJoiner)
         result = ReflectUtil.invokeStatic(method, *params)
         debugOutput("invoke method success")
     }
 
     private fun parseParamType(index: Int, paramType: String, parseDefaultValue: Boolean): String {
-        var parseDefaultValue = parseDefaultValue
+        var innerParse = parseDefaultValue
         val idx = paramType.indexOf('=')
         if (idx < 1) {
             return paramType
         }
+
         val type: String
         if (paramType[0] == '@') {
-            parseDefaultValue = true
+            innerParse = true
             type = paramType.substring(1, idx)
         } else {
             type = paramType.substring(0, idx)
         }
 
         // 解析默认值
-        if (parseDefaultValue) {
+        if (innerParse) {
             val param = paramType.substring(idx + 1)
-            ARG!!.params.add(Math.min(index, ARG!!.params.size), param)
+            ARG.params.add(min(index, ARG.params.size), param)
         }
         return type
     }
 
-    private fun autoMatchMethod(clazz: Class<*>?): Method? {
+    private fun autoMatchMethod(clazz: Class<*>): Method? {
         // 找到与方法名一致的方法（忽略大小写）
-        val methods = clazz!!.methods
+        val methods = clazz.methods
         val fuzzyList: MutableList<Method> = ArrayList()
         for (method in methods) {
             val modifiers = method.modifiers
             if (!Modifier.isPublic(modifiers) || !Modifier.isStatic(modifiers)) {
                 continue
             }
-            if (method.name.equals(ARG!!.methodName, ignoreCase = true)) {
+            if (method.name.equals(ARG.methodName, ignoreCase = true)) {
                 fuzzyList.add(method)
             }
         }
@@ -360,13 +382,11 @@ object Hutool {
         }
 
         // 找到离参数个数最相近的方法
-        val paramSize = ARG!!.params.size
+        val paramSize = ARG.params.size
         fuzzyList.sortWith(Comparator.comparingInt { it.parameterCount })
         var method: Method? = null
         for (m in fuzzyList) {
-            if (Objects.isNull(method)) {
-                method = m
-            }
+            method = method ?: m
             if (m.parameterCount > paramSize) {
                 break
             }
@@ -374,55 +394,57 @@ object Hutool {
         }
 
         // 确定方法参数类型
-        if (Objects.nonNull(method)) {
-            ARG!!.paramTypes = ArrayList()
-            for (paramType in method!!.parameterTypes) {
-                ARG!!.paramTypes.add(paramType.name)
+        method?.also {
+            ARG.paramTypes = ArrayList()
+            for (paramType in it.parameterTypes) {
+                ARG.paramTypes.add(paramType.name)
             }
         }
         return method
     }
 
     fun castParam2JavaType(inputConverter: IOConverter?, param: String, type: Class<*>, replace: Boolean): Any? {
-        var param = param
-        if ("nil" == param) {
+        var p = param
+        if ("nil" == p) {
             return null
         }
-        if (replace && resultContainer != null) {
+
+        if (replace && resultContainer.isNotEmpty()) {
             // 替换连续命令中的结果记录值，格式：\\0,\\1,\\2...
-            val endIds = resultContainer!!.size - 1
+            val endIds = resultContainer.size - 1
             for (i in 0..endIds) {
                 val key = "\\\\" + i
-                val value = resultContainer!![i]
-                param = param.replace(key, value!!)
+                val value = resultContainer[i]
+                p = p.replace(key, value)
                 if (i == endIds) {
-                    param = param.replace("\\\\p", value)
+                    p = p.replace("\\\\p", value)
                 }
             }
         }
-        if (Objects.isNull(inputConverter) && CharSequence::class.java.isAssignableFrom(type)) {
-            return param
+        if (inputConverter == null && CharSequence::class.java.isAssignableFrom(type)) {
+            return p
         }
 
         // 转换参数类型
         var converter: Converter<*>? = null
         try {
-            converter = getConverter(inputConverter!!, type)
+            converter = getConverter(inputConverter, type)
             if (converter != null) {
-                debugOutput("cast param[%s] using converter: %s", param, converter.javaClass.name)
-                return converter.string2Object(param)
+                debugOutput("cast param[%s] using converter: %s", p, converter.javaClass.name)
+                return converter.string2Object(p)
             }
         } catch (e: Exception) {
-            Objects.requireNonNull(converter)
-            debugOutput("cast param[%s] to type[%s] using converter[%s] failed: %s", param, type.name, converter!!.javaClass.name, ExceptionUtil.stacktraceToString(e, Int.MAX_VALUE))
+            val msg = "cast param[%s] to type[%s] using converter[%s] failed: %s"
+            val err = ExceptionUtil.stacktraceToString(e, Int.MAX_VALUE)
+            debugOutput(msg, p, type.name, converter!!.javaClass.name, err)
         }
-        debugOutput("auto convert param[%s] to type: %s", param, type.name)
-        return TypeUtils.cast(param, type, null)
+
+        debugOutput("auto convert param[%s] to type: %s", p, type.name)
+        return TypeUtils.cast(p, type, null)
     }
 
-    @Throws(Exception::class)
-    private fun getConverter(inputConverter: IOConverter, type: Class<*>): Converter<*>? {
-        if (Objects.nonNull(inputConverter)) {
+    private fun getConverter(inputConverter: IOConverter?, type: Class<*>): Converter<*>? {
+        if (inputConverter != null) {
             return Converter.getConverter(inputConverter, type)
         }
         if (MutableList::class.java.isAssignableFrom(type)) {
@@ -434,25 +456,23 @@ object Hutool {
         if (type.isArray) {
             return ArrayConverter(type)
         }
-        val converterName = getAlias("", homeDir, CONVERTER_JSON)!!.getString(type.name)
-        return if (isStringEmpty(converterName)) {
-            null
-        } else newConverter(parseClass(converterName) as Class<out Converter<*>?>?, type)
+        val converterName: String? = getAlias("", homeDir, CONVERTER_JSON).getString(type.name)
+        return converterName?.let { newConverter(parseClass(it) as Class<Converter<*>>?, type) }
     }
 
-    private fun fixMethodName(fixName: Boolean, methodAliasPaths: List<String?>?) {
+    private fun fixMethodName(fixName: Boolean, methodAliasPaths: List<String>?) {
         // 从方法别名文件中找到方法名
         if (fixName && !isCollectionEmpty(methodAliasPaths)) {
             val methodKey = "methodName"
-            val aliasJson = getAlias(ARG!!.methodName, "", *methodAliasPaths!!.toTypedArray())
-            val methodJson = aliasJson!!.getJSONObject(ARG!!.methodName)
+            val aliasJson = getAlias(ARG.methodName, "", *methodAliasPaths!!.toTypedArray())
+            val methodJson = aliasJson.getJSONObject(ARG.methodName)
             if (Objects.nonNull(methodJson)) {
                 val methodName = methodJson.getString(methodKey)
                 if (!isStringEmpty(methodName)) {
-                    ARG!!.methodName = methodName
+                    ARG.methodName = methodName
                 }
                 parseMethod(methodJson)
-                debugOutput("get method name: %s", ARG!!.methodName)
+                debugOutput("get method name: %s", ARG.methodName)
                 omitParamType = false
             }
         }
@@ -466,22 +486,23 @@ object Hutool {
         if (Objects.isNull(commander)) {
             commander = JCommander.newBuilder().addObject(ARG).build()
         }
-        commander!!.usage()
+        commander.usage()
     }
 
     private fun seeAlias(className: String, vararg paths: String) {
         // 用户自定义别名会覆盖工作目录定义的别名
         val aliasJson = getAlias("", homeDir, *paths)
-        aliasJson!!.putAll(getAlias("", "", *paths)!!)
-        if (!isCollectionEmpty(ARG!!.params)) {
+        aliasJson.putAll(getAlias("", "", *paths))
+        if (!isCollectionEmpty(ARG.params)) {
             val iterator: MutableIterator<Map.Entry<String, Any>> = aliasJson.entries.iterator()
             while (iterator.hasNext()) {
                 val key = iterator.next().key
-                if (ARG!!.params.stream().noneMatch { s: String? -> key.contains(s!!) }) {
+                if (ARG.params.stream().noneMatch { s: String? -> key.contains(s!!) }) {
                     iterator.remove()
                 }
             }
         }
+
         val joiner = StringJoiner("\n")
         val maxLength = Holder.of(0)
         val map: MutableMap<String, String> = TreeMap()
@@ -500,16 +521,16 @@ object Hutool {
                 if (isStringEmpty(methodName)) {
                     methodName = json.getString("methodName")
                 }
-                ARG!!.methodName = methodName
+                ARG.methodName = methodName
                 parseMethod(json)
                 try {
                     // 拿到方法的形参名称，参数类型
-                    map[k] = parseMethodFullInfo(className, ARG!!.methodName, ARG!!.paramTypes)
+                    map[k] = parseMethodFullInfo(className, ARG.methodName, ARG.paramTypes)
                 } catch (e: Exception) {
                     // 这里只能输出方法参数类型，无法输出形参类型
                     debugOutput("parse method param name error: %s", ExceptionUtil.stacktraceToString(e, Int.MAX_VALUE))
-                    val typeString = ArrayUtil.join(ARG!!.paramTypes.toTypedArray(), ", ")
-                    map[k] = ARG!!.methodName + "(" + typeString + ")"
+                    val typeString = ArrayUtil.join(ARG.paramTypes.toTypedArray(), ", ")
+                    map[k] = "${ARG.methodName}($typeString)"
                 }
             }
         })
@@ -521,33 +542,33 @@ object Hutool {
     }
 
     private fun parseMethod(json: JSONObject) {
-        if (ARG!!.methodName!!.endsWith(")")) {
-            val idx = ARG!!.methodName!!.indexOf("(")
+        if (ARG.methodName!!.endsWith(")")) {
+            val idx = ARG.methodName!!.indexOf("(")
             if (idx < 1) {
-                debugOutput("method format error: %s", ARG!!.methodName)
+                debugOutput("method format error: %s", ARG.methodName)
                 return
             }
-            val split = ARG!!.methodName!!.substring(idx + 1, ARG!!.methodName!!.length - 1).split(",").toTypedArray()
-            ARG!!.paramTypes = Arrays.stream(split).filter { it?.isNotEmpty() ?: false }.collect(Collectors.toList())
-            ARG!!.methodName = ARG!!.methodName!!.substring(0, idx)
+            val split = ARG.methodName!!.substring(idx + 1, ARG.methodName!!.length - 1).split(",").toTypedArray()
+            ARG.paramTypes = Arrays.stream(split).filter { it?.isNotEmpty() ?: false }.collect(Collectors.toList())
+            ARG.methodName = ARG.methodName!!.substring(0, idx)
         } else if (Objects.nonNull(json)) {
-            val paramTypes = json.getObject<ArrayList<String>>(PARAM_KEY, object : TypeReference<ArrayList<String>?>() {})
-            ARG!!.paramTypes = paramTypes ?: Collections.emptyList()
+            val paramTypes =
+                json.getObject<ArrayList<String>>(PARAM_KEY, object : TypeReference<ArrayList<String>?>() {})
+            ARG.paramTypes = paramTypes ?: Collections.emptyList()
         }
         if (Objects.isNull(json)) {
             return
         }
 
         // 重载方法
-        val specificTypes = json[ARG!!.params.size.toString() + "param"] ?: return
+        val specificTypes = json[ARG.params.size.toString() + "param"] ?: return
         if (specificTypes is List<*>) {
-            ARG!!.paramTypes = specificTypes.stream().map { it.toString() }.collect(Collectors.toList())
+            ARG.paramTypes = specificTypes.stream().map { it.toString() }.collect(Collectors.toList())
         } else {
-            ARG!!.paramTypes = Arrays.asList(*specificTypes.toString().split(",").toTypedArray())
+            ARG.paramTypes = arrayListOf<String>().apply { addAll(specificTypes.toString().split(",")) }
         }
     }
 
-    @Throws(NotFoundException::class)
     private fun parseMethodFullInfo(className: String, methodName: String?, paramTypes: List<String>): String {
         var mn = methodName
         var outClassName = false
@@ -596,7 +617,6 @@ object Hutool {
         return ""
     }
 
-    @Throws(Exception::class)
     fun convertResult(obj: Any?, ioConverter: IOConverter?): String {
         if (Objects.isNull(obj)) {
             return ""
@@ -634,24 +654,27 @@ object Hutool {
                 return ArrayConverter(resClass).object2String(obj)
             }
         }
+
         if (Objects.nonNull(ioConverter)) {
             return Converter.getConverter(ioConverter!!, resClass)!!.object2String(obj)
         }
+
         val name = resClass.name
         val converterJson = getAlias("", homeDir, CONVERTER_JSON)
-        val converterName = converterJson!!.getString(name)
+        val converterName = converterJson.getString(name)
         return if (isStringEmpty(converterName)) {
             ObjectUtil.toString(obj)
-        } else newConverter(parseClass(converterName) as Class<out Converter<*>?>?, resClass)!!.object2String(obj)
+        } else newConverter(parseClass(converterName) as Class<out Converter<*>>?, resClass)!!.object2String(obj)
     }
 
     fun getAlias(aliasKey: String?, parentDir: String?, vararg paths: String?): JSONObject {
         // 先查找用户自定义别名，没找到再从工作目录查找
-        var parentDir = parentDir
-        if (isStringEmpty(parentDir)) {
-            parentDir = HUTOOL_USER_HOME
+        var dir = parentDir
+        if (isStringEmpty(dir)) {
+            dir = HUTOOL_USER_HOME
         }
-        val path = Paths.get(parentDir, *paths).toAbsolutePath().normalize().toString()
+
+        val path = Paths.get(dir, *paths).toAbsolutePath().normalize().toString()
         debugOutput("alias json file path: %s", path)
         var json = ALIAS_CACHE[path]
         if (json == null) {
@@ -660,31 +683,29 @@ object Hutool {
             } else {
                 JSONObject()
             }
-            ALIAS_CACHE[path] = json
+            ALIAS_CACHE[path] = json!!
         }
-        return if (isStringEmpty(aliasKey) || json!!.containsKey(aliasKey)) {
-            json!!
-        } else getAlias("", homeDir, *paths)
+
+        return if (isStringEmpty(aliasKey) || json.containsKey(aliasKey)) json else getAlias("", homeDir, *paths)
     }
 
     fun debugOutput(msg: String, vararg params: Any?) {
-        var msg = msg
+        var m = msg
         if (isDebug) {
             val stackTrace = Thread.currentThread().stackTrace
             val className = if (stackTrace.size > 2) stackTrace[2].className else "Unknown"
             val lineNumber = if (stackTrace.size > 2) stackTrace[2].lineNumber.toString() else "NaN"
-            if (params != null && params.size > 0) {
-                msg = String.format(msg, *params)
+            if (params.isNotEmpty()) {
+                m = String.format(m, *params)
             }
-            msg = simpleDateFormat!!.format(Date()) + " " + className + ":" + lineNumber + " - " + msg
-            println(msg)
+            m = "${simpleDateFormat.format(Date())} $className:$lineNumber - $m"
+            println(m)
         }
     }
 
-    fun test(vararg args: String): String? {
+    fun test(vararg args: String): String {
         val cmd = java.lang.String.join(" ", *args)
-        val cs = CharArray(cmd.length + 11)
-        Arrays.fill(cs, '=')
+        val cs = CharArray(cmd.length + 11) { '=' }
         cs[0] = '\n'
         val separator = String(cs)
         println("$separator\n>> hu $cmd <<$separator")

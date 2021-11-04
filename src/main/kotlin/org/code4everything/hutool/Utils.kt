@@ -62,7 +62,12 @@ object Utils {
             return ""
         }
 
-        Arrays.sort(files!!, ComparatorChain.of(Comparator.comparingInt { if (it.isDirectory) 0 else 1 }, Comparator.comparing { it.name }, Comparator.comparingLong { it.lastModified() }))
+        Arrays.sort(
+            files!!,
+            ComparatorChain.of(Comparator.comparingInt { if (it.isDirectory) 0 else 1 },
+                Comparator.comparing { it.name },
+                Comparator.comparingLong { it.lastModified() })
+        )
         val joiner = StringJoiner("\n")
         var maxLen = 0
         val size = Array(files.size) { "" }
@@ -98,7 +103,12 @@ object Utils {
         val weekProcess = (week + specificDate.hour(true)) * 100 / 7.0 / 24
         val monthProcess = DateUtil.dayOfMonth(date) * 100 / DateUtil.endOfMonth(date).dayOfMonth().toDouble()
         val yearProcess = DateUtil.dayOfYear(date) * 100 / DateUtil.endOfYear(date).dayOfYear().toDouble()
-        var template = String.format("%s %s %s%n", lunar(specificDate), weekEnum.toChinese("周"), Hutool.simpleDateFormat.format(specificDate))
+        var template = String.format(
+            "%s %s %s%n",
+            lunar(specificDate),
+            weekEnum.toChinese("周"),
+            Hutool.simpleDateFormat.format(specificDate)
+        )
 
         template += String.format("%n今日 [%s]: %05.2f%%", getDayProcessString(todayProcess), todayProcess)
         template += String.format("%n本周 [%s]: %05.2f%%", getDayProcessString(weekProcess), weekProcess)
@@ -241,7 +251,10 @@ object Utils {
     }
 
     @JvmStatic
-    fun assignableFrom(@IOConverter(ClassConverter::class) sourceClass: Class<*>, @IOConverter(ClassConverter::class) testClass: Class<*>): Boolean {
+    fun assignableFrom(
+        @IOConverter(ClassConverter::class) sourceClass: Class<*>,
+        @IOConverter(ClassConverter::class) testClass: Class<*>
+    ): Boolean {
         return sourceClass.isAssignableFrom(testClass)
     }
 
@@ -263,7 +276,10 @@ object Utils {
     fun toLowerCase(str: String?): String = str?.lowercase() ?: ""
 
     @JvmStatic
-    fun grep(@IOConverter(PatternConverter::class) pattern: Pattern, @IOConverter(ListStringConverter::class) lines: List<String>): String {
+    fun grep(
+        @IOConverter(PatternConverter::class) pattern: Pattern,
+        @IOConverter(ListStringConverter::class) lines: List<String>
+    ): String {
         var line = lines
         if (isCollectionEmpty(line) && !isStringEmpty(Hutool.resultString)) {
             line = ListStringConverter().useLineSep().string2Object(Hutool.resultString!!)
@@ -491,7 +507,10 @@ object Utils {
             }
             lineList.stream().sorted(String::compareTo).forEach(joiner::add)
         } catch (e: Exception) {
-            Hutool.debugOutput("parse class static methods error: %s", ExceptionUtil.stacktraceToString(e, Int.MAX_VALUE))
+            Hutool.debugOutput(
+                "parse class static methods error: %s",
+                ExceptionUtil.stacktraceToString(e, Int.MAX_VALUE)
+            )
         }
         return joiner.toString()
     }
@@ -506,11 +525,12 @@ object Utils {
         }
 
         val paramJoiner = StringJoiner(", ")
-        val attribute = method.methodInfo.codeAttribute.getAttribute(LocalVariableAttribute.tag) as LocalVariableAttribute
+        val attribute =
+            method.methodInfo.codeAttribute.getAttribute(LocalVariableAttribute.tag) as LocalVariableAttribute?
         for (i in parameterTypes.indices) {
             val parameterType = parameterTypes[i]
             val paramType = parameterType.name
-            var paramStr = attribute.variableName(i) + ":" + paramType
+            var paramStr = attribute!!.variableName(i) + ":" + paramType
             if (defaultValueMap != null) {
                 val defaultValue = defaultValueMap[paramType + i]
                 if (!isStringEmpty(defaultValue)) {

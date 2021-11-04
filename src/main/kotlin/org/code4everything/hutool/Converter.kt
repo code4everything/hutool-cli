@@ -32,7 +32,7 @@ interface Converter<T> {
         }
 
         @JvmStatic
-        fun newConverter(converter: Class<out Converter<*>?>?, type: Class<*>?): Converter<*>? {
+        fun newConverter(converter: Class<out Converter<*>>?, type: Class<*>?): Converter<*>? {
             return try {
                 ReflectUtil.newInstance(converter)
             } catch (e: Exception) {
