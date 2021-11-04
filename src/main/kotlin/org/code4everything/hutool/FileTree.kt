@@ -5,10 +5,12 @@ import cn.hutool.core.util.ArrayUtil
 import java.io.File
 import java.util.stream.Collectors
 import org.code4everything.hutool.converter.FileConverter
+import org.code4everything.hutool.converter.LineSepConverter
 
 object FileTree {
 
     @JvmStatic
+    @IOConverter(LineSepConverter::class)
     fun treeFile(@IOConverter(FileConverter::class) file: File, maxDepth: Int): List<String> {
         return if (FileUtil.exist(file)) {
             treeFile(file, 1, maxDepth, true)
