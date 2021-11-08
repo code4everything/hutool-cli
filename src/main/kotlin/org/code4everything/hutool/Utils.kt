@@ -273,6 +273,7 @@ object Utils {
     @JvmStatic
     fun toUpperCase(str: String?): String = str?.uppercase() ?: ""
 
+    @JvmStatic
     fun toLowerCase(str: String?): String = str?.lowercase() ?: ""
 
     @JvmStatic
@@ -393,6 +394,7 @@ object Utils {
         }
     }
 
+    @JvmStatic
     private fun parseClassName0(className: String): String {
         return when (className) {
             "string" -> "java.lang.String"
