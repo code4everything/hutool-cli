@@ -110,6 +110,11 @@ class HutoolCli {
         test("date now+(-2+7)d")
     }
 
+    @Test
+    fun lower() {
+        test("lower QUERY_SPLIT_STATUS -d")
+    }
+
     companion object {
 
         fun test(cmd: String, vararg params: String): String = Hutool.test(*(cmd.split(" ").toTypedArray() + params))
