@@ -278,15 +278,15 @@ object Utils {
     @JvmStatic
     fun grep(
         @IOConverter(PatternConverter::class) pattern: Pattern,
-        @IOConverter(ListStringConverter::class) lines: List<String>
+        @IOConverter(ListStringConverter::class) lines: List<String>?
     ): String {
         var line = lines
         if (isCollectionEmpty(line) && !isStringEmpty(Hutool.resultString)) {
-            line = ListStringConverter().useLineSep().string2Object(Hutool.resultString!!)
+            line = ListStringConverter().useLineSep().string2Object(Hutool.resultString)
         }
 
         val joiner = StringJoiner("\n")
-        for (lin in line) {
+        for (lin in line!!) {
             if (pattern.matcher(lin).find()) {
                 joiner.add(lin)
             }
@@ -463,10 +463,7 @@ object Utils {
 
     @JvmStatic
     fun padAfter(str: String?, len: Int, pad: Char): String {
-        var s = str
-        if (s == null) {
-            s = ""
-        }
+        val s = str ?: ""
         val diff = len - s.length
         if (diff < 1) {
             return s
@@ -487,7 +484,7 @@ object Utils {
     private fun outputPublicStaticMethods0(className: String): String {
         val pool = ClassPool.getDefault()
         val joiner = StringJoiner("\n")
-        val filter = MethodArg.getSubParams(Hutool.ARG, 1)
+        val filter = MethodArg.getSubParams(Hutool.ARG, 1).map { it.lowercase() }
         try {
             val ctClass = pool[parseClassName(className)]
             val methods = ctClass.methods
@@ -497,8 +494,8 @@ object Utils {
                 if (!Modifier.isPublic(modifiers) || !Modifier.isStatic(modifiers)) {
                     continue
                 }
-                if (!isCollectionEmpty(filter)) {
-                    val methodName = method.name.uppercase()
+                if (filter.isNotEmpty()) {
+                    val methodName = method.name.lowercase()
                     if (filter.stream().noneMatch { methodName.contains(it) }) {
                         continue
                     }

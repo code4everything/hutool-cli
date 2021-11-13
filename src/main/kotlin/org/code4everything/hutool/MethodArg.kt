@@ -5,7 +5,6 @@ import com.alibaba.fastjson.JSON
 import com.beust.jcommander.Parameter
 import com.beust.jcommander.Parameters
 import com.beust.jcommander.Strings
-import java.util.Objects
 import org.code4everything.hutool.Utils.isStringEmpty
 
 @Parameters(separators = ": ")
@@ -98,8 +97,8 @@ class MethodArg {
             private set
 
         @JvmStatic
-        fun getSubParams(methodArg: MethodArg, fromIdx: Int): List<String> {
-            return if (Objects.isNull(methodArg)) emptyList() else methodArg.params.subList(fromIdx, methodArg.params.size)
+        fun getSubParams(methodArg: MethodArg?, fromIdx: Int): List<String> {
+            return methodArg?.params?.subList(fromIdx, methodArg.params.size) ?: emptyList()
         }
     }
 }
