@@ -87,7 +87,7 @@ class MethodArg {
         @JvmStatic
         var separator: String = ""
             get() {
-                val arg = Hutool.ARG ?: run { MethodArg() }
+                val arg = Hutool.ARG
                 if (!Strings.isStringEmpty(arg.sep) || Strings.isStringEmpty(field)) {
                     field = arg.sep
                 }

@@ -51,7 +51,7 @@ class ListStringConverter : Converter<List<String?>> {
 
         val iterator = any.iterator()
         if (any.size == 1) {
-            return Hutool.convertResult(any, null)
+            return Hutool.convertResult(iterator.next(), null)
         }
 
         val joiner: StringJoiner
