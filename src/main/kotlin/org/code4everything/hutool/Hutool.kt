@@ -39,7 +39,6 @@ import org.code4everything.hutool.Utils.getMethodFullInfo
 import org.code4everything.hutool.Utils.isArrayEmpty
 import org.code4everything.hutool.Utils.isCollectionEmpty
 import org.code4everything.hutool.Utils.isStringEmpty
-import org.code4everything.hutool.Utils.padAfter
 import org.code4everything.hutool.Utils.parseClass
 import org.code4everything.hutool.Utils.parseClassName
 import org.code4everything.hutool.converter.ArrayConverter
@@ -537,7 +536,7 @@ object Hutool {
 
         // 输出别名到终端
         debugOutput("max length: %s", maxLength.get())
-        map.forEach { (k: String?, v: String) -> joiner.add(padAfter(k, maxLength.get(), ' ') + " = " + v) }
+        map.forEach { (k: String?, v: String) -> joiner.add("${k.padEnd(maxLength.get(), ' ')} = $v") }
         result = joiner.toString()
     }
 

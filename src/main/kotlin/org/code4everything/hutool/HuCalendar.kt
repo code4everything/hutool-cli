@@ -86,10 +86,7 @@ class HuCalendar(yearMonth: String?) {
                     return@forEach
                 }
 
-                val yearMonth = if (len < 3) {
-                    previousYear + StrUtil.padPre(it, 2, '0')
-                } else it
-
+                val yearMonth = if (len < 3) previousYear + it.padStart(2, '0') else it
                 previousYear = yearMonth.substring(0, 4)
                 joiner.append(HuCalendar(yearMonth).calenderStr)
 

@@ -6,7 +6,6 @@ import java.util.StringTokenizer
 import java.util.TreeMap
 import org.code4everything.hutool.Converter
 import org.code4everything.hutool.MethodArg
-import org.code4everything.hutool.Utils
 
 class MapConverter : Converter<Map<Any?, Any?>> {
 
@@ -46,8 +45,9 @@ class MapConverter : Converter<Map<Any?, Any?>> {
                 tempMap[it] = ObjectUtil.toString(v)
             }
         }
+
         val joiner = StringJoiner("\n")
-        tempMap.forEach { (k, v) -> joiner.add("${Utils.padAfter(k, maxLen, ' ')} = $v") }
+        tempMap.forEach { (k, v) -> joiner.add("${k.padEnd(maxLen, ' ')} = $v") }
         return joiner.toString()
     }
 }

@@ -246,5 +246,8 @@
     },
     "lottery": {
         "method": "org.code4everything.hutool.Lottery#lottery"
+    },
+    "tojson": {
+        "method": "org.code4everything.hutool.JsonFormatter#format(string=)"
     }
 }

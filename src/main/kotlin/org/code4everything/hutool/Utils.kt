@@ -10,7 +10,6 @@ import cn.hutool.core.lang.Holder
 import cn.hutool.core.lang.JarClassLoader
 import cn.hutool.core.math.Calculator
 import cn.hutool.core.util.ReflectUtil
-import cn.hutool.core.util.StrUtil
 import com.alibaba.fastjson.JSONObject
 import java.io.File
 import java.lang.reflect.Field
@@ -85,7 +84,7 @@ object Utils {
 
         for (i in files.indices) {
             val date = DateUtil.formatDateTime(Date(files[i].lastModified()))
-            val fmtSize = StrUtil.padPre(size[i], maxLen, " ")
+            val fmtSize = size[i].padStart(maxLen, ' ')
             joiner.add("$date  $fmtSize  ${files[i].name}")
         }
 
@@ -461,20 +460,6 @@ object Utils {
     @JvmStatic
     fun addSuffixIfNot(str: String, suffix: String): String {
         return if (isStringEmpty(str) || isStringEmpty(suffix) || str.endsWith(suffix)) str else str + suffix
-    }
-
-    @JvmStatic
-    fun padAfter(str: String?, len: Int, pad: Char): String {
-        val s = str ?: ""
-        val diff = len - s.length
-        if (diff < 1) {
-            return s
-        }
-        val cs = CharArray(diff)
-        for (i in 0 until diff) {
-            cs[i] = pad
-        }
-        return s + String(cs)
     }
 
     @JvmStatic
