@@ -108,6 +108,7 @@ tasks.register("pack") {
 
 tasks.register("install") {
     dependsOn("pack")
+
     exec {
         workingDir("./src/main/go")
         if (isWin) {
@@ -116,12 +117,16 @@ tasks.register("install") {
             commandLine("bash", "-c", "go build hutool.go")
         }
     }
+
     copy {
         from("./src/main/go")
         into("./hutool/bin")
         exclude("hutool.go")
         rename("hutool", "hu")
     }
+
+    delete("./src/main/go/hutool.exe")
+    delete("./src/main/go/hutool")
 }
 
 val platforms = listOf("windows", "linux", "darwin")
