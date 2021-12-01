@@ -29,7 +29,7 @@ object QLE {
             }
         }
 
-        Hutool.debugOutput("get ql script: %s", express)
+        Hutool.debugOutput("get ql script: %s", exp)
         val runner = ExpressRunner()
 
         // 绑定方法
@@ -48,7 +48,7 @@ object QLE {
 
         // 执行表达式
         Hutool.debugOutput("execute expression with args: %s", joiner)
-        return runner.execute(express, context, null, true, false)
+        return runner.execute(exp, context, null, true, false)
     }
 
     @JvmStatic
