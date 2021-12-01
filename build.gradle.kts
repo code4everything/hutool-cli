@@ -16,7 +16,7 @@ repositories {
 
 val jcommanderVersion = "1.81"
 val hutoolVersion = "5.7.16"
-val oshiVersion = "5.8.3"
+val oshiVersion = "5.8.5"
 val emojiVersion = "5.1.1"
 val zxingVersion = "3.4.1"
 val pinyinVersion = "2.5.1"
@@ -24,7 +24,7 @@ val fastjsonVersion = "1.2.78"
 val javassistVersion = "3.28.0-GA"
 val junitVersion = "4.13.2"
 val chalkVersion = "1.0.2"
-val qlExpressVersion = "3.2.5"
+val qlExpressVersion = "3.2.6"
 
 dependencies {
     implementation("com.beust:jcommander:$jcommanderVersion")
@@ -43,6 +43,7 @@ dependencies {
     implementation("com.github.tomas-langer:chalk:$chalkVersion")
     implementation("com.alibaba:QLExpress:$qlExpressVersion")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
+    implementation("org.bouncycastle:bcprov-jdk15on:1.69")
 
     testImplementation("junit:junit:$junitVersion")
 }
@@ -74,6 +75,9 @@ tasks.jar {
 
     from(configurations.runtimeClasspath.get().files.map { if (it.isDirectory) it else zipTree(it) })
 
+    exclude("META-INF/*.RSA")
+    exclude("META-INF/*.SF")
+    exclude("META-INF/*.DSA")
     exclude("META-INF/AL2.0")
     exclude("META-INF/LGPL2.1")
     exclude("META-INF/LICENSE")
