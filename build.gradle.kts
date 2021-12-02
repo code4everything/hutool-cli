@@ -107,10 +107,14 @@ tasks.build {
 }
 
 tasks.register("pack") {
+    group = "build"
+    description = "Clean and build a executable jar, then move to './hutool' folder."
     dependsOn("clean", "build")
 }
 
 tasks.register("install") {
+    group = "build"
+    description = "Execute pack task, then build './src/main/go/hutool.go'."
     dependsOn("pack")
 
     exec {
@@ -137,11 +141,13 @@ val platforms = listOf("windows", "linux", "darwin")
 
 for (i in platforms.indices) {
     tasks.register("release$i") {
+        val osName = platforms[i]
+        group = "build"
+        description = "Only build go for $osName platform."
         if (isWin) {
             return@register
         }
 
-        val osName = platforms[i]
         exec {
             workingDir("./src/main/go")
             commandLine("bash", "-c", "CGO_ENABLED=0 GOOS=${osName} GOARCH=amd64 go build hutool.go")
@@ -161,6 +167,8 @@ for (i in platforms.indices) {
 }
 
 tasks.register("release", type = Zip::class) {
+    group = "build"
+    description = "Build jar and go, and zip it to a publishable zip."
     dependsOn("pack", "release0", "release1", "release2")
     archiveFileName.set("hu-${hutoolCliVersion}.zip")
     destinationDirectory.set(File("."))
