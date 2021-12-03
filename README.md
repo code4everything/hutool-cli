@@ -121,7 +121,8 @@ git clone https://gitee.com/code4everything/hutool-cli.git
 └─hutool.jar
 ```
 
-下载完成后解压ZIP包，并将 hutool.jar 和 bin目录中与平台对应的可执行文件移动到 hutool-cli/hutool 目录下，如windows对应的`hu.exe`文件，linux对应的`hu`文件，macos对应的`hu-mac`文件（Mac移动后需重命名为`hu`），移动后目录结构如下。
+下载完成后解压ZIP包，并将 hutool.jar 和 bin目录中与平台对应的可执行文件移动到 hutool-cli/hutool 目录下，如windows对应的`hu.exe`文件，linux对应的`hu`
+文件，macos对应的`hu-mac`文件（Mac移动后需重命名为`hu`），移动后目录结构如下。
 
 ## 配置环境变量
 
@@ -397,6 +398,40 @@ weekend = endOfWeek(date:java.util.Date)
 
 > 我们可以通过关键字 `alias` 来查看命令、类名、方法名已有的别名
 
+## 覆盖别名方法
+
+使用别名文件定义的类名和方法名，参数类型及数量替换为终端命令中使用特定语法输入的内容。
+
+举个例子，比如别名文件中定义的`md5`方法是：`cn.hutool.crypto.SecureUtil#md5(data:java.lang.String)`，传入的是一个`string`类型的参数，但是现在我们想要计算一个文件的MD5。
+
+如何做呢？方法一，再定义一个计算文件MD5的别名，缺点导致别名过多，不方便记忆。
+
+方法二，覆盖别名，语法：`hu command@type1,type2 param`。
+
+还是上面的`md5`，首先查看它的重载方法有哪些？
+
+```shell
+hu md5@
+
+# output:
+md5()
+md5(data:java.io.InputStream)
+md5(data:java.lang.String)
+md5(dataFile:java.io.File)
+```
+
+我们可以看到该方法是支持传入文件的，这时我们直接使用覆盖别名即可：
+
+```shell
+# file 是 java.io.File 的别名
+hu md5@file command.json
+
+# output:
+268f6d715cf4ec191a96b80c29f2449f
+```
+
+> `hu command@` 查看别名的重载方法。
+
 ## 默认值
 
 我们可以在别名文件中定义参数默认值，执行方法时默认值要么都缺省，要么都填上。
@@ -466,9 +501,12 @@ hutool-cli 提供了很多常用的别名，参考下面文件：
 
 ## 加载外部类
 
-方法一，在 `HUTOOL_PATH` 对应的目录下新建external目录，将类class类文件（包含包名目录）拷贝到external文件夹中即可，如类 `com.example.Test` 对应的路径 `external/com/example/Test.class`。
+方法一，在 `HUTOOL_PATH` 对应的目录下新建external目录，将类class类文件（包含包名目录）拷贝到external文件夹中即可，如类 `com.example.Test`
+对应的路径 `external/com/example/Test.class`。
 
-方法二，推荐，在 `HUTOOL_PATH` 对应的目录下新建external.conf文件，在文件中定义类加载路径（不包含包路径），多个用英文逗号分隔，还是用上面的类举例，假设类绝对路径是 `/home/java/com/examaple/Test.class`，那么文件定义路径 `/home/java` 即可。
+方法二，推荐，在 `HUTOOL_PATH`
+对应的目录下新建external.conf文件，在文件中定义类加载路径（不包含包路径），多个用英文逗号分隔，还是用上面的类举例，假设类绝对路径是 `/home/java/com/examaple/Test.class`
+，那么文件定义路径 `/home/java` 即可。
 
 external.conf文件支持mvn坐标，但前提是本地maven仓库已有对应的jar包，比如：
 

@@ -144,12 +144,6 @@
     "md5": {
         "method": "cn.hutool.crypto.SecureUtil#md5(string)"
     },
-    "md5file": {
-        "method": "cn.hutool.crypto.SecureUtil#md5(file)"
-    },
-    "fmd5": {
-        "method": "cn.hutool.crypto.SecureUtil#md5(file)"
-    },
     "sha1": {
         "method": "cn.hutool.crypto.SecureUtil#sha1(string)"
     },

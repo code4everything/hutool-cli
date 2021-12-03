@@ -156,7 +156,9 @@ object Hutool {
     private fun resolveResult() {
         var fixClassName = true
         if (ARG.command.isNotEmpty()) {
-            val command = ARG.command[0]
+            // 命令带 @ 符号，覆盖文件定义的方法
+            val tokens = ARG.command[0].split('@')
+            val command = tokens[0]
             debugOutput("get command: %s", command)
             ARG.params.addAll(ARG.command.subList(1, ARG.command.size))
 
@@ -196,9 +198,21 @@ object Hutool {
             ARG.className = classMethod.substring(0, idx)
             ARG.methodName = classMethod.substring(idx + 1)
             parseMethod(methodJson)
-            debugOutput("get method: %s", ARG.methodName)
+            if (tokens.size > 1) {
+                val userParamTypes = tokens[1].split(',').filter { it.isNotEmpty() }
+                if (userParamTypes.isEmpty()) {
+                    val filter = listOf(ARG.methodName!!.lowercase())
+                    result = Utils.outputPublicStaticMethods0(ARG.className!!, filter, true)
+                    return
+                } else {
+                    ARG.paramTypes.clear()
+                    ARG.paramTypes.addAll(userParamTypes)
+                }
+            }
+
+            debugOutput("get method: %s, params: %s", ARG.methodName, ARG.paramTypes)
             omitParamType = false
-            fixClassName = omitParamType
+            fixClassName = false
         }
 
         resolveResultByClassMethod(fixClassName)

@@ -62,8 +62,7 @@ object Utils {
         }
 
         Arrays.sort(
-            files!!,
-            ComparatorChain.of(Comparator.comparingInt { if (it.isDirectory) 0 else 1 },
+            files!!, ComparatorChain.of(Comparator.comparingInt { if (it.isDirectory) 0 else 1 },
                 Comparator.comparing { it.name },
                 Comparator.comparingLong { it.lastModified() })
         )
@@ -103,10 +102,7 @@ object Utils {
         val monthProcess = DateUtil.dayOfMonth(date) * 100 / DateUtil.endOfMonth(date).dayOfMonth().toDouble()
         val yearProcess = DateUtil.dayOfYear(date) * 100 / DateUtil.endOfYear(date).dayOfYear().toDouble()
         var template = String.format(
-            "%s %s %s%n",
-            lunar(specificDate),
-            weekEnum.toChinese("周"),
-            Hutool.simpleDateFormat.format(specificDate)
+            "%s %s %s%n", lunar(specificDate), weekEnum.toChinese("周"), Hutool.simpleDateFormat.format(specificDate)
         )
 
         template += String.format("%n今日 [%s]: %05.2f%%", getDayProcessString(todayProcess), todayProcess)
@@ -464,14 +460,18 @@ object Utils {
 
     @JvmStatic
     fun outputPublicStaticMethods(className: String): String {
-        return if (isStringEmpty(className)) "" else outputPublicStaticMethods0(className)
+        if (isStringEmpty(className)) {
+            return ""
+        }
+
+        val filter = MethodArg.getSubParams(Hutool.ARG, 1).map { it.lowercase() }
+        return outputPublicStaticMethods0(className, filter)
     }
 
     @JvmStatic
-    private fun outputPublicStaticMethods0(className: String): String {
+    fun outputPublicStaticMethods0(className: String, filter: List<String>, forceEquals: Boolean = false): String {
         val pool = ClassPool.getDefault()
         val joiner = StringJoiner("\n")
-        val filter = MethodArg.getSubParams(Hutool.ARG, 1).map { it.lowercase() }
         try {
             val ctClass = pool[parseClassName(className)]
             val methods = ctClass.methods
@@ -483,7 +483,7 @@ object Utils {
                 }
                 if (filter.isNotEmpty()) {
                     val methodName = method.name.lowercase()
-                    if (filter.stream().noneMatch { methodName.contains(it) }) {
+                    if (filter.stream().noneMatch { if (forceEquals) methodName == it else methodName.contains(it) }) {
                         continue
                     }
                 }
@@ -492,8 +492,7 @@ object Utils {
             lineList.stream().sorted(String::compareTo).forEach(joiner::add)
         } catch (e: Exception) {
             Hutool.debugOutput(
-                "parse class static methods error: %s",
-                ExceptionUtil.stacktraceToString(e, Int.MAX_VALUE)
+                "parse class static methods error: %s", ExceptionUtil.stacktraceToString(e, Int.MAX_VALUE)
             )
         }
         return joiner.toString()

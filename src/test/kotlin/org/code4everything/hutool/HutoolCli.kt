@@ -131,11 +131,6 @@ class HutoolCli {
         test("md5 test")
     }
 
-    @Test
-    fun md5file() {
-        test("md5file build.gradle.kts")
-    }
-
     companion object {
 
         fun test(cmd: String, vararg params: String): String = Hutool.test(*(cmd.split(" ").toTypedArray() + params))
