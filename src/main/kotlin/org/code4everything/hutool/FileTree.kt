@@ -32,7 +32,7 @@ object FileTree {
             return emptyList()
         }
 
-        val fileList = files.filter { !it.isHidden && (!it.isDirectory || !it.name.startsWith(".")) }.stream()
+        val fileList = files!!.filter { !it.isHidden && (!it.isDirectory || !it.name.startsWith(".")) }.stream()
             .sorted(Comparator.comparing { obj: File -> obj.isDirectory }.reversed()).collect(Collectors.toList())
         if (fileList.isEmpty()) {
             return emptyList()

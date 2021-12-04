@@ -111,7 +111,7 @@ hu countdown 123456789 ms
 git clone https://gitee.com/code4everything/hutool-cli.git
 ```
 
-下载对应的 [ZIP包](http://share.qiniu.easepan.xyz/tool/hutool/hu-1.2.zip) ，目录结构如下
+下载对应的 [ZIP包](http://share.qiniu.easepan.xyz/tool/hutool/hu-1.3.zip) ，目录结构如下
 
 ```text
 ├─bin
@@ -123,6 +123,17 @@ git clone https://gitee.com/code4everything/hutool-cli.git
 
 下载完成后解压ZIP包，并将 hutool.jar 和 bin目录中与平台对应的可执行文件移动到 hutool-cli/hutool 目录下，如windows对应的`hu.exe`文件，linux对应的`hu`
 文件，macos对应的`hu-mac`文件（Mac移动后需重命名为`hu`），移动后目录结构如下。
+
+## 源码安装
+
+> 也可用于更新 `hutool.jar` 文件，当已有 `bin` 目录文件，更新版本时无需再下载上面的 `zip` 包。
+
+先拉取最新代码：`git pull`，然后执行打包命令，通常情况我们只需要执行PACK打包命令即可。
+
+- `gradle pack -x test` 打包可执行JAR包，需要JAVA环境。
+- `gradle install -x test` 执行上面的PACK打包命令，并构建对应平台的二进制执行文件（即`hu(.exe)`），需要GO语言环境。
+
+> `-x test` 表示跳过测试用例。
 
 ## 配置环境变量
 
