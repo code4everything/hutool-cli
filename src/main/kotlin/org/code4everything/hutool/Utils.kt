@@ -325,7 +325,7 @@ object Utils {
             classLoader!!.addJar(FileUtil.file(Hutool.homeDir, "external"))
             val externalConf = FileUtil.file(Hutool.homeDir, "external.conf")
             if (FileUtil.exist(externalConf)) {
-                val externalPaths = FileUtil.readUtf8String(externalConf).split(",").toTypedArray()
+                val externalPaths = FileUtil.readUtf8String(externalConf).split(Pattern.compile("\n|,"))
                 for (externalPath in externalPaths) {
                     val external = parseClasspath(externalPath)
                     if (FileUtil.exist(external)) {
@@ -342,8 +342,8 @@ object Utils {
     @JvmStatic
     private fun parseClasspath(path: String): File? {
         var p = path
-        p = p.trim()
-        if (p.isEmpty()) {
+        p = p.trim().trimEnd(',')
+        if (p.isEmpty() || p.startsWith("//")) {
             return null
         }
 

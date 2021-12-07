@@ -522,8 +522,9 @@ hutool-cli 提供了很多常用的别名，参考下面文件：
 external.conf文件支持mvn坐标，但前提是本地maven仓库已有对应的jar包，比如：
 
 ```txt
-/path/folder,
-/path/test.jar,
+// 这是注释
+/path/folder
+/path/test.jar
 mvn:org.code4everything:wetool-plugin-support:1.6.0
 ```
 
