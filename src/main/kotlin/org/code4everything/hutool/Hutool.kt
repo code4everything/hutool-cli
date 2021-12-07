@@ -28,6 +28,7 @@ import java.util.Date
 import java.util.Objects
 import java.util.StringJoiner
 import java.util.TreeMap
+import java.util.concurrent.FutureTask
 import java.util.function.Consumer
 import java.util.regex.Pattern
 import java.util.stream.Collectors
@@ -60,7 +61,7 @@ object Hutool {
     private val HUTOOL_USER_HOME = "${System.getProperty("user.home")}${File.separator}hutool-cli"
     private const val ALIAS = "alias"
     private const val PARAM_KEY = "paramTypes"
-    private const val VERSION = "v1.3"
+    private const val VERSION = "v1.4"
     private val ALIAS_CACHE: MutableMap<String, JSONObject> = HashMap(4, 1f)
 
     private var result: Any? = null
@@ -350,7 +351,13 @@ object Hutool {
 
         debugOutput("cast parameter success")
         debugOutput("invoking method: %s#%s(%s)", clazz.name, method.name, paramJoiner)
-        result = ReflectUtil.invokeStatic(method, *params)
+        result = if (Utils.classLoader == null) ReflectUtil.invokeStatic(method, *params) else {
+            val future: FutureTask<Any> = FutureTask { ReflectUtil.invokeStatic(method, *params) }
+            val t = Thread(future)
+            t.contextClassLoader = Utils.classLoader
+            t.start()
+            future.get()
+        }
         debugOutput("invoke method success")
     }
 

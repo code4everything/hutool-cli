@@ -35,7 +35,7 @@ object Utils {
     private var classAliasJson: JSONObject? = null
 
     @JvmStatic
-    private var classLoader: JarClassLoader? = null
+    var classLoader: JarClassLoader? = null
 
     @JvmStatic
     private var mvnRepositoryHome: List<String>? = null
@@ -360,7 +360,7 @@ object Utils {
 
             mvnRepositoryHome ?: run { mvnRepositoryHome = listOf("~", ".m2", "repository") }
             val paths: MutableList<String> = ArrayList(mvnRepositoryHome!!)
-            paths.addAll(coordinates[0].split("\\."))
+            paths.addAll(coordinates[0].split('.'))
             val name = coordinates[1]
             val version = coordinates[2]
             paths.add(name)
