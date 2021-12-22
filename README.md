@@ -575,8 +575,6 @@ mvn:org.code4everything:wetool-plugin-support:1.6.0
 |---|---|
 |now|当前时间|
 |today|今天的开始时间|
-|yesterday|昨天的开始时间|
-|tomorrow|明天的开始时间|
 
 偏移单位对照表
 
