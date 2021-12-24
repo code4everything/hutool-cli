@@ -542,6 +542,8 @@ object Hutool {
                     methodName = json.getString("methodName")
                 }
                 ARG.methodName = methodName
+                // 清楚过滤参数，使用定义的默认方法
+                ARG.params.clear()
                 parseMethod(json)
                 try {
                     // 拿到方法的形参名称，参数类型
