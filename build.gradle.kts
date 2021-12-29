@@ -49,7 +49,7 @@ dependencies {
 }
 
 val group = "org.code4everything"
-val version = "1.4"
+val version = "1.5"
 val hutoolCliVersion = version
 val description = "hutool-cli"
 java.sourceCompatibility = JavaVersion.VERSION_1_8

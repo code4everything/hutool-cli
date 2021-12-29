@@ -9,6 +9,7 @@ import (
 	"log"
 	"os"
 	"os/exec"
+	"strings"
 	"runtime"
 )
 
@@ -21,7 +22,12 @@ const (
 
 func main() {
 	cwd, _ := os.Getwd()
-	args := append([]string{"--illegal-access=debug", "-jar", "hutool.jar", "--work-dir", cwd}, os.Args[1:]...)
+	args := []string{"-jar", "hutool.jar", "--work-dir", cwd}
+	customArgs := os.Getenv("HUTOOL_ARGS")
+	if customArgs != "" {
+        args = append(strings.Split(customArgs, ","), args...)
+	}
+	args = append(args, os.Args[1:]...)
 	cmd := exec.Command("java", args...)
 	path := os.Getenv("HUTOOL_PATH")
 	if path == "" {
