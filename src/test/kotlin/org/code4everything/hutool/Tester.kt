@@ -17,6 +17,11 @@ class Tester {
     }
 
     @Test
+    fun accumulationFund() {
+        println(AccumulationFund.calcChengdu("1080*15,1000*10,2500*3"))
+    }
+
+    @Test
     fun kotlin() {
         Array(5) { i -> i }.forEach {
             if (it == 3) {
