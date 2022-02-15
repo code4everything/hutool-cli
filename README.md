@@ -279,9 +279,9 @@ replaceAll(str:java.lang.CharSequence, regex:java.lang.String, replaceFun:cn.hut
 查看有哪些类方法别名（可以精确的定位到方法）
 
 ```shell
-hu -r alias
+hu alias
+# 等同于：hu -r alias
 
-# 或者 hutool alias
 # output:
 assignable  = org.code4everything.hutool.Utils#assignableFrom(sourceClass:java.lang.Class, testClass:java.lang.Class)
 between     = cn.hutool.core.date.DateUtil#between(beginDate:java.util.Date, endDate:java.util.Date, unit:cn.hutool.core.date.DateUnit=day)
@@ -453,12 +453,11 @@ hu md5@file command.json
 
 ```shell
 # 查找qrcode相关命令
-hu alias // grep qr \\0
+hu alias qr
 
 # output:
-decodeqr    = cn.hutool.extra.qrcode.QrCodeUtil#decode(qrCodeFile:java.io.File)
-qrcode      = cn.hutool.extra.qrcode.QrCodeUtil#generate(content:java.lang.String, width:int=1000, height:int=1000, targetFile:java.io.File)
-randompass    = cn.hutool.core.util.RandomUtil#randomString(number:java.lang.String=abcdefghijkmnpqrstuvwxyzABCDEFGHJKMNPQRSTUVWXYZ234567892345678923456789, i:int=16)
+decodeqr = cn.hutool.extra.qrcode.QrCodeUtil#decode(qrCodeFile:java.io.File)
+qrcode   = cn.hutool.extra.qrcode.QrCodeUtil#generate(content:java.lang.String, width:int=1000, height:int=1000, targetFile:java.io.File=qrcode.png)
 ```
 
 然后执行
