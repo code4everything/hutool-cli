@@ -111,7 +111,7 @@ hu countdown 123456789 ms
 git clone https://gitee.com/code4everything/hutool-cli.git
 ```
 
-下载对应的 [ZIP包](http://share.qiniu.easepan.xyz/tool/hutool/hu-1.3.zip) ，目录结构如下
+下载对应的 [ZIP包](http://share.qiniu.easepan.xyz/tool/hutool/hu-1.5.zip) ，目录结构如下
 
 ```text
 ├─bin
