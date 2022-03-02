@@ -2,13 +2,12 @@ package org.code4everything.hutool
 
 import com.alibaba.fastjson.util.TypeUtils
 import java.lang.annotation.Inherited
-import java.util.Objects
 import kotlin.reflect.KClass
 
 // 输入输出转换器
 @MustBeDocumented
 @Inherited
-@kotlin.annotation.Retention(AnnotationRetention.RUNTIME)
+@Retention(AnnotationRetention.RUNTIME)
 @Target(
     AnnotationTarget.VALUE_PARAMETER,
     AnnotationTarget.FUNCTION,
@@ -27,6 +26,6 @@ annotation class IOConverter(
 
         override fun string2Object(string: String): Any = TypeUtils.cast(string, objType, null)
 
-        override fun object2String(any: Any?): String = Objects.toString(any)
+        override fun object2String(any: Any?): String = any.toString()
     }
 }

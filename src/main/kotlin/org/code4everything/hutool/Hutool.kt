@@ -61,7 +61,7 @@ object Hutool {
     private val HUTOOL_USER_HOME = "${System.getProperty("user.home")}${File.separator}hutool-cli"
     private const val ALIAS = "alias"
     private const val PARAM_KEY = "paramTypes"
-    private const val VERSION = "v1.5"
+    private const val VERSION = "v1.6"
     private val ALIAS_CACHE: MutableMap<String, JSONObject> = HashMap(4, 1f)
 
     private var result: Any? = null

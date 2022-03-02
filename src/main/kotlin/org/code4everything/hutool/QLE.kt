@@ -32,6 +32,11 @@ object QLE {
         Hutool.debugOutput("get ql script: %s", exp)
         val runner = ExpressRunner()
 
+        // 导入默认包
+        val expressPackage = runner.rootExpressPackage
+        expressPackage.addPackage("org.code4everything.hutool")
+        expressPackage.addPackage("org.code4everything.hutool.converter")
+
         // 绑定方法
         val clz = QLE::class.java
         runner.addFunctionOfClassMethod("cmd", clz, "cmd", arrayOf<Class<*>>(String::class.java), null)

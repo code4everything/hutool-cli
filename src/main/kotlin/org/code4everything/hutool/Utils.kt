@@ -23,9 +23,11 @@ import javassist.ClassPool
 import javassist.CtMethod
 import javassist.bytecode.LocalVariableAttribute
 import kotlin.math.ceil
+import kotlin.streams.toList
 import org.code4everything.hutool.converter.ClassConverter
 import org.code4everything.hutool.converter.DateConverter
 import org.code4everything.hutool.converter.FileConverter
+import org.code4everything.hutool.converter.LineSepConverter
 import org.code4everything.hutool.converter.ListStringConverter
 import org.code4everything.hutool.converter.PatternConverter
 
@@ -41,15 +43,16 @@ object Utils {
     private var mvnRepositoryHome: List<String>? = null
 
     @JvmStatic
-    fun listFiles(@IOConverter(FileConverter::class) file: File): String {
+    @IOConverter(LineSepConverter::class)
+    fun listFiles(@IOConverter(FileConverter::class) file: File): List<String> {
         if (!FileUtil.exist(file)) {
-            return "file not found!"
+            return listOf("file not found!")
         }
 
         if (FileUtil.isFile(file)) {
             val date = DateUtil.formatDateTime(Date(file.lastModified()))
             val size = FileUtil.readableFileSize(file)
-            return "$date\t$size\t${file.name}"
+            return listOf("$date  $size  ${file.name}")
         }
 
         val filter = MethodArg.getSubParams(Hutool.ARG, 1)
@@ -58,15 +61,16 @@ object Utils {
         }
 
         if (isArrayEmpty(files)) {
-            return ""
+            return emptyList()
         }
 
         Arrays.sort(
             files!!, ComparatorChain.of(Comparator.comparingInt { if (it.isDirectory) 0 else 1 },
-                Comparator.comparing { it.name },
-                Comparator.comparingLong { it.lastModified() })
+            Comparator.comparing { it.name },
+            Comparator.comparingLong { it.lastModified() })
         )
-        val joiner = StringJoiner("\n")
+
+        val list = arrayListOf<String>()
         var maxLen = 0
         val size = Array(files.size) { "" }
         for (i in files.indices) {
@@ -84,10 +88,10 @@ object Utils {
         for (i in files.indices) {
             val date = DateUtil.formatDateTime(Date(files[i].lastModified()))
             val fmtSize = size[i].padStart(maxLen, ' ')
-            joiner.add("$date  $fmtSize  ${files[i].name}")
+            list.add("$date  $fmtSize  ${files[i].name}")
         }
 
-        return joiner.toString()
+        return list
     }
 
     @JvmStatic
@@ -139,14 +143,15 @@ object Utils {
     }
 
     @JvmStatic
-    fun getFieldNames(@IOConverter(ClassConverter::class) clazz: Class<*>): String {
+    @IOConverter(LineSepConverter::class)
+    fun getFieldNames(@IOConverter(ClassConverter::class) clazz: Class<*>): List<String> {
         var clz = clazz
         if (clz.isPrimitive) {
             clz = parseClass0(parseClassName0("j." + clz.name))
         }
 
         val fields = ReflectUtil.getFields(clz)
-        val joiner = StringJoiner("\n")
+        val result = arrayListOf<String>()
         val modifierMap: MutableMap<String, List<String>> = HashMap()
         val comparators = ComparatorChain<String>().apply {
             addComparator(Comparator.comparingInt { o ->
@@ -198,10 +203,10 @@ object Utils {
                 modifierList.clear()
                 modifierList.addAll(list)
             }
-            joiner.add(line)
+            result.add(line)
             holder.set("\n")
         }
-        return joiner.toString()
+        return result
     }
 
     @JvmStatic
@@ -272,22 +277,16 @@ object Utils {
     fun toLowerCase(str: String?): String = str?.lowercase() ?: ""
 
     @JvmStatic
+    @IOConverter(LineSepConverter::class)
     fun grep(
         @IOConverter(PatternConverter::class) pattern: Pattern,
         @IOConverter(ListStringConverter::class) lines: List<String>?
-    ): String {
+    ): List<String> {
         var line = lines
         if (isCollectionEmpty(line) && !isStringEmpty(Hutool.resultString)) {
             line = ListStringConverter().useLineSep().string2Object(Hutool.resultString)
         }
-
-        val joiner = StringJoiner("\n")
-        for (lin in line!!) {
-            if (pattern.matcher(lin).find()) {
-                joiner.add(lin)
-            }
-        }
-        return joiner.toString()
+        return line!!.filter { pattern.matcher(it).find() }
     }
 
     @JvmStatic
@@ -459,9 +458,9 @@ object Utils {
     }
 
     @JvmStatic
-    fun outputPublicStaticMethods(className: String): String {
+    fun outputPublicStaticMethods(className: String): List<String> {
         if (isStringEmpty(className)) {
-            return ""
+            return emptyList()
         }
 
         val filter = MethodArg.getSubParams(Hutool.ARG, 1).map { it.lowercase() }
@@ -469,9 +468,8 @@ object Utils {
     }
 
     @JvmStatic
-    fun outputPublicStaticMethods0(className: String, filter: List<String>, forceEquals: Boolean = false): String {
+    fun outputPublicStaticMethods0(className: String, filter: List<String>, forceEquals: Boolean = false): List<String> {
         val pool = ClassPool.getDefault()
-        val joiner = StringJoiner("\n")
         try {
             val ctClass = pool[parseClassName(className)]
             val methods = ctClass.methods
@@ -489,13 +487,13 @@ object Utils {
                 }
                 lineList.add(getMethodFullInfo(method, null))
             }
-            lineList.stream().sorted(String::compareTo).forEach(joiner::add)
+            return lineList.stream().sorted(String::compareTo).toList()
         } catch (e: Exception) {
             Hutool.debugOutput(
                 "parse class static methods error: %s", ExceptionUtil.stacktraceToString(e, Int.MAX_VALUE)
             )
         }
-        return joiner.toString()
+        return emptyList()
     }
 
     @JvmStatic

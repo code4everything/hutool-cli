@@ -2,25 +2,26 @@ package org.code4everything.hutool
 
 import com.alibaba.fastjson.JSON
 import com.ql.util.express.ExpressRunner
+import org.code4everything.hutool.converter.JsonObjectConverter
 
 object JsonFormatter {
 
     @JvmStatic
-    fun format(content: String): String {
+    @IOConverter(JsonObjectConverter::class)
+    fun format(content: String): Any {
         if (content.isEmpty()) {
-            return "{}"
+            return emptyList<Any>()
         }
 
         if (content.startsWith("\"") && content.endsWith("\"")) {
-            var unwrapped = ExpressRunner().execute(content, null, null, false, false).toString()
+            val unwrapped = ExpressRunner().execute(content, null, null, false, false).toString()
             return format(unwrapped)
         }
 
         return try {
-            val value = if (content.startsWith('[')) JSON.parseArray(content) else JSON.parseObject(content)
-            JSON.toJSONString(value, true)
+            if (content.startsWith('[')) JSON.parseArray(content) else JSON.parseObject(content)
         } catch (e: Exception) {
-            "not support format"
+            mapOf("error" to "not support format")
         }
     }
 }
