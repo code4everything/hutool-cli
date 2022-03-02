@@ -12,6 +12,7 @@ import java.math.BigInteger
 import java.sql.Timestamp
 import java.util.Date
 import java.util.StringJoiner
+import org.code4everything.hutool.converter.FileConverter
 
 object QLE {
 
@@ -67,7 +68,7 @@ object QLE {
 
     private fun handleExpression(expression: String): String {
         if (expression.startsWith("file:")) {
-            val file = FileUtil.file(expression.substring(5))
+            val file = FileConverter().string2Object(expression.substring(5))
             if (FileUtil.exist(file)) {
                 Hutool.debugOutput("get script from file: %s", file.absolutePath)
                 return FileUtil.readUtf8String(file)
