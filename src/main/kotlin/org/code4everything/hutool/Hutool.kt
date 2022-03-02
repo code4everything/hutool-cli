@@ -46,6 +46,7 @@ import org.code4everything.hutool.converter.ArrayConverter
 import org.code4everything.hutool.converter.CharsetConverter
 import org.code4everything.hutool.converter.DateConverter
 import org.code4everything.hutool.converter.FileConverter
+import org.code4everything.hutool.converter.LineSepConverter
 import org.code4everything.hutool.converter.ListStringConverter
 import org.code4everything.hutool.converter.MapConverter
 import org.code4everything.hutool.converter.PatternConverter
@@ -72,7 +73,8 @@ object Hutool {
     lateinit var resultString: String
     private lateinit var commander: JCommander
     private val resultContainer: MutableList<String> by lazy { ArrayList(5) }
-    private var outputConverter: IOConverter? = null
+    private var outputConverterName: String? = null
+    private var inputConverterNames: List<String>? = null
 
     val isDebug: Boolean get() = ARG.debug
     val simpleDateFormat: SimpleDateFormat by lazy { SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS") }
@@ -195,6 +197,8 @@ object Hutool {
                 return
             }
 
+            outputConverterName = methodJson.getString("outConverter")
+            inputConverterNames = methodJson.getJSONArray("inConverters")?.map { it.toString() }
             debugOutput("parse method to class name and method name")
             ARG.className = classMethod.substring(0, idx)
             ARG.methodName = classMethod.substring(idx + 1)
@@ -203,6 +207,7 @@ object Hutool {
                 val userParamTypes = tokens[1].split(',').filter { it.isNotEmpty() }
                 if (userParamTypes.isEmpty()) {
                     val filter = listOf(ARG.methodName!!.lowercase())
+                    outputConverterName = LineSepConverter::class.java.name
                     result = Utils.outputPublicStaticMethods0(ARG.className!!, filter, true)
                     return
                 } else {
@@ -322,7 +327,7 @@ object Hutool {
 
         val parameters = method.parameters
         val converterClz = IOConverter::class.java
-        outputConverter = method.getAnnotation(converterClz)
+        outputConverterName = method.getAnnotation(converterClz).getConverterName(outputConverterName)
         debugOutput("get method success")
         if (ARG.params.size < parameters.size) {
             ARG.params.add(ClipboardUtil.getStr())
@@ -346,7 +351,8 @@ object Hutool {
             val param = ARG.params[i]
             paramJoiner.add(param)
             val parameter = parameters[i]
-            params[i] = castParam2JavaType(parameter.getAnnotation(converterClz), param, parameter.type, true)
+            val converterName = parameter.getAnnotation(converterClz).getConverterName(inputConverterNames?.getOrNull(i))
+            params[i] = castParam2JavaType(converterName, param, parameter.type, true)
         }
 
         debugOutput("cast parameter success")
@@ -359,6 +365,10 @@ object Hutool {
             future.get()
         }
         debugOutput("invoke method success")
+    }
+
+    private fun IOConverter?.getConverterName(srcName: String?): String? {
+        return if (srcName?.isNotEmpty() == true) srcName else this?.run { className.ifEmpty { value.java.name } }
     }
 
     private fun parseParamType(index: Int, paramType: String, parseDefaultValue: Boolean): String {
@@ -423,7 +433,7 @@ object Hutool {
         return method
     }
 
-    fun castParam2JavaType(inputConverter: IOConverter?, param: String, type: Class<*>, replace: Boolean): Any? {
+    fun castParam2JavaType(converterName: String?, param: String, type: Class<*>, replace: Boolean): Any? {
         var p = param
         if ("nil" == p) {
             return null
@@ -441,14 +451,14 @@ object Hutool {
                 }
             }
         }
-        if (inputConverter == null && CharSequence::class.java.isAssignableFrom(type)) {
+        if (converterName == null && CharSequence::class.java.isAssignableFrom(type)) {
             return p
         }
 
         // 转换参数类型
         var converter: Converter<*>? = null
         try {
-            converter = getConverter(inputConverter, type)
+            converter = getConverter(converterName, type)
             if (converter != null) {
                 debugOutput("cast param[%s] using converter: %s", p, converter.javaClass.name)
                 return converter.string2Object(p)
@@ -463,9 +473,9 @@ object Hutool {
         return TypeUtils.cast(p, type, null)
     }
 
-    private fun getConverter(inputConverter: IOConverter?, type: Class<*>): Converter<*>? {
-        if (inputConverter != null) {
-            return Converter.getConverter(inputConverter, type)
+    private fun getConverter(converterName: String?, type: Class<*>): Converter<*>? {
+        if (converterName != null) {
+            return Converter.getConverter(converterName, type)
         }
         if (MutableList::class.java.isAssignableFrom(type)) {
             return ListStringConverter()
@@ -476,8 +486,8 @@ object Hutool {
         if (type.isArray) {
             return ArrayConverter(type)
         }
-        val converterName: String? = getAlias("", homeDir, CONVERTER_JSON).getString(type.name)
-        return converterName?.let { newConverter(parseClass(it) as Class<Converter<*>>?, type) }
+        val converterName0: String? = getAlias("", homeDir, CONVERTER_JSON).getString(type.name)
+        return converterName0?.let { newConverter(parseClass(it) as Class<Converter<*>>?, type) }
     }
 
     private fun fixMethodName(fixName: Boolean, methodAliasPaths: List<String>?) {
@@ -630,7 +640,7 @@ object Hutool {
     private fun convertResult(): String {
         debugOutput("converting result")
         try {
-            val res = convertResult(result, outputConverter)
+            val res = convertResult(result, outputConverterName)
             debugOutput("result convert success")
             return res
         } catch (e: Exception) {
@@ -639,54 +649,53 @@ object Hutool {
         return ""
     }
 
-    fun convertResult(obj: Any?, ioConverter: IOConverter?): String {
+    fun convertResult(obj: Any?, converterName: String?): String {
         if (Objects.isNull(obj)) {
             return ""
         }
+
         val resClass: Class<*> = obj!!.javaClass
-        if (Objects.isNull(ioConverter)) {
-            if (obj is CharSequence) {
-                return obj.toString()
-            }
-            if (obj is File) {
-                return FileConverter().object2String(obj)
-            }
-            if (obj is Date) {
-                return DateConverter().object2String(obj)
-            }
-            if (obj is Map<*, *>) {
-                return MapConverter().object2String(obj)
-            }
-            if (obj is Double) {
-                return String.format("%.2f", obj)
-            }
-            if (obj is Charset) {
-                return CharsetConverter().object2String(obj)
-            }
-            if (obj is Collection<*>) {
-                return ListStringConverter().object2String(obj)
-            }
-            if (obj is Pattern) {
-                return PatternConverter().object2String(obj)
-            }
-            if (obj is Week) {
-                return WeekConverter().object2String(obj)
-            }
-            if (obj.javaClass.isArray) {
-                return ArrayConverter(resClass).object2String(obj)
-            }
+        if (converterName?.isNotEmpty() == true) {
+            return Converter.getConverter(converterName, resClass)!!.object2String(obj)
         }
 
-        if (Objects.nonNull(ioConverter)) {
-            return Converter.getConverter(ioConverter!!, resClass)!!.object2String(obj)
+        if (obj is CharSequence) {
+            return obj.toString()
+        }
+        if (obj is File) {
+            return FileConverter().object2String(obj)
+        }
+        if (obj is Date) {
+            return DateConverter().object2String(obj)
+        }
+        if (obj is Map<*, *>) {
+            return MapConverter().object2String(obj)
+        }
+        if (obj is Double) {
+            return String.format("%.2f", obj)
+        }
+        if (obj is Charset) {
+            return CharsetConverter().object2String(obj)
+        }
+        if (obj is Collection<*>) {
+            return ListStringConverter().object2String(obj)
+        }
+        if (obj is Pattern) {
+            return PatternConverter().object2String(obj)
+        }
+        if (obj is Week) {
+            return WeekConverter().object2String(obj)
+        }
+        if (obj.javaClass.isArray) {
+            return ArrayConverter(resClass).object2String(obj)
         }
 
         val name = resClass.name
         val converterJson = getAlias("", homeDir, CONVERTER_JSON)
-        val converterName = converterJson.getString(name)
+        val converterName0 = converterJson.getString(name)
         return if (isStringEmpty(converterName)) {
             ObjectUtil.toString(obj)
-        } else newConverter(parseClass(converterName) as Class<out Converter<*>>?, resClass)!!.object2String(obj)
+        } else newConverter(parseClass(converterName0) as Class<out Converter<*>>?, resClass)!!.object2String(obj)
     }
 
     fun getAlias(aliasKey: String?, parentDir: String?, vararg paths: String?): JSONObject {

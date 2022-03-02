@@ -501,7 +501,7 @@ hutool-cli 提供了很多常用的别名，参考下面文件：
 
 - 类名称别名参考 [class.json](/hutool/class.json)
 
-- 方法名称别名参考 [base64-util.json](/hutool/method/base64-util.json)
+- ~~方法名称别名参考（弃用此功能）~~
 
 自定义你的别名后，你还可以 pr 到本仓库哦，让更多人享受到 hutool 带来的便捷吧。
 

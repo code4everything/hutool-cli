@@ -15,20 +15,17 @@ interface Converter<T> {
     companion object {
 
         @JvmStatic
-        fun getConverter(ioConverter: IOConverter, type: Class<*>?): Converter<*>? {
-            var converter: Class<out Converter<*>> = ioConverter.value.java
-            if (converter == WithoutConverter::class.java) {
-                if (ioConverter.className.isNotEmpty()) {
-                    converter = Utils.parseClass(ioConverter.className) as Class<out Converter<*>>
-                }
-                if (converter == WithoutConverter::class.java) {
-                    return WithoutConverter(type!!)
-                }
+        fun getConverter(converterName: String?, type: Class<*>?): Converter<*>? {
+            if (converterName?.isEmpty() != false) {
+                return null
             }
-
-            return if (converter == ArrayConverter::class.java) {
-                ArrayConverter(type!!)
-            } else newConverter(converter, type)
+            if (converterName == WithoutConverter::class.java.name) {
+                return WithoutConverter(type!!)
+            }
+            if (converterName == ArrayConverter::class.java.name) {
+                return ArrayConverter(type!!)
+            }
+            return newConverter(Utils.parseClass(converterName) as Class<out Converter<*>>, type)
         }
 
         @JvmStatic

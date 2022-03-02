@@ -210,16 +210,16 @@
         "method": "csu#repeat(j.char.seq,int=2)"
     },
     "ll": {
-        "method": "utils#listFiles(file=.)"
+        "method": "file.list#listFiles(file=.)"
     },
     "ls": {
-        "method": "utils#listFiles(file=.)"
+        "method": "file.list#listFiles(file=.)"
     },
     "calendar": {
         "method": "org.code4everything.hutool.HuCalendar#calendar(str.arr=nil)"
     },
     "tree": {
-        "method": "org.code4everything.hutool.FileTree#treeFile(file=.,int=-1)",
+        "method": "file.list#treeFile(file=.,int=-1)",
         "1param": "file,int=-1"
     },
     "len": {
@@ -249,5 +249,8 @@
     },
     "tojson": {
         "method": "org.code4everything.hutool.JsonFormatter#format(string)"
+    },
+    "converters": {
+        "method": "utils#getConverters()"
     }
 }

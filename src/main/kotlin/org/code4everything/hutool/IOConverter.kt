@@ -18,7 +18,7 @@ annotation class IOConverter(
     // 使用自定义转换器
     val value: KClass<out Converter<*>> = WithoutConverter::class,
 
-    // 当value是WithoutConverter类时，并且className不为空，那么解析className转换器
+    // 当className不为空，使用className转换器
     val className: String = "",
 ) {
 

@@ -187,5 +187,8 @@
     },
     "qe": {
         "clazz": "org.code4everything.hutool.QLE"
+    },
+    "file.list": {
+        "clazz": "org.code4everything.hutool.FileList"
     }
 }
