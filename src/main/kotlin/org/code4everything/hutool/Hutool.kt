@@ -199,6 +199,14 @@ object Hutool {
 
             outputConverterName = methodJson.getString("outConverter")
             inputConverterNames = methodJson.getJSONArray("inConverters")?.map { it.toString() }
+            methodJson.getString("outArgs")?.also {
+                val methodArg = MethodArg()
+                JCommander.newBuilder().addObject(methodArg).build().parse(*(it.split(" ").toTypedArray()))
+                ARG.copy = if (ARG.copy) true else methodArg.copy
+                ARG.debug = if (ARG.debug) true else methodArg.debug
+                ARG.sep = if (it.contains("-s") || it.contains("--sep")) methodArg.sep else ARG.sep
+            }
+
             debugOutput("parse method to class name and method name")
             ARG.className = classMethod.substring(0, idx)
             ARG.methodName = classMethod.substring(idx + 1)
