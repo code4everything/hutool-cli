@@ -183,7 +183,7 @@ object Hutool {
 
             // 从命令文件中找到类名和方法名以及参数类型，默认值
             val methodKey = "method"
-            val aliasJson = getAlias(command, "", COMMAND_JSON)
+            val aliasJson = getAlias(COMMAND_JSON)
             val methodJson = aliasJson.getJSONObject(command)
             if (methodJson?.containsKey(methodKey) != true) {
                 result = "command[$command] not found!"
@@ -248,7 +248,7 @@ object Hutool {
         if (innerFixName) {
             // 尝试从类别名文件中查找类全名
             val methodAliasKey = "methodAliasPaths"
-            val aliasJson = getAlias(ARG.className, "", CLASS_JSON)
+            val aliasJson = getAlias(CLASS_JSON)
             val clazzJson = aliasJson.getJSONObject(ARG.className)
             if (clazzJson?.containsKey(CLAZZ_KEY) != true) {
                 innerFixName = false
@@ -494,7 +494,7 @@ object Hutool {
         if (type.isArray) {
             return ArrayConverter(type)
         }
-        val converterName0: String? = getAlias("", homeDir, CONVERTER_JSON).getString(type.name)
+        val converterName0: String? = getAlias(CONVERTER_JSON).getString(type.name)
         return converterName0?.let { newConverter(parseClass(it) as Class<Converter<*>>?, type) }
     }
 
@@ -502,7 +502,7 @@ object Hutool {
         // 从方法别名文件中找到方法名
         if (fixName && !isCollectionEmpty(methodAliasPaths)) {
             val methodKey = "methodName"
-            val aliasJson = getAlias(ARG.methodName, "", *methodAliasPaths!!.toTypedArray())
+            val aliasJson = getAlias(*methodAliasPaths!!.toTypedArray())
             val methodJson = aliasJson.getJSONObject(ARG.methodName)
             if (Objects.nonNull(methodJson)) {
                 val methodName = methodJson.getString(methodKey)
@@ -529,8 +529,8 @@ object Hutool {
 
     private fun seeAlias(className: String, vararg paths: String) {
         // 用户自定义别名会覆盖工作目录定义的别名
-        val aliasJson = getAlias("", homeDir, *paths)
-        aliasJson.putAll(getAlias("", "", *paths))
+        val aliasJson = getAlias(*paths)
+        aliasJson.putAll(getAlias(*paths))
         if (!isCollectionEmpty(ARG.params)) {
             val iterator: MutableIterator<Map.Entry<String, Any>> = aliasJson.entries.iterator()
             while (iterator.hasNext()) {
@@ -699,33 +699,27 @@ object Hutool {
         }
 
         val name = resClass.name
-        val converterJson = getAlias("", homeDir, CONVERTER_JSON)
+        val converterJson = getAlias(CONVERTER_JSON)
         val converterName0 = converterJson.getString(name)
         return if (isStringEmpty(converterName)) {
             ObjectUtil.toString(obj)
         } else newConverter(parseClass(converterName0) as Class<out Converter<*>>?, resClass)!!.object2String(obj)
     }
 
-    fun getAlias(aliasKey: String?, parentDir: String?, vararg paths: String?): JSONObject {
-        // 先查找用户自定义别名，没找到再从工作目录查找
-        var dir = parentDir
-        if (isStringEmpty(dir)) {
-            dir = HUTOOL_USER_HOME
+    fun getAlias(vararg paths: String?): JSONObject {
+        val key = paths.joinToString(File.separator)
+        if (!ALIAS_CACHE.containsKey(key)) {
+            val path = Paths.get(HUTOOL_USER_HOME, *paths).toAbsolutePath().normalize().toString()
+            debugOutput("user alias json file path: %s", path)
+            val userAlias = getJson(path)
+            val hutoolAlias = getJson(homeDir + File.separator + key)
+            ALIAS_CACHE[key] = Utils.mergeJson(userAlias, hutoolAlias)
         }
+        return ALIAS_CACHE[key]!!
+    }
 
-        val path = Paths.get(dir, *paths).toAbsolutePath().normalize().toString()
-        debugOutput("alias json file path: %s", path)
-        var json = ALIAS_CACHE[path]
-        if (json == null) {
-            json = if (FileUtil.exist(path)) {
-                JSON.parseObject(FileUtil.readUtf8String(path))
-            } else {
-                JSONObject()
-            }
-            ALIAS_CACHE[path] = json!!
-        }
-
-        return if (isStringEmpty(aliasKey) || json.containsKey(aliasKey)) json else getAlias("", homeDir, *paths)
+    private fun getJson(path: String): JSONObject {
+        return if (FileUtil.exist(path)) JSON.parseObject(FileUtil.readUtf8String(path)) else JSONObject()
     }
 
     fun debugOutput(msg: String, vararg params: Any?) {

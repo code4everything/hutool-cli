@@ -252,5 +252,8 @@
     },
     "converters": {
         "method": "utils#getConverters()"
+    },
+    "mergejson": {
+        "method": "utils#mergeJson(json.obj,json.obj)"
     }
 }

@@ -484,11 +484,13 @@ hu qrcode 'qrcode test' 600 600 /home/test.png
         "method": "cn.hutool.core.codec.Base64#encodeUrlSafe",
         "paramTypes": [
             "j.char.seq"
-        ]
+        ],
+        "outArgs": "--copy"
     },
     "echo": {
         /*@符号表示总是解析参数默认值*/
-        "method": "qe#run(@string=return args,@boolean=false)"
+        "method": "qe#run(@string=return args,@boolean=false)",
+        "outConverter": "org.code4everything.hutool.converter.LineSepConverter"
     }
 }
 ```
@@ -507,7 +509,9 @@ hutool-cli 提供了很多常用的别名，参考下面文件：
 
 > 注意：类别名的定义不能超过16个字符。
 
-> v1.2支持定义私有别名啦，定义路径 `{user.home}/hutool-cli/`，文件名和别名格式参照上面说明，程序会优先读取用户定义的私有别名。
+> v1.2支持定义私有别名啦（优先级高于系统别名），定义路径 `{user.home}/hutool-cli/`，文件名和别名格式参照上面说明，程序会对私有别名和系统别名进行合并。
+
+> v1.6新增在别名文件中定义参数输入输出转换器 `outConverter` `inConverters`，以及输出参数 `outArgs`。
 
 ## 加载外部类
 

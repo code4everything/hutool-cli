@@ -28,6 +28,7 @@ import kotlin.streams.toList
 import org.code4everything.hutool.converter.ClassConverter
 import org.code4everything.hutool.converter.DateConverter
 import org.code4everything.hutool.converter.FileConverter
+import org.code4everything.hutool.converter.JsonObjectConverter
 import org.code4everything.hutool.converter.LineSepConverter
 import org.code4everything.hutool.converter.ListStringConverter
 import org.code4everything.hutool.converter.PatternConverter
@@ -95,6 +96,26 @@ object Utils {
             sb.append(sep).append(k).append("=").append(value).also { sep = "&" }
         }
         return sb.toString()
+    }
+
+    @JvmStatic
+    @IOConverter(JsonObjectConverter::class)
+    fun mergeJson(@IOConverter(JsonObjectConverter::class) master: JSONObject, @IOConverter(JsonObjectConverter::class) second: JSONObject): JSONObject {
+        second.entries.forEach {
+            val key = it.key
+            val value = it.value
+            if (!master.containsKey(key)) {
+                // 不存在时直接新增
+                master[key] = value
+            }
+
+            val obj = master[key]
+            if (obj is JSONObject && value is JSONObject) {
+                // 都是JsonObject时，继续深入合并，否则跳过
+                master[key] = mergeJson(obj, value)
+            }
+        }
+        return master
     }
 
     @JvmStatic
@@ -385,8 +406,8 @@ object Utils {
         }
 
         if (classAliasJson == null) {
-            classAliasJson = Hutool.getAlias("", Hutool.homeDir, Hutool.CLASS_JSON)
-            classAliasJson!!.putAll(Hutool.getAlias("", "", Hutool.CLASS_JSON))
+            classAliasJson = Hutool.getAlias(Hutool.CLASS_JSON)
+            classAliasJson!!.putAll(Hutool.getAlias(Hutool.CLASS_JSON))
         }
 
         val classJson = classAliasJson!!.getJSONObject(cn)
