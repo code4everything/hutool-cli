@@ -101,6 +101,10 @@ object Utils {
     @JvmStatic
     @IOConverter(JsonObjectConverter::class)
     fun mergeJson(@IOConverter(JsonObjectConverter::class) master: JSONObject, @IOConverter(JsonObjectConverter::class) second: JSONObject): JSONObject {
+        if (master.isEmpty()) {
+            return second
+        }
+
         second.entries.forEach {
             val key = it.key
             val value = it.value

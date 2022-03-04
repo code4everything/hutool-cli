@@ -146,7 +146,7 @@
     "emoji.u": {
         "clazz": "cn.hutool.extra.emoji.EmojiUtil"
     },
-    "qrcode": {
+    "qrcode.u": {
         "clazz": "cn.hutool.extra.qrcode.QrCodeUtil"
     },
     "pinyin.u": {
@@ -158,7 +158,7 @@
     "img.u": {
         "clazz": "cn.hutool.core.img.ImgUtil"
     },
-    "desk": {
+    "desk.u": {
         "clazz": "cn.hutool.core.swing.DesktopUtil"
     },
     "robot.u": {
@@ -173,7 +173,7 @@
     "credit.u": {
         "clazz": "cn.hutool.core.util.CreditCodeUtil"
     },
-    "desensitize": {
+    "desensitize.u": {
         "clazz": "cn.hutool.core.util.DesensitizedUtil"
     },
     "zip.u": {

@@ -110,8 +110,12 @@ object Hutool {
 
         if (ARG.copy) {
             debugOutput("copying result into clipboard")
-            ClipboardUtil.setStr(resultString)
-            debugOutput("result copied")
+            try {
+                ClipboardUtil.setStr(resultString)
+                debugOutput("result copied")
+            } catch (e: Exception) {
+                debugOutput("copy result failed")
+            }
         }
 
         if (isDebug) {
@@ -296,7 +300,7 @@ object Hutool {
 
         // 将剪贴板字符内容注入到方法参数的指定索引位置
         if (ARG.paramIdxFromClipboard >= 0) {
-            ARG.params.add(min(ARG.params.size, ARG.paramIdxFromClipboard), ClipboardUtil.getStr())
+            ARG.params.add(min(ARG.params.size, ARG.paramIdxFromClipboard), getFromClipboard())
         }
 
         val method: Method?
@@ -338,7 +342,7 @@ object Hutool {
         outputConverterName = method.getAnnotation(converterClz).getConverterName(outputConverterName)
         debugOutput("get method success")
         if (ARG.params.size < parameters.size) {
-            ARG.params.add(ClipboardUtil.getStr())
+            ARG.params.add(getFromClipboard())
         }
         if (ARG.params.size < parameters.size) {
             result = try {
@@ -373,6 +377,17 @@ object Hutool {
             future.get()
         }
         debugOutput("invoke method success")
+    }
+
+    private fun getFromClipboard(): String {
+        var content = "nil"
+        try {
+            content = ClipboardUtil.getStr()
+            debugOutput("get param from clipboard success")
+        } catch (e: Exception) {
+            debugOutput("get param from clipboard failed, return null")
+        }
+        return content
     }
 
     private fun IOConverter?.getConverterName(srcName: String?): String? {
