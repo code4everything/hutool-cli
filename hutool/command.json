@@ -255,5 +255,8 @@
     },
     "mergejson": {
         "method": "utils#mergeJson(json.obj,json.obj)"
+    },
+    "install": {
+        "method": "org.code4everything.hutool.Plugins#install(string)"
     }
 }

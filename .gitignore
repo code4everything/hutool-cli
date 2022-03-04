@@ -10,5 +10,7 @@ build
 *.zip
 .DS_Store
 hutool/external.conf
+hutool/external
 src/main/kotlin/org/code4everything/hutool/ignore
 src/test/kotlin/org/code4everything/hutool/ignore
+hutool/plugins

@@ -4,6 +4,7 @@ import cn.hutool.core.date.Week
 import cn.hutool.core.exceptions.ExceptionUtil
 import cn.hutool.core.io.FileUtil
 import cn.hutool.core.lang.Holder
+import cn.hutool.core.lang.JarClassLoader
 import cn.hutool.core.swing.clipboard.ClipboardUtil
 import cn.hutool.core.util.ArrayUtil
 import cn.hutool.core.util.ObjectUtil
@@ -188,10 +189,17 @@ object Hutool {
             // 从命令文件中找到类名和方法名以及参数类型，默认值
             val methodKey = "method"
             val aliasJson = getAlias(COMMAND_JSON)
-            val methodJson = aliasJson.getJSONObject(command)
+            var methodJson = aliasJson.getJSONObject(command)
             if (methodJson?.containsKey(methodKey) != true) {
-                result = "command[$command] not found!"
-                return
+                val plugin = FileUtil.file(homeDir, "plugins", "${command.removePrefix("p.")}.jar")
+                if (FileUtil.exist(plugin)) {
+                    methodJson = JSONObject().apply { put(methodKey, "${Plugins.CLASS_NAME}#run()") }
+                    Utils.classLoader = JarClassLoader().apply { addJar(plugin) }
+                    debugOutput("get command from plugin: " + plugin.name)
+                } else {
+                    result = "command[$command] not found!"
+                    return
+                }
             }
 
             val classMethod = methodJson.getString(methodKey)

@@ -19,10 +19,10 @@ class FileConverter : Converter<File> {
         }
 
         if (path.startsWith("~")) {
-            return FileUtil.file(FileUtil.getUserHomePath(), string.substring(1))
+            return FileUtil.file(FileUtil.getUserHomePath(), string.substring(2))
         }
         if (path.startsWith(".")) {
-            return FileUtil.file(Hutool.ARG.workDir, path.substring(1))
+            return FileUtil.file(Hutool.ARG.workDir, path.substring(2))
         }
         if (FileUtil.isAbsolutePath(path)) {
             return FileUtil.file(path)
