@@ -3,6 +3,7 @@ package org.code4everything.hutool
 import cn.hutool.core.io.FileUtil
 import cn.hutool.core.lang.JarClassLoader
 import cn.hutool.core.util.ReflectUtil
+import cn.hutool.core.util.StrUtil
 import cn.hutool.http.HttpUtil
 import java.io.File
 import java.lang.reflect.Modifier
@@ -53,7 +54,6 @@ object PluginEntry {
             if (success.isNotEmpty()) {
                 add("uninstalled plugins: " + success.joinToString(", "))
             }
-
         }
     }
 
@@ -66,18 +66,20 @@ object PluginEntry {
             if (emptyLine) {
                 res.add("")
             }
+
             emptyLine = true
-            res.add("install plugin: $it")
+            val name = it.removeSuffix(".jar")
+            res.add("install plugin: $name")
             val plugin = if (it.startsWith("http://") || it.startsWith("https://")) {
                 HttpUtil.downloadFileFromUrl(it, fileConverter.string2Object("~/Downloads"))
-            } else fileConverter.string2Object(it)
+            } else fileConverter.string2Object(StrUtil.addSuffixIfNot(it, ".jar"))
 
             if (!FileUtil.exist(plugin)) {
-                res.add("install failed: file not exists")
+                res.add("install failed: '${plugin.name}' file not exists")
                 return@forEach
             }
             if (!plugin.name.endsWith("jar")) {
-                res.add("install failed: plugin is not a jar file")
+                res.add("install failed: '${plugin.absolutePath}' is not a jar file")
                 return@forEach
             }
 
@@ -105,7 +107,7 @@ object PluginEntry {
             }
 
             FileUtil.copy(plugin, File(pluginHome + File.separator + plugin.name), true)
-            res.add("install success: " + plugin.name.substring(0, plugin.name.length - 4))
+            res.add("install success: $name")
         }
 
         return res
