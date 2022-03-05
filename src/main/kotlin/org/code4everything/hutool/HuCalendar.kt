@@ -67,7 +67,7 @@ class HuCalendar(yearMonth: String?) {
         if (line == null) {
             result.add(StrJoiner.of(" ").append(line).toString())
         }
-        return StrJoiner.of("\n").append<Any>(result).toString()
+        return result.joinToString("\n")
     }
 
     companion object {

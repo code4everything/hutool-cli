@@ -1,70 +1,61 @@
 import org.jetbrains.kotlin.konan.file.bufferedReader
 
 plugins {
-    java
-    `maven-publish`
     id("org.jetbrains.kotlin.jvm") version "1.6.0-RC"
 }
 
-repositories {
-    mavenLocal()
-    maven {
-        url = uri("https://repo.maven.apache.org/maven2/")
+allprojects {
+    repositories {
+        mavenLocal()
+        maven {
+            url = uri("https://repo.maven.apache.org/maven2/")
+        }
+        mavenCentral()
     }
-    mavenCentral()
-}
 
-val jcommanderVersion = "1.81"
-val hutoolVersion = "5.7.16"
-val oshiVersion = "5.8.5"
-val emojiVersion = "5.1.1"
-val zxingVersion = "3.4.1"
-val pinyinVersion = "2.5.1"
-val fastjsonVersion = "1.2.78"
-val javassistVersion = "3.28.0-GA"
-val junitVersion = "4.13.2"
-val chalkVersion = "1.0.2"
-val qlExpressVersion = "3.2.6"
+    tasks.withType<JavaCompile> {
+        options.encoding = "UTF-8"
+    }
 
-dependencies {
-    implementation("com.beust:jcommander:$jcommanderVersion")
-    implementation("cn.hutool:hutool-core:$hutoolVersion")
-    implementation("cn.hutool:hutool-system:$hutoolVersion")
-    implementation("com.github.oshi:oshi-core:$oshiVersion")
-    implementation("cn.hutool:hutool-crypto:$hutoolVersion")
-    implementation("cn.hutool:hutool-http:$hutoolVersion")
-    implementation("cn.hutool:hutool-script:$hutoolVersion")
-    implementation("cn.hutool:hutool-extra:$hutoolVersion")
-    implementation("com.vdurmont:emoji-java:$emojiVersion")
-    implementation("com.google.zxing:core:$zxingVersion")
-    implementation("com.belerweb:pinyin4j:$pinyinVersion")
-    implementation("com.alibaba:fastjson:$fastjsonVersion")
-    implementation("org.javassist:javassist:$javassistVersion")
-    implementation("com.github.tomas-langer:chalk:$chalkVersion")
-    implementation("com.alibaba:QLExpress:$qlExpressVersion")
-    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
-    implementation("org.bouncycastle:bcprov-jdk15on:1.69")
+    val jcommanderVersion = "1.82"
+    val hutoolVersion = "5.7.20"
+    val oshiVersion = "6.1.3"
+    val emojiVersion = "5.1.1"
+    val zxingVersion = "3.4.1"
+    val pinyinVersion = "2.5.1"
+    val fastjsonVersion = "1.2.79"
+    val javassistVersion = "3.28.0-GA"
+    val junitVersion = "4.13.2"
+    val chalkVersion = "1.0.2"
+    val qlExpressVersion = "3.2.7"
 
-    testImplementation("junit:junit:$junitVersion")
+    dependencies {
+        apply(plugin = "org.jetbrains.kotlin.jvm")
+        implementation("com.beust:jcommander:$jcommanderVersion")
+        implementation("cn.hutool:hutool-core:$hutoolVersion")
+        implementation("cn.hutool:hutool-system:$hutoolVersion")
+        implementation("com.github.oshi:oshi-core:$oshiVersion")
+        implementation("cn.hutool:hutool-crypto:$hutoolVersion")
+        implementation("cn.hutool:hutool-http:$hutoolVersion")
+        implementation("cn.hutool:hutool-script:$hutoolVersion")
+        implementation("cn.hutool:hutool-extra:$hutoolVersion")
+        implementation("com.vdurmont:emoji-java:$emojiVersion")
+        implementation("com.google.zxing:core:$zxingVersion")
+        implementation("com.belerweb:pinyin4j:$pinyinVersion")
+        implementation("com.alibaba:fastjson:$fastjsonVersion")
+        implementation("org.javassist:javassist:$javassistVersion")
+        implementation("com.github.tomas-langer:chalk:$chalkVersion")
+        implementation("com.alibaba:QLExpress:$qlExpressVersion")
+        implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
+        implementation("org.bouncycastle:bcprov-jdk15on:1.69")
+        testImplementation("junit:junit:$junitVersion")
+    }
 }
 
 val group = "org.code4everything"
 val version = "1.6"
 val hutoolCliVersion = version
 val description = "hutool-cli"
-java.sourceCompatibility = JavaVersion.VERSION_1_8
-
-publishing {
-    publications {
-        create<MavenPublication>("maven") {
-            from(components["java"])
-        }
-    }
-}
-
-tasks.withType<JavaCompile> {
-    options.encoding = "UTF-8"
-}
 
 tasks.jar {
     archiveFileName.set("hutool.jar")
@@ -175,6 +166,8 @@ tasks.register("release", type = Zip::class) {
     from("./hutool")
     exclude("method")
     exclude("*.json")
+    exclude("plugins")
+    include("plugins/plugin.jar")
 }
 
 tasks.compileKotlin {

@@ -9,7 +9,6 @@ import com.ql.util.express.ExpressRunner
 import java.lang.reflect.Type
 import java.math.BigDecimal
 import java.math.BigInteger
-import java.sql.Timestamp
 import java.util.Date
 import java.util.StringJoiner
 import org.code4everything.hutool.converter.FileConverter
@@ -139,9 +138,9 @@ object QLE {
 
         override fun getDate(index: Int): Date? = if (index >= size) null else super.getDate(index)
 
-        override fun getSqlDate(index: Int): java.sql.Date? = if (index >= size) null else super.getSqlDate(index)
+        override fun getSqlDate(index: Int): Any? = if (index >= size) null else super.getSqlDate(index)
 
-        override fun getTimestamp(index: Int): Timestamp? = if (index >= size) null else super.getTimestamp(index)
+        override fun getTimestamp(index: Int): Any? = if (index >= size) null else super.getTimestamp(index)
 
         companion object {
 

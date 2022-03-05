@@ -60,6 +60,7 @@ object Hutool {
     private const val CONVERTER_JSON = "converter.json"
     const val CLAZZ_KEY = "clazz"
     private const val COMMAND_JSON = "command.json"
+    const val PLUGIN_NAME = "org.code4everything.hutool.PluginEntry"
     private val HUTOOL_USER_HOME = "${System.getProperty("user.home")}${File.separator}hutool-cli"
     private const val ALIAS = "alias"
     private const val PARAM_KEY = "paramTypes"
@@ -193,7 +194,7 @@ object Hutool {
             if (methodJson?.containsKey(methodKey) != true) {
                 val plugin = FileUtil.file(homeDir, "plugins", "${command.removePrefix("p.")}.jar")
                 if (FileUtil.exist(plugin)) {
-                    methodJson = JSONObject().apply { put(methodKey, "${Plugins.CLASS_NAME}#run()") }
+                    methodJson = JSONObject().apply { put(methodKey, "$PLUGIN_NAME#run()") }
                     Utils.classLoader = JarClassLoader().apply { addJar(plugin) }
                     debugOutput("get command from plugin: " + plugin.name)
                 } else {
@@ -759,7 +760,10 @@ object Hutool {
         }
     }
 
+    fun test2(cmd: String): String = test(*cmd.split(" ").toTypedArray())
+
     fun test(vararg args: String): String {
+        val alias = args[0]
         val cmd = java.lang.String.join(" ", *args)
         val cs = CharArray(cmd.length + 11) { '=' }
         cs[0] = '\n'
@@ -767,6 +771,7 @@ object Hutool {
         println("$separator\n>> hu $cmd <<$separator")
         var idx = args.size
         val newArgs = Arrays.copyOf(args, idx + 2)
+        newArgs[0] = if (alias == "plugin") "$PLUGIN_NAME#run" else alias
         newArgs[idx++] = "--work-dir"
         newArgs[idx] = Paths.get(".").toAbsolutePath().normalize().toString()
         main(newArgs)
