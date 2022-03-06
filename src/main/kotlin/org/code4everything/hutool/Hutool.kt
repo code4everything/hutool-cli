@@ -61,7 +61,7 @@ object Hutool {
     const val CLAZZ_KEY = "clazz"
     private const val COMMAND_JSON = "command.json"
     const val PLUGIN_NAME = "org.code4everything.hutool.PluginEntry"
-    private val HUTOOL_USER_HOME = "${System.getProperty("user.home")}${File.separator}hutool-cli"
+    val HUTOOL_USER_HOME = "${System.getProperty("user.home")}${File.separator}hutool-cli"
     private const val ALIAS = "alias"
     private const val PARAM_KEY = "paramTypes"
     private const val VERSION = "v1.6"

@@ -24,6 +24,7 @@ Figlet Banner生成
 
 ```shell
 hu figlet hutool-cli
+# hu figlet {message} {font-name=standard}
 
 # output:
   _               _                     _                  _   _ 
@@ -34,6 +35,8 @@ hu figlet hutool-cli
                                                                  
 
 ```
+
+> [figlet fonts](http://www.figlet.org/fontdb.cgi) ，下载后放到 `{user.home}/hutool-cli/fonts/figlet/` 目录下即可。
 
 查看时间进度
 
