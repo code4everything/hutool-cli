@@ -131,6 +131,11 @@ class HutoolCli {
         test("md5 test")
     }
 
+    @Test
+    fun randomColor() {
+        test("randomc")
+    }
+
     companion object {
 
         fun test(cmd: String, vararg params: String): String = Hutool.test(*(cmd.split(" ").toTypedArray() + params))

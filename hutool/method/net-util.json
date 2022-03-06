@@ -1,6 +1,0 @@
-{
-    "randport": {
-        "methodName": "getUsableLocalPort",
-        "paramTypes": []
-    }
-}

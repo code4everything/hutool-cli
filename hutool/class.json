@@ -30,80 +30,40 @@
         "clazz": "[Ljava.lang.String;"
     },
     "base32": {
-        "clazz": "cn.hutool.core.codec.Base32",
-        "methodAliasPaths": [
-            "method",
-            "base32-util.json"
-        ]
+        "clazz": "cn.hutool.core.codec.Base32"
     },
     "base64": {
-        "clazz": "cn.hutool.core.codec.Base64",
-        "methodAliasPaths": [
-            "method",
-            "base64-util.json"
-        ]
+        "clazz": "cn.hutool.core.codec.Base64"
     },
     "caesar": {
-        "clazz": "cn.hutool.core.codec.Caesar",
-        "methodAliasPaths": [
-            "method",
-            "caesar.json"
-        ]
+        "clazz": "cn.hutool.core.codec.Caesar"
     },
     "date.u": {
-        "clazz": "cn.hutool.core.date.DateUtil",
-        "methodAliasPaths": [
-            "method",
-            "date-util.json"
-        ]
+        "clazz": "cn.hutool.core.date.DateUtil"
     },
     "file.u": {
-        "clazz": "cn.hutool.core.io.FileUtil",
-        "methodAliasPaths": [
-            "method",
-            "file-util.json"
-        ]
+        "clazz": "cn.hutool.core.io.FileUtil"
     },
     "math.u": {
-        "clazz": "cn.hutool.core.math.MathUtil",
-        "methodAliasPaths": [
-            "method",
-            "math-util.json"
-        ]
+        "clazz": "cn.hutool.core.math.MathUtil"
     },
     "net.u": {
-        "clazz": "cn.hutool.core.net.NetUtil",
-        "methodAliasPaths": [
-            "method",
-            "net-util.json"
-        ]
+        "clazz": "cn.hutool.core.net.NetUtil"
     },
     "unicode.u": {
-        "clazz": "cn.hutool.core.text.UnicodeUtil",
-        "methodAliasPaths": [
-            "method",
-            "unicode-util.json"
-        ]
+        "clazz": "cn.hutool.core.text.UnicodeUtil"
     },
     "csu": {
         "clazz": "cn.hutool.core.text.CharSequenceUtil"
     },
     "charset.u": {
-        "clazz": "cn.hutool.core.util.CharsetUtil",
-        "methodAliasPaths": [
-            "method",
-            "charset-util.json"
-        ]
+        "clazz": "cn.hutool.core.util.CharsetUtil"
     },
     "hash.u": {
         "clazz": "cn.hutool.core.util.HashUtil"
     },
     "hex.u": {
-        "clazz": "cn.hutool.core.util.HexUtil",
-        "methodAliasPaths": [
-            "method",
-            "hex-util.json"
-        ]
+        "clazz": "cn.hutool.core.util.HexUtil"
     },
     "id.u": {
         "clazz": "cn.hutool.core.util.IdUtil"
@@ -118,21 +78,13 @@
         "clazz": "cn.hutool.core.util.ReflectUtil"
     },
     "regex.u": {
-        "clazz": "cn.hutool.core.util.ReUtil",
-        "methodAliasPaths": [
-            "method",
-            "re-util.json"
-        ]
+        "clazz": "cn.hutool.core.util.ReUtil"
     },
     "str.u": {
         "clazz": "cn.hutool.core.util.StrUtil"
     },
     "system.u": {
-        "clazz": "cn.hutool.system.SystemUtil",
-        "methodAliasPaths": [
-            "method",
-            "system-util.json"
-        ]
+        "clazz": "cn.hutool.system.SystemUtil"
     },
     "secure.u": {
         "clazz": "cn.hutool.crypto.SecureUtil"

@@ -726,7 +726,7 @@ object Hutool {
         val name = resClass.name
         val converterJson = getAlias(CONVERTER_JSON)
         val converterName0 = converterJson.getString(name)
-        return if (isStringEmpty(converterName)) {
+        return if (isStringEmpty(converterName0)) {
             ObjectUtil.toString(obj)
         } else newConverter(parseClass(converterName0) as Class<out Converter<*>>?, resClass)!!.object2String(obj)
     }
@@ -735,7 +735,6 @@ object Hutool {
         val key = paths.joinToString(File.separator)
         if (!ALIAS_CACHE.containsKey(key)) {
             val path = Paths.get(HUTOOL_USER_HOME, *paths).toAbsolutePath().normalize().toString()
-            debugOutput("user alias json file path: %s", path)
             val userAlias = getJson(path)
             val hutoolAlias = getJson(homeDir + File.separator + key)
             ALIAS_CACHE[key] = Utils.mergeJson(userAlias, hutoolAlias)

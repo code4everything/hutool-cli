@@ -20,19 +20,6 @@
     "now": {
         "method": "cn.hutool.core.date.DateUtil#date"
     },
-    "second": {
-        "method": "cn.hutool.core.date.DateUtil#currentSeconds"
-    },
-    "week": {
-        "method": "cn.hutool.core.date.DateUtil#dayOfWeekEnum(date=now)"
-    },
-    "weekend": {
-        "method": "cn.hutool.core.date.DateUtil#endOfWeek(date=now)"
-    },
-    "daydiff": {
-        "method": "cn.hutool.core.date.DateUtil#between(date,date=now,cn.hutool.core.date.DateUnit=day)",
-        "2param": "date,date,cn.hutool.core.date.DateUnit=day"
-    },
     "ms2date": {
         "method": "cn.hutool.core.date.DateUtil#date(long)"
     },
@@ -42,20 +29,8 @@
     "date2ms": {
         "method": "utils#date2Millis(date=now)"
     },
-    "ftype": {
-        "method": "cn.hutool.core.io.FileUtil#getType(file)"
-    },
-    "fr": {
-        "method": "cn.hutool.core.io.FileUtil#readUtf8String(file)"
-    },
     "cat": {
         "method": "cn.hutool.core.io.FileUtil#readUtf8String(file)"
-    },
-    "fw": {
-        "method": "cn.hutool.core.io.FileUtil#writeUtf8String(string,file)"
-    },
-    "write": {
-        "method": "cn.hutool.core.io.FileUtil#writeUtf8String(string,file)"
     },
     "unicode2str": {
         "method": "cn.hutool.core.text.UnicodeUtil#toString(string)"
@@ -63,17 +38,11 @@
     "str2unicode": {
         "method": "cn.hutool.core.text.UnicodeUtil#toUnicode(string)"
     },
-    "fconvert": {
-        "method": "cn.hutool.core.util.CharsetUtil#convert(file,charset,charset)"
-    },
     "hex": {
         "method": "cn.hutool.core.util.HexUtil#encodeHexStr(string)"
     },
     "idinfo": {
         "method": "cn.hutool.core.util.IdcardUtil#getIdcardInfo(string)"
-    },
-    "creditc": {
-        "method": "cn.hutool.core.util.CreditCodeUtil#randomCreditCode"
     },
     "uuid": {
         "method": "cn.hutool.core.util.IdUtil#randomUUID"
@@ -81,19 +50,12 @@
     "uuid0": {
         "method": "cn.hutool.core.util.IdUtil#simpleUUID"
     },
-    "objectid": {
-        "method": "cn.hutool.core.util.IdUtil#objectId"
-    },
     "random": {
+        "method": "cn.hutool.core.util.RandomUtil#randomString(int=16)"
+    },
+    "randomi": {
         "method": "cn.hutool.core.util.RandomUtil#randomLong(long=0,long=9223372036854775807)",
         "1param": "long=0,long"
-    },
-    "randomd": {
-        "method": "cn.hutool.core.util.RandomUtil#randomDouble(double=0,double=9223372036854775807)",
-        "1param": "double=0,double"
-    },
-    "randoms": {
-        "method": "cn.hutool.core.util.RandomUtil#randomString(int=16)"
     },
     "randompass": {
         "method": "cn.hutool.core.util.RandomUtil#randomString(string=abcdefghijkmnpqrstuvwxyzABCDEFGHJKMNPQRSTUVWXYZ234567892345678923456789,int=16)",
@@ -108,9 +70,6 @@
     "class": {
         "method": "utils#parseClassName(string)"
     },
-    "assignable": {
-        "method": "utils#assignableFrom(class,class)"
-    },
     "suppers": {
         "method": "utils#getSupperClass(class)"
     },
@@ -119,9 +78,6 @@
     },
     "match": {
         "method": "utils#getMatchedItems(reg.pattern,string)"
-    },
-    "test": {
-        "method": "cn.hutool.core.util.ReUtil#isMatch(reg.pattern,j.char.seq)"
     },
     "regex": {
         "method": "cn.hutool.core.util.ReUtil#isMatch(reg.pattern,j.char.seq)"
@@ -133,13 +89,7 @@
         "method": "utils#toLowerCase(string)"
     },
     "jinfo": {
-        "method": "cn.hutool.system.SystemUtil#props"
-    },
-    "sysinfo": {
-        "method": "cn.hutool.system.oshi.OshiUtil#getSystem"
-    },
-    "cpuinfo": {
-        "method": "cn.hutool.system.oshi.OshiUtil#getCpuInfo"
+        "method": "cn.hutool.core.util.SystemPropsUtil#getProps"
     },
     "md5": {
         "method": "cn.hutool.crypto.SecureUtil#md5(string)"
@@ -174,13 +124,6 @@
     },
     "lunar": {
         "method": "utils#lunar(date=now)"
-    },
-    "split": {
-        "method": "cn.hutool.core.text.CharSequenceUtil#splitTrim",
-        "paramTypes": [
-            "j.char.seq",
-            "j.char.seq=,"
-        ]
     },
     "mkdir": {
         "method": "cn.hutool.core.io.FileUtil#mkdir(file)"
@@ -252,8 +195,5 @@
     },
     "converters": {
         "method": "utils#getConverters()"
-    },
-    "mergejson": {
-        "method": "utils#mergeJson(json.obj,json.obj)"
     }
 }

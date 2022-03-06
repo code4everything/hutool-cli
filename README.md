@@ -16,7 +16,7 @@ hu uuid
 # output: 483cc7fc-4b22-4188-8f1c-dc1ce4b6d3ee
 ```
 
-现在不仅仅是终端里的Hutool了，更多功能等待你来探索哦。
+随着工具不断的迭代更新，现在，已经不再只是终端里的Hutool了，更多功能等待你来探索哦。
 
 ## 内置指令
 
@@ -161,7 +161,7 @@ hu
 Usage: hutool-cli [options]
   Options:
     -r, --run, --command
-      命令模式，命令（类方法别名）可以精确的定位到静态方法，-r指令可缺省
+      命令模式，命令（方法别名）可以精确的定位到静态方法，-r指令可缺省
     -c, --class
       类名称（自动加前缀：cn.hutool.）
     -m, --method
@@ -203,11 +203,11 @@ hu -r cn.hutool.core.codec.Base64#encode -t java.lang.CharSequence -p hutool-cli
 hu -c base64 -m encode -p 'sky is blue'
 # output: c2t5IGlzIGJsdWU=
 
-hu -r encode64 'sky is blue' -y
+hu encode64 'sky is blue' -y
 # output: c2t5IGlzIGJsdWU=
 # 说明：-y 表示将输出结果复制到剪贴板
 
-hu -r decode64 -a:0
+hu decode64 -a:0
 # output: sky is blue
 # 说明：-a:0 表示将剪贴板字符串内容注入到索引位置是0的参数中
 
@@ -276,7 +276,7 @@ replaceAll(str:java.lang.CharSequence, regex:java.lang.String, replaceFun:cn.hut
 
 ## 别名查看
 
-查看有哪些类方法别名（可以精确的定位到方法）
+查看有哪些方法别名（可以精确的定位到方法）
 
 ```shell
 hu alias
@@ -384,42 +384,19 @@ unicode     = cn.hutool.core.text.UnicodeUtil
 zip         = cn.hutool.core.util.ZipUtil
 ```
 
-查看类别名下方法别名，有以下两种方式：
-
-```shell
-hu -c base64 -m alias
-
-# output:
-decode    = decodeStr(source:java.lang.CharSequence)
-encode    = encode(source:java.lang.CharSequence)
-encodeurl = encodeUrlSafe(source:java.lang.CharSequence)
-```
-
-```shell
-hu -r date#alias
-
-# output:
-between = between(beginDate:java.util.Date, endDate:java.util.Date, unit:cn.hutool.core.date.DateUnit=day)
-ms2date = date(date:java.util.Date)
-now     = now()
-second  = currentSeconds()
-week    = dayOfWeekEnum(date:java.util.Date)
-weekend = endOfWeek(date:java.util.Date)
-```
-
 > 我们可以通过关键字 `alias` 来查看命令、类名、方法名已有的别名
 
 ## 覆盖别名方法
 
-使用别名文件定义的类名和方法名，参数类型及数量替换为终端命令中使用特定语法输入的内容。
+使用别名文件定义的类名和方法名，参数类型及数量替换为用户在终端中输入的内容。
 
 举个例子，比如别名文件中定义的`md5`方法是：`cn.hutool.crypto.SecureUtil#md5(data:java.lang.String)`，传入的是一个`string`类型的参数，但是现在我们想要计算一个文件的MD5。
 
 如何做呢？方法一，再定义一个计算文件MD5的别名，缺点导致别名过多，不方便记忆。
 
-方法二，覆盖别名，语法：`hu command@type1,type2 param`。
+方法二，采用覆盖别名方法，语法：`hu command@type1,type2 params`。
 
-还是上面的`md5`，首先查看它的重载方法有哪些？
+还是上面的`md5`举例，首先查看它有哪些重载方法
 
 ```shell
 hu md5@
@@ -490,7 +467,8 @@ hu qrcode 'qrcode test' 600 600 /home/test.png
     "echo": {
         /*@符号表示总是解析参数默认值*/
         "method": "qe#run(@string=return args,@boolean=false)",
-        "outConverter": "org.code4everything.hutool.converter.LineSepConverter"
+        "outConverter": "org.code4everything.hutool.converter.LineSepConverter",
+        "inConverters": []
     }
 }
 ```
@@ -499,13 +477,11 @@ hu qrcode 'qrcode test' 600 600 /home/test.png
 
 hutool-cli 提供了很多常用的别名，参考下面文件：
 
-- 类方法别名参考 [command.json](/hutool/command.json)
+- 方法别名参考 [command.json](/hutool/command.json)
 
 - 类名称别名参考 [class.json](/hutool/class.json)
 
-- ~~方法名称别名参考（弃用此功能）~~
-
-自定义你的别名后，你还可以 pr 到本仓库哦，让更多人享受到 hutool 带来的便捷吧。
+自定义你的别名后，可以 pr 到本仓库哦，让更多人体验到工具带来的便捷~
 
 > 注意：类别名的定义不能超过16个字符。
 

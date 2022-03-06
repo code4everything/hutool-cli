@@ -17,38 +17,26 @@ allprojects {
         options.encoding = "UTF-8"
     }
 
-    val jcommanderVersion = "1.82"
     val hutoolVersion = "5.7.20"
-    val oshiVersion = "6.1.3"
-    val emojiVersion = "5.1.1"
-    val zxingVersion = "3.4.1"
-    val pinyinVersion = "2.5.1"
-    val fastjsonVersion = "1.2.79"
-    val javassistVersion = "3.28.0-GA"
-    val junitVersion = "4.13.2"
-    val chalkVersion = "1.0.2"
-    val qlExpressVersion = "3.2.7"
-
     dependencies {
         apply(plugin = "org.jetbrains.kotlin.jvm")
-        implementation("com.beust:jcommander:$jcommanderVersion")
+        implementation("com.beust:jcommander:1.82")
         implementation("cn.hutool:hutool-core:$hutoolVersion")
         implementation("cn.hutool:hutool-system:$hutoolVersion")
-        implementation("com.github.oshi:oshi-core:$oshiVersion")
         implementation("cn.hutool:hutool-crypto:$hutoolVersion")
         implementation("cn.hutool:hutool-http:$hutoolVersion")
         implementation("cn.hutool:hutool-script:$hutoolVersion")
         implementation("cn.hutool:hutool-extra:$hutoolVersion")
-        implementation("com.vdurmont:emoji-java:$emojiVersion")
-        implementation("com.google.zxing:core:$zxingVersion")
-        implementation("com.belerweb:pinyin4j:$pinyinVersion")
-        implementation("com.alibaba:fastjson:$fastjsonVersion")
-        implementation("org.javassist:javassist:$javassistVersion")
-        implementation("com.github.tomas-langer:chalk:$chalkVersion")
-        implementation("com.alibaba:QLExpress:$qlExpressVersion")
+        implementation("com.vdurmont:emoji-java:5.1.1")
+        implementation("com.google.zxing:core:3.4.1")
+        implementation("com.belerweb:pinyin4j:2.5.1")
+        implementation("com.alibaba:fastjson:1.2.79")
+        implementation("org.javassist:javassist:3.28.0-GA")
+        implementation("com.github.tomas-langer:chalk:1.0.2")
+        implementation("com.alibaba:QLExpress:3.2.7")
         implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
         implementation("org.bouncycastle:bcprov-jdk15on:1.69")
-        testImplementation("junit:junit:$junitVersion")
+        testImplementation("junit:junit:4.13.2")
     }
 }
 
