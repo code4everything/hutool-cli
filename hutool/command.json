@@ -195,5 +195,8 @@
     },
     "converters": {
         "method": "utils#getConverters()"
+    },
+    "figlet": {
+        "method": "org.code4everything.hutool.figlet.Figlet#ascii(string,string=standard)"
     }
 }

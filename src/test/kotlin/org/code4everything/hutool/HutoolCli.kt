@@ -136,6 +136,11 @@ class HutoolCli {
         test("randomc")
     }
 
+    @Test
+    fun figlet(){
+        test("figlet hutool-cli")
+    }
+
     companion object {
 
         fun test(cmd: String, vararg params: String): String = Hutool.test(*(cmd.split(" ").toTypedArray() + params))
