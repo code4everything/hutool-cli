@@ -66,9 +66,10 @@ object Hutool {
     private const val PARAM_KEY = "paramTypes"
     private const val VERSION = "v1.6"
     private val ALIAS_CACHE: MutableMap<String, JSONObject> = HashMap(4, 1f)
-
     private var result: Any? = null
+
     var homeDir: String = System.getenv("HUTOOL_PATH")
+    var pluginHome = homeDir + File.separator + "plugins"
     private var omitParamType = true
 
     lateinit var ARG: MethodArg
@@ -192,7 +193,7 @@ object Hutool {
             val aliasJson = getAlias(COMMAND_JSON)
             var methodJson = aliasJson.getJSONObject(command)
             if (methodJson?.containsKey(methodKey) != true) {
-                val plugin = FileUtil.file(homeDir, "plugins", "${command.removePrefix("p.")}.jar")
+                val plugin = FileUtil.file(pluginHome, "${command.removePrefix("p.")}.jar")
                 if (FileUtil.exist(plugin)) {
                     methodJson = JSONObject().apply { put(methodKey, "$PLUGIN_NAME#run()") }
                     Utils.classLoader = JarClassLoader().apply { addJar(plugin) }

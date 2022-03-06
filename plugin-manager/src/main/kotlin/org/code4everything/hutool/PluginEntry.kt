@@ -13,8 +13,6 @@ import org.code4everything.hutool.converter.LineSepConverter
 
 object PluginEntry {
 
-    private var pluginHome = Hutool.homeDir + File.separator + "plugins"
-
     @JvmStatic
     @IOConverter(LineSepConverter::class)
     fun run(): List<String> {
@@ -34,7 +32,7 @@ object PluginEntry {
     }
 
     private fun list(): List<String> {
-        val plugins = FileUtil.ls(pluginHome)
+        val plugins = FileUtil.ls(Hutool.pluginHome)
         return listOf("installed plugins: " + plugins.joinToString(", ") { it.name.removeSuffix(".jar") })
     }
 
@@ -43,7 +41,7 @@ object PluginEntry {
         val success = arrayListOf<String>()
         plugins.forEach {
             val name = it.removeSuffix(".jar")
-            val del = FileUtil.del(pluginHome + File.separator + name + ".jar")
+            val del = FileUtil.del(Hutool.pluginHome + File.separator + name + ".jar")
             if (del) success.add(name) else failed.add(name)
         }
 
@@ -106,7 +104,7 @@ object PluginEntry {
                 return@forEach
             }
 
-            FileUtil.copy(plugin, File(pluginHome + File.separator + plugin.name), true)
+            FileUtil.copy(plugin, File(Hutool.pluginHome + File.separator + plugin.name), true)
             res.add("install success: $name")
         }
 
