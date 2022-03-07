@@ -44,6 +44,12 @@ object Utils {
     @JvmStatic
     private var mvnRepositoryHome: List<String>? = null
 
+    /**
+     * 可在别名文件中自定义输入输出转换器
+     */
+    @JvmStatic
+    fun power(any: Any?): Any? = any
+
     @JvmStatic
     @IOConverter(LineSepConverter::class)
     fun getConverters(): List<String> {
@@ -374,6 +380,7 @@ object Utils {
     private fun parseClassName0(className: String): String {
         return when (className) {
             "string" -> "java.lang.String"
+            "object" -> "java.lang.Object"
             "j.char.seq" -> "java.lang.CharSequence"
             "file" -> "java.io.File"
             "charset" -> "java.nio.charset.Charset"

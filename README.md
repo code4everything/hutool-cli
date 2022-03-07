@@ -20,7 +20,7 @@ hu uuid
 
 ## 内置命令
 
-Figlet Banner生成
+FigletBanner生成（ASCII艺术字）
 
 ```shell
 hu figlet hutool-cli
@@ -539,6 +539,7 @@ mvn:org.code4everything:wetool-plugin-support:1.6.0
 |简写名|类全名|
 |---|---|
 |string|java.lang.String|
+|object|java.lang.Object|
 |j.char.seq|java.lang.CharSequence|
 |file|java.io.File|
 |charset|java.nio.charset.Charset|

@@ -683,11 +683,12 @@ object Hutool {
     }
 
     fun convertResult(obj: Any?, converterName: String?): String {
-        if (Objects.isNull(obj)) {
+        if (obj == null) {
+            debugOutput("get null result, convert to empty")
             return ""
         }
 
-        val resClass: Class<*> = obj!!.javaClass
+        val resClass: Class<*> = obj.javaClass
         if (converterName?.isNotEmpty() == true) {
             return Converter.getConverter(converterName, resClass)!!.object2String(obj)
         }

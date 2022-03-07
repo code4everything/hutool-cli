@@ -131,7 +131,7 @@
     "calc": {
         "method": "utils#calc(string,int=0)"
     },
-    "fopen": {
+    "open": {
         "method": "cn.hutool.core.swing.DesktopUtil#open(file=.)"
     },
     "value": {
