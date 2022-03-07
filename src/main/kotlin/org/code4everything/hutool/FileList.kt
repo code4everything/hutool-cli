@@ -3,11 +3,13 @@ package org.code4everything.hutool
 import cn.hutool.core.comparator.ComparatorChain
 import cn.hutool.core.date.DateUtil
 import cn.hutool.core.io.FileUtil
-import cn.hutool.core.util.ArrayUtil
+import cn.hutool.core.util.StrUtil
 import java.io.File
 import java.util.Arrays
 import java.util.Date
 import java.util.stream.Collectors
+import java.util.zip.ZipEntry
+import java.util.zip.ZipFile
 import org.code4everything.hutool.converter.FileConverter
 import org.code4everything.hutool.converter.LineSepConverter
 
@@ -16,28 +18,36 @@ object FileList {
     @JvmStatic
     @IOConverter(LineSepConverter::class)
     fun treeFile(@IOConverter(FileConverter::class) file: File, maxDepth: Int): List<String> {
-        return if (FileUtil.exist(file)) {
-            treeFile(file, 1, maxDepth, true)
-        } else emptyList()
+        if (!FileUtil.exist(file)) {
+            return emptyList()
+        }
+        if (FileUtil.isDirectory(file)) {
+            return treeFile(DocFileProp(file), 1, maxDepth, true)
+        }
+        if (file.name.endsWith(".jar") || file.name.endsWith(".zip")) {
+            val zip = ZipFile(file)
+            return treeFile(ZipProp(zip), 1, maxDepth, true)
+        }
+        return listOf(file.name)
     }
 
-    private fun treeFile(file: File, currDepth: Int, maxDepth: Int, isLast: Boolean): List<String> {
+    private fun treeFile(file: FileProp, currDepth: Int, maxDepth: Int, isLast: Boolean): List<String> {
         if (maxDepth > -1 && currDepth > maxDepth) {
             return emptyList()
         }
 
-        if (file.isFile) {
+        if (file.isFile()) {
             val prefix = if (isLast) "└─" else "├─"
-            return listOf("$prefix${file.name}")
+            return listOf("$prefix${file.getName()}")
         }
 
-        val files = file.listFiles()
-        if (ArrayUtil.isEmpty(files)) {
+        val files = file.listEntries()
+        if (files.isEmpty()) {
             return emptyList()
         }
 
-        val fileList = files!!.filter { !it.isHidden && (!it.isDirectory || !it.name.startsWith(".")) }.stream()
-            .sorted(Comparator.comparing { obj: File -> obj.isDirectory }.reversed()).collect(Collectors.toList())
+        val fileList = files.filter { !it.isHidden() && (!it.isDirectory() || !it.getName().startsWith(".")) }.stream()
+            .sorted(Comparator.comparing { obj: FileProp -> obj.isDirectory() }.reversed()).collect(Collectors.toList())
         if (fileList.isEmpty()) {
             return emptyList()
         }
@@ -47,10 +57,10 @@ object FileList {
         for (i in 0..last) {
             val f = fileList[i]
             val isLastInner = i == last
-            val directory = f.isDirectory
+            val directory = f.isDirectory()
             if (directory) {
                 val prefix = if (isLastInner) "└─" else "├─"
-                list.add("$prefix${f.name}")
+                list.add("$prefix${f.getName()}")
             }
 
             val innerList = treeFile(f, if (directory) currDepth + 1 else currDepth, maxDepth, isLastInner)
@@ -116,5 +126,86 @@ object FileList {
         }
 
         return list
+    }
+
+    interface FileProp {
+        fun isFile(): Boolean
+        fun getName(): String
+        fun isHidden(): Boolean
+        fun isDirectory(): Boolean
+        fun listEntries(): List<FileProp>
+    }
+
+    class DocFileProp(private val file: File) : FileProp {
+        override fun isFile(): Boolean = file.isFile
+
+        override fun getName(): String = file.name
+
+        override fun isHidden(): Boolean = file.isHidden
+
+        override fun isDirectory(): Boolean = file.isDirectory
+
+        override fun listEntries(): List<FileProp> = file.listFiles()?.map { DocFileProp(it) } ?: emptyList()
+    }
+
+    open class ZipProp(private val zip: ZipFile) : FileProp {
+        override fun isFile(): Boolean = false
+
+        override fun getName(): String = zip.name
+
+        override fun isHidden(): Boolean = false
+
+        override fun isDirectory(): Boolean = true
+
+        override fun listEntries(): List<FileProp> = listEntry("")
+
+        fun listEntry(prefix: String): List<FileProp> {
+            val entries = zip.entries()
+            val list = arrayListOf<FileProp>()
+            val cnt1 = StrUtil.count(prefix, '/')
+
+            while (entries.hasMoreElements()) {
+                val entry = entries.nextElement()
+                if (entry.name.equals(prefix)) {
+                    continue
+                }
+                if (prefix.isNotEmpty() && !entry.name.startsWith(prefix)) {
+                    continue
+                }
+                val cnt2 = StrUtil.count(entry.name.removeSuffix("/"), '/')
+                if (cnt2 > cnt1) {
+                    // mean multi dir
+                    continue
+                }
+                list.add(ZipEntryProp(zip, entry))
+            }
+
+            return list
+        }
+    }
+
+    class ZipEntryProp(zip: ZipFile, private val entry: ZipEntry) : ZipProp(zip) {
+
+        private var name: String? = null
+
+        override fun isFile(): Boolean = !isDirectory()
+
+        override fun getName(): String {
+            if (name == null) {
+                name = entry.name.removeSuffix("/").split("/").last()
+            }
+            return name!!
+        }
+
+        override fun isHidden(): Boolean = false
+
+        override fun isDirectory(): Boolean = entry.isDirectory
+
+        override fun listEntries(): List<FileProp> {
+            if (isFile()) {
+                return emptyList()
+            }
+            return listEntry(entry.name)
+        }
     }
 }

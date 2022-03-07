@@ -18,7 +18,7 @@ hu uuid
 
 随着工具不断的迭代更新，现在，已经不再只是终端里的Hutool了，更多功能等待你来探索哦。
 
-## 内置指令
+## 内置命令
 
 Figlet Banner生成
 
@@ -525,7 +525,8 @@ external.conf文件支持mvn坐标，但前提是本地maven仓库已有对应�
 mvn:org.code4everything:wetool-plugin-support:1.6.0
 ```
 
-方法三，通过插件方式，安装插件 `hu plugin install /path/xxx.jar`，执行插件 `hu xxx` 或者 `hu p.xxx`（当插件名被别名占用时，可使用此方式执行），程序将执行插件包内的 `org.code4everything.hutool.PluginEntry#run()` 方法。
+方法三，通过插件方式，安装插件 `hu plugin install /path/xxx.jar`，执行插件 `hu xxx` 或者 `hu p.xxx`
+（当插件名被别名占用时，可使用此方式执行），程序将执行插件包内的 `org.code4everything.hutool.PluginEntry#run()` 方法。
 
 > 你可以基于此功能开发适用于本地的指令。
 

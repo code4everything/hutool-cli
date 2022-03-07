@@ -102,7 +102,7 @@ class HutoolCli {
 
     @Test
     fun treeFile() {
-        test("tree ~ 3")
+        test("tree hutool/hutool.jar 2")
     }
 
     @Test
@@ -137,7 +137,7 @@ class HutoolCli {
     }
 
     @Test
-    fun figlet(){
+    fun figlet() {
         test("figlet hutool-cli")
     }
 
