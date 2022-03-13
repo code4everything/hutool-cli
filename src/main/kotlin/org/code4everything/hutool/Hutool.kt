@@ -258,7 +258,7 @@ object Hutool {
             return
         }
 
-        var methodAliasPaths: MutableList<String>? = null
+        var methodAliasPaths = ""
         if (innerFixName) {
             // 尝试从类别名文件中查找类全名
             val methodAliasKey = "methodAliasPaths"
@@ -269,7 +269,7 @@ object Hutool {
             } else {
                 ARG.className = clazzJson.getString(CLAZZ_KEY)
                 debugOutput("find class alias: %s", ARG.className)
-                methodAliasPaths = JSON.parseArray(clazzJson.getString(methodAliasKey), String::class.java)
+                methodAliasPaths = clazzJson.getJSONArray(methodAliasKey).joinToString(File.separator)
             }
         }
 
@@ -293,20 +293,20 @@ object Hutool {
         resolveResultByClassMethod(clazz!!, innerFixName, methodAliasPaths)
     }
 
-    private fun resolveResultByClassMethod(clazz: Class<*>, fixName: Boolean, methodAliasPaths: List<String>?) {
+    private fun resolveResultByClassMethod(clazz: Class<*>, fixName: Boolean, methodAliasPath: String) {
         if (isStringEmpty(ARG.methodName)) {
             seeUsage()
             return
         }
 
         if (ALIAS == ARG.methodName) {
-            if (!isCollectionEmpty(methodAliasPaths)) {
-                seeAlias(clazz.name, *methodAliasPaths!!.toTypedArray())
+            if (methodAliasPath.isNotBlank()) {
+                seeAlias(clazz.name, methodAliasPath)
             }
             return
         }
 
-        fixMethodName(fixName, methodAliasPaths)
+        fixMethodName(fixName, methodAliasPath)
 
         // 将剪贴板字符内容注入到方法参数的指定索引位置
         if (ARG.paramIdxFromClipboard >= 0) {
@@ -343,7 +343,7 @@ object Hutool {
             val paramTypeArray = ARG.paramTypes.toTypedArray()
             debugOutput(msg, clazz.name, ARG.methodName, ArrayUtil.join(paramTypeArray, ", "))
             ARG.methodName = ""
-            resolveResultByClassMethod(clazz, fixName, methodAliasPaths)
+            resolveResultByClassMethod(clazz, fixName, methodAliasPath)
             return
         }
 
@@ -523,11 +523,11 @@ object Hutool {
         return converterName0?.let { newConverter(parseClass(it) as Class<Converter<*>>?, type) }
     }
 
-    private fun fixMethodName(fixName: Boolean, methodAliasPaths: List<String>?) {
+    private fun fixMethodName(fixName: Boolean, methodAliasPath: String) {
         // 从方法别名文件中找到方法名
-        if (fixName && !isCollectionEmpty(methodAliasPaths)) {
+        if (fixName && methodAliasPath.isNotBlank()) {
             val methodKey = "methodName"
-            val aliasJson = getAlias(*methodAliasPaths!!.toTypedArray())
+            val aliasJson = getAlias(methodAliasPath)
             val methodJson = aliasJson.getJSONObject(ARG.methodName)
             if (Objects.nonNull(methodJson)) {
                 val methodName = methodJson.getString(methodKey)
@@ -552,15 +552,17 @@ object Hutool {
         commander.usage()
     }
 
-    private fun seeAlias(className: String, vararg paths: String) {
+    private fun seeAlias(className: String, path: String) {
         // 用户自定义别名会覆盖工作目录定义的别名
-        val aliasJson = getAlias(*paths)
-        aliasJson.putAll(getAlias(*paths))
+        val aliasJson = getAlias(path)
+        aliasJson.putAll(getAlias(path))
         if (!isCollectionEmpty(ARG.params)) {
             val iterator: MutableIterator<Map.Entry<String, Any>> = aliasJson.entries.iterator()
             while (iterator.hasNext()) {
-                val key = iterator.next().key
-                if (ARG.params.stream().noneMatch { s: String? -> key.contains(s!!) }) {
+                val entry = iterator.next()
+                val method = aliasJson.getJSONObject(entry.key)?.getString("method")
+                val name = (entry.key + (method ?: "")).lowercase()
+                if (ARG.params.stream().noneMatch { s: String? -> name.contains(s!!) }) {
                     iterator.remove()
                 }
             }
@@ -732,19 +734,18 @@ object Hutool {
         } else newConverter(parseClass(converterName0) as Class<out Converter<*>>?, resClass)!!.object2String(obj)
     }
 
-    fun getAlias(vararg paths: String?): JSONObject {
-        val key = paths.joinToString(File.separator)
-        if (!ALIAS_CACHE.containsKey(key)) {
-            val path = Paths.get(HUTOOL_USER_HOME, *paths).toAbsolutePath().normalize().toString()
-            val userAlias = getJson(path)
-            val hutoolAlias = getJson(homeDir + File.separator + key)
-            ALIAS_CACHE[key] = Utils.mergeJson(userAlias, hutoolAlias)
+    fun getAlias(filename: String): JSONObject {
+        if (!ALIAS_CACHE.containsKey(filename)) {
+            val userAlias = getJson(HUTOOL_USER_HOME + File.separator + filename)
+            val hutoolAlias = getJson(homeDir + File.separator + filename)
+            ALIAS_CACHE[filename] = Utils.mergeJson(userAlias, hutoolAlias)
         }
-        return ALIAS_CACHE[key]!!
+        return ALIAS_CACHE[filename]!!
     }
 
     private fun getJson(path: String): JSONObject {
-        return if (FileUtil.exist(path)) JSON.parseObject(FileUtil.readUtf8String(path)) else JSONObject()
+        val file = File(path)
+        return if (file.exists() && file.isFile) JSON.parseObject(FileUtil.readUtf8String(path)) else JSONObject()
     }
 
     fun debugOutput(msg: String, vararg params: Any?) {

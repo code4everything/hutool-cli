@@ -1,7 +1,7 @@
 val group = "org.code4everything"
 val version = "1.6"
 val hutoolCliVersion = version
-val description = "hutool comand line plugin manager"
+val description = "hutool command line plugin manager"
 
 dependencies {
     implementation(rootProject)
