@@ -10,18 +10,20 @@ import cn.hutool.core.lang.Holder
 import cn.hutool.core.lang.JarClassLoader
 import cn.hutool.core.math.Calculator
 import cn.hutool.core.util.ClassUtil
+import cn.hutool.core.util.ReUtil
 import cn.hutool.core.util.ReflectUtil
 import com.alibaba.fastjson.JSONObject
 import java.io.File
 import java.lang.reflect.Field
+import java.lang.reflect.Method
 import java.lang.reflect.Modifier
+import java.lang.reflect.Parameter
 import java.util.Arrays
 import java.util.Date
 import java.util.StringJoiner
 import java.util.regex.Pattern
 import java.util.stream.Collectors
 import javassist.ClassPool
-import javassist.CtMethod
 import javassist.bytecode.LocalVariableAttribute
 import kotlin.math.ceil
 import kotlin.streams.toList
@@ -39,12 +41,12 @@ object Utils {
     private var classAliasJson: JSONObject? = null
 
     @JvmStatic
-    var classLoader: JarClassLoader? = null
+    internal var classLoader: JarClassLoader? = null
 
     @JvmStatic
     private var mvnRepositoryHome: List<String>? = null
 
-    private val clazzCache = HashMap<String, Class<*>?>(4, 1f)
+    private val clazzCache = HashMap<String, Class<*>>(4, 1f)
 
     /**
      * 可在别名文件中自定义输入输出转换器
@@ -239,14 +241,6 @@ object Utils {
     }
 
     @JvmStatic
-    fun assignableFrom(
-        @IOConverter(ClassConverter::class) sourceClass: Class<*>,
-        @IOConverter(ClassConverter::class) testClass: Class<*>
-    ): Boolean {
-        return sourceClass.isAssignableFrom(testClass)
-    }
-
-    @JvmStatic
     fun calc(expression: String?, @IOConverter scale: Int): String {
         val res = Calculator.conversion(expression)
         return String.format("%.${scale}f", res)
@@ -282,7 +276,7 @@ object Utils {
 
     @JvmStatic
     @IOConverter(ClassConverter::class)
-    fun parseClass(className: String): Class<*>? {
+    internal fun parseClass(className: String): Class<*> {
         return clazzCache.computeIfAbsent(className) {
             when (it) {
                 "bool", "boolean" -> Boolean::class.javaPrimitiveType
@@ -294,7 +288,7 @@ object Utils {
                 "float" -> Float::class.javaPrimitiveType
                 "double" -> Double::class.javaPrimitiveType
                 else -> parseClass0(className)
-            }
+            }!!
         }
     }
 
@@ -463,11 +457,10 @@ object Utils {
 
     @JvmStatic
     @IOConverter(LineSepConverter::class)
-    fun outputPublicStaticMethods0(className: String, filter: List<String>, forceEquals: Boolean = false): List<String> {
-        val pool = ClassPool.getDefault()
+    internal fun outputPublicStaticMethods0(className: String, filter: List<String>, forceEquals: Boolean = false): List<String> {
         try {
-            val ctClass = pool[parseClassName(className)]
-            val methods = ctClass.methods
+            val clazz = parseClass(className)
+            val methods = clazz.methods
             val lineList: MutableList<String> = ArrayList(methods.size)
             for (method in methods) {
                 val modifiers = method.modifiers
@@ -492,21 +485,20 @@ object Utils {
     }
 
     @JvmStatic
-    fun getMethodFullInfo(method: CtMethod, defaultValueMap: Map<String?, String?>?): String {
-        val parameterTypes = method.parameterTypes
+    internal fun getMethodFullInfo(method: Method, defaultValueMap: Map<String?, String?>?): String {
+        val parameters = method.parameters
         if (Hutool.isDebug) {
             val joiner = StringJoiner(",")
-            Arrays.stream(parameterTypes).forEach { joiner.add(it.name) }
+            Arrays.stream(parameters).forEach { joiner.add(it.type.name) }
             Hutool.debugOutput("parse method full info: %s#%s(%s)", method.declaringClass.name, method.name, joiner)
         }
 
         val paramJoiner = StringJoiner(", ")
-        val attribute =
-            method.methodInfo.codeAttribute.getAttribute(LocalVariableAttribute.tag) as LocalVariableAttribute?
-        for (i in parameterTypes.indices) {
-            val parameterType = parameterTypes[i]
-            val paramType = parameterType.name
-            var paramStr = attribute!!.variableName(i) + ":" + paramType
+        for (i in parameters.indices) {
+            val parameter = parameters[i]
+            val paramType = parameter.type.name
+            val name = getParamName(parameter)
+            var paramStr = "$name:$paramType"
             if (defaultValueMap != null) {
                 val defaultValue = defaultValueMap[paramType + i]
                 if (!isStringEmpty(defaultValue)) {
@@ -517,5 +509,25 @@ object Utils {
         }
 
         return "${method.name}($paramJoiner)"
+    }
+
+    private fun getParamName(parameter: Parameter): String {
+        // 优先使用注解和Java8编译参数
+        val param = parameter.getAnnotation(Param::class.java)
+        val name = param?.value?.ifEmpty { param.name } ?: parameter.name
+
+        val idx = name.removePrefix("arg")
+        if (ReUtil.isMatch("[0-9]+", idx)) {
+            // 无Java8编译参数时，使用javassist获取形参名称
+            val method = parameter.declaringExecutable
+            val pool = ClassPool.getDefault()
+            val ctClass = pool[method.declaringClass.name]
+            val ctMethod = ctClass.getDeclaredMethod(method.name, method.parameterTypes.map { pool[it.name] }.toTypedArray())
+            val codeAttribute = ctMethod.methodInfo.codeAttribute
+            val attribute = codeAttribute.getAttribute(LocalVariableAttribute.tag) as LocalVariableAttribute?
+            return attribute!!.variableName(idx.toInt())
+        }
+
+        return name
     }
 }

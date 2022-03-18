@@ -17,7 +17,7 @@ allprojects {
         options.encoding = "UTF-8"
     }
 
-    val hutoolVersion = "5.7.20"
+    val hutoolVersion = "5.7.22"
     dependencies {
         apply(plugin = "org.jetbrains.kotlin.jvm")
         implementation("com.beust:jcommander:1.82")
@@ -25,7 +25,6 @@ allprojects {
         implementation("cn.hutool:hutool-system:$hutoolVersion")
         implementation("cn.hutool:hutool-crypto:$hutoolVersion")
         implementation("cn.hutool:hutool-http:$hutoolVersion")
-        implementation("cn.hutool:hutool-script:$hutoolVersion")
         implementation("cn.hutool:hutool-extra:$hutoolVersion")
         implementation("com.vdurmont:emoji-java:5.1.1")
         implementation("com.google.zxing:core:3.4.1")
@@ -35,7 +34,7 @@ allprojects {
         implementation("com.github.tomas-langer:chalk:1.0.2")
         implementation("com.alibaba:QLExpress:3.2.7")
         implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
-        implementation("org.bouncycastle:bcprov-jdk15on:1.69")
+        implementation("org.bouncycastle:bcprov-jdk15on:1.70")
         implementation("com.github.lalyos:jfiglet:0.0.8")
         testImplementation("junit:junit:4.13.2")
     }
@@ -163,6 +162,7 @@ tasks.register("release", type = Zip::class) {
 
 tasks.compileKotlin {
     kotlinOptions.jvmTarget = "1.8"
+    kotlinOptions.javaParameters = true
 }
 
 tasks.compileTestKotlin {

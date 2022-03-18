@@ -45,9 +45,6 @@ class ListStringConverter : Converter<List<String?>> {
         if (any !is Collection<*>) {
             return ""
         }
-        if (any.isEmpty()) {
-            return "[]"
-        }
 
         val iterator = any.iterator()
         if (any.size == 1) {

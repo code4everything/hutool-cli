@@ -109,9 +109,6 @@
     "download": {
         "method": "cn.hutool.http.HttpUtil#downloadFileFromUrl(string,file=.)"
     },
-    "eval": {
-        "method": "cn.hutool.script.ScriptUtil#eval(string)"
-    },
     "pinyin": {
         "method": "cn.hutool.extra.pinyin.PinyinUtil#getPinyin(string)"
     },
@@ -165,9 +162,6 @@
         "method": "file.list#treeFile(file=.,int=-1)",
         "1param": "file,int=-1"
     },
-    "len": {
-        "method": "csu#length(j.char.seq)"
-    },
     "touch": {
         "method": "cn.hutool.core.io.FileUtil#touch(file=NewFile.txt)"
     },
@@ -177,8 +171,8 @@
     "countdown": {
         "method": "org.code4everything.hutool.Countdown#countdown(string,string=sec)"
     },
-    "echo": {
-        "method": "qe#run(@string=return args,@boolean=false)"
+    "run": {
+        "method": "qe#run(string=return args,@boolean=false)"
     },
     "env": {
         "method": "qe#run",
@@ -189,9 +183,6 @@
     },
     "lottery": {
         "method": "org.code4everything.hutool.Lottery#lottery"
-    },
-    "tojson": {
-        "method": "org.code4everything.hutool.JsonFormatter#format(string)"
     },
     "converters": {
         "method": "utils#getConverters()"

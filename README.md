@@ -236,13 +236,6 @@ hu encode64 'test multi cmd' // decode64 \\0
 
 > 在 `-r` 模式下，别名后可直接跟方法需要的参数，当然使用 `-p` 也是支持的，并且 -r 是可以省略的，如最上面生成随机UUID的例子。
 
-执行JavaScript脚本
-
-```shell
-hu eval 5+6+3+22+9999
-# output: 10035
-```
-
 ## 查看类有哪些可执行静态方法
 
 ```shell
@@ -297,109 +290,26 @@ replaceAll(str:java.lang.CharSequence, regex:java.lang.String, replaceFun:cn.hut
 查看有哪些方法别名（可以精确的定位到方法）
 
 ```shell
-hu alias
-# 等同于：hu -r alias
+# 查看包含random的别名
+hu alias random
 
 # output:
-assignable  = org.code4everything.hutool.Utils#assignableFrom(sourceClass:java.lang.Class, testClass:java.lang.Class)
-between     = cn.hutool.core.date.DateUtil#between(beginDate:java.util.Date, endDate:java.util.Date, unit:cn.hutool.core.date.DateUnit=day)
-calc        = org.code4everything.hutool.Utils#calc(expression:java.lang.String, scale:int=0)
-class       = org.code4everything.hutool.Utils#parseClassName(className:java.lang.String)
-cpuinfo     = cn.hutool.system.oshi.OshiUtil#getCpuInfo()
-creditc     = cn.hutool.core.util.CreditCodeUtil#randomCreditCode()
-date2ms     = org.code4everything.hutool.Utils#date2Millis(date:java.util.Date)
-decode32    = cn.hutool.core.codec.Base32#decodeStr(source:java.lang.String)
-decode64    = cn.hutool.core.codec.Base64#decodeStr(source:java.lang.CharSequence)
-decodeqr    = cn.hutool.extra.qrcode.QrCodeUtil#decode(qrCodeFile:java.io.File)
-download    = cn.hutool.http.HttpUtil#downloadFileFromUrl(url:java.lang.String, destFile:java.io.File)
-encode32    = cn.hutool.core.codec.Base32#encode(source:java.lang.String)
-encode64    = cn.hutool.core.codec.Base64#encode(source:java.lang.CharSequence)
-encode64url = cn.hutool.core.codec.Base64#encodeUrlSafe(source:java.lang.CharSequence)
-eval        = cn.hutool.script.ScriptUtil#eval(e:java.lang.String)
-fconvert    = cn.hutool.core.util.CharsetUtil#convert(file:java.io.File, srcCharset:java.nio.charset.Charset, destCharset:java.nio.charset.Charset)
-fopen       = cn.hutool.core.swing.DesktopUtil#open(e:java.io.File=.)
-fr          = cn.hutool.core.io.FileUtil#readUtf8String(file:java.io.File)
-ftype       = cn.hutool.core.io.FileUtil#getType(file:java.io.File)
-fw          = cn.hutool.core.io.FileUtil#writeUtf8String(content:java.lang.String, file:java.io.File)
-get         = cn.hutool.http.HttpUtil#get(urlString:java.lang.String)
-grep        = org.code4everything.hutool.Utils#grep(line:java.util.regex.Pattern, pattern:java.util.List)
-hex         = cn.hutool.core.util.HexUtil#encodeHexStr(data:java.lang.String)
-idcard      = cn.hutool.core.util.IdcardUtil#getIdcardInfo(idcard:java.lang.String)
-jinfo       = cn.hutool.system.SystemUtil#props()
-lower       = org.code4everything.hutool.Utils#toLowerCase(str:java.lang.String)
-lunar       = org.code4everything.hutool.Utils#lunar(date:java.util.Date)
-match       = cn.hutool.core.util.ReUtil#isMatch(pattern:java.util.regex.Pattern, content:java.lang.CharSequence)
-md5         = cn.hutool.crypto.SecureUtil#md5(data:java.lang.String)
-methods     = org.code4everything.hutool.Utils#outputPublicStaticMethods(className:java.lang.String)
-mkdir       = cn.hutool.core.io.FileUtil#mkdir(dir:java.io.File)
-ms2date     = cn.hutool.core.date.DateUtil#date(date:long)
-now         = cn.hutool.core.date.DateUtil#date()
-objectid    = cn.hutool.core.util.IdUtil#objectId()
-pinyin      = cn.hutool.extra.pinyin.PinyinUtil#getPinyin(str:java.lang.String)
-post        = cn.hutool.http.HttpUtil#post(urlString:java.lang.String, body:java.lang.String={})
-qrcode      = cn.hutool.extra.qrcode.QrCodeUtil#generate(content:java.lang.String, width:int=1000, height:int=1000, targetFile:java.io.File)
-random      = cn.hutool.core.util.RandomUtil#randomLong(min:long=0, max:long=9223372036854775807)
-randomc     = cn.hutool.core.img.ImgUtil#randomColor()
-randomd     = cn.hutool.core.util.RandomUtil#randomDouble(min:double=0, max:double=9223372036854775807)
-randompass  = cn.hutool.core.util.RandomUtil#randomString(number:java.lang.String=abcdefghijkmnpqrstuvwxyzABCDEFGHJKMNPQRSTUVWXYZ234567892345678923456789, i:int=16)
-randoms     = cn.hutool.core.util.RandomUtil#randomString(length:int=16)
-regex       = cn.hutool.core.util.ReUtil#isMatch(pattern:java.util.regex.Pattern, content:java.lang.CharSequence)
-second      = cn.hutool.core.date.DateUtil#currentSeconds()
-sha1        = cn.hutool.crypto.SecureUtil#sha1(data:java.lang.String)
-sha256      = cn.hutool.crypto.SecureUtil#sha256(data:java.lang.String)
-split       = cn.hutool.core.text.CharSequenceUtil#splitTrim(str:java.lang.CharSequence, separator:java.lang.CharSequence=,)
-str2unicode = cn.hutool.core.text.UnicodeUtil#toUnicode(str:java.lang.String)
-suppers     = org.code4everything.hutool.Utils#getSupperClass(clazz:java.lang.Class)
-sysinfo     = cn.hutool.system.oshi.OshiUtil#getSystem()
-test        = cn.hutool.core.util.ReUtil#isMatch(pattern:java.util.regex.Pattern, content:java.lang.CharSequence)
-unicode2str = cn.hutool.core.text.UnicodeUtil#toString(c:java.lang.String)
-upper       = org.code4everything.hutool.Utils#toUpperCase(str:java.lang.String)
-uuid        = cn.hutool.core.util.IdUtil#randomUUID()
-uuid0       = cn.hutool.core.util.IdUtil#simpleUUID()
-week        = cn.hutool.core.date.DateUtil#dayOfWeekEnum(date:java.util.Date)
-weekend     = cn.hutool.core.date.DateUtil#endOfWeek(date:java.util.Date)
+random     = cn.hutool.core.util.RandomUtil#randomString(length:int=16)
+randomc    = cn.hutool.core.img.ImgUtil#randomColor()
+randomi    = cn.hutool.core.util.RandomUtil#randomLong(min:long=0, max:long=9223372036854775807)
+randompass = cn.hutool.core.util.RandomUtil#randomString(number:java.lang.String=abcdefghijkmnpqrstuvwxyzABCDEFGHJKMNPQRSTUVWXYZ234567892345678923456789, i:int=16)
+uuid       = cn.hutool.core.util.IdUtil#randomUUID()
 ```
 
 查看类名称别名
 
 ```shell
-hu -c alias
+# 查看包含base的类别名
+hu -c alias -p base
 
 # output:
-base32      = cn.hutool.core.codec.Base32
-base64      = cn.hutool.core.codec.Base64
-caesar      = cn.hutool.core.codec.Caesar
-charset     = cn.hutool.core.util.CharsetUtil
-clipboard   = cn.hutool.core.swing.clipboard.ClipboardUtil
-credit      = cn.hutool.core.util.CreditCodeUtil
-csu         = cn.hutool.core.text.CharSequenceUtil
-date        = cn.hutool.core.date.DateUtil
-desensitize = cn.hutool.core.util.DesensitizedUtil
-emoji       = cn.hutool.extra.emoji.EmojiUtil
-file        = cn.hutool.core.io.FileUtil
-hash        = cn.hutool.core.util.HashUtil
-hex         = cn.hutool.core.util.HexUtil
-http        = cn.hutool.http.HttpUtil
-id          = cn.hutool.core.util.IdUtil
-img         = cn.hutool.core.img.ImgUtil
-list        = cn.hutool.core.collection.ListUtil
-math        = cn.hutool.core.math.MathUtil
-net         = cn.hutool.core.net.NetUtil
-p           = cn.hutool.core.swing.DesktopUtil
-phone       = cn.hutool.core.util.PhoneUtil
-pinyin      = cn.hutool.extra.pinyin.PinyinUtil
-qrcode      = cn.hutool.extra.qrcode.QrCodeUtil
-random      = cn.hutool.core.util.RandomUtil
-reflect     = cn.hutool.core.util.ReflectUtil
-regex       = cn.hutool.core.util.ReUtil
-robot       = cn.hutool.core.swing.RobotUtil
-screen      = cn.hutool.core.swing.ScreenUtil
-script      = cn.hutool.script.ScriptUtil
-secure      = cn.hutool.crypto.SecureUtil
-str         = cn.hutool.core.util.StrUtil
-system      = cn.hutool.system.SystemUtil
-unicode     = cn.hutool.core.text.UnicodeUtil
-zip         = cn.hutool.core.util.ZipUtil
+base32 = cn.hutool.core.codec.Base32
+base64 = cn.hutool.core.codec.Base64
 ```
 
 > 我们可以通过关键字 `alias` 来查看命令、类名、方法名已有的别名

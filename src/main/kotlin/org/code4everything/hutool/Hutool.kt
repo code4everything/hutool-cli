@@ -33,8 +33,6 @@ import java.util.concurrent.FutureTask
 import java.util.function.Consumer
 import java.util.regex.Pattern
 import java.util.stream.Collectors
-import javassist.ClassPool
-import javassist.CtClass
 import kotlin.math.min
 import org.code4everything.hutool.Converter.Companion.newConverter
 import org.code4everything.hutool.Utils.getMethodFullInfo
@@ -42,7 +40,6 @@ import org.code4everything.hutool.Utils.isArrayEmpty
 import org.code4everything.hutool.Utils.isCollectionEmpty
 import org.code4everything.hutool.Utils.isStringEmpty
 import org.code4everything.hutool.Utils.parseClass
-import org.code4everything.hutool.Utils.parseClassName
 import org.code4everything.hutool.converter.ArrayConverter
 import org.code4everything.hutool.converter.CharsetConverter
 import org.code4everything.hutool.converter.DateConverter
@@ -188,6 +185,9 @@ object Hutool {
                 return
             }
 
+            omitParamType = false
+            fixClassName = false
+
             // 从命令文件中找到类名和方法名以及参数类型，默认值
             val methodKey = "method"
             val aliasJson = getAlias(COMMAND_JSON)
@@ -202,6 +202,7 @@ object Hutool {
                     val methodName = ARG.params.removeFirst()
                     methodJson = JSONObject().fluentPut(methodKey, "$command#$methodName")
                     debugOutput("get method name from param[0]")
+                    omitParamType = true
                 } else {
                     result = "command[$command] not found!"
                     return
@@ -241,10 +242,7 @@ object Hutool {
                     ARG.paramTypes.addAll(userParamTypes)
                 }
             }
-
             debugOutput("get method: %s, params: %s", ARG.methodName, ARG.paramTypes)
-            omitParamType = false
-            fixClassName = false
         }
 
         resolveResultByClassMethod(fixClassName)
@@ -318,7 +316,7 @@ object Hutool {
         }
 
         val method: Method?
-        if (omitParamType && isCollectionEmpty(ARG.paramTypes) && !isCollectionEmpty(ARG.params)) {
+        if (omitParamType && isCollectionEmpty(ARG.paramTypes)) {
             // 缺省方法参数类型，自动匹配方法
             debugOutput("getting method ignore case by method name and param count")
             method = autoMatchMethod(clazz)
@@ -562,11 +560,13 @@ object Hutool {
         aliasJson.putAll(getAlias(path))
         if (!isCollectionEmpty(ARG.params)) {
             val iterator: MutableIterator<Map.Entry<String, Any>> = aliasJson.entries.iterator()
+            val filter = ARG.params.map { it.lowercase() }
             while (iterator.hasNext()) {
                 val entry = iterator.next()
-                val method = aliasJson.getJSONObject(entry.key)?.getString("method")
+                val json = aliasJson.getJSONObject(entry.key)
+                val method = json?.getString("method") ?: json?.getString("clazz")
                 val name = (entry.key + (method ?: "")).lowercase()
-                if (ARG.params.stream().noneMatch { s: String? -> name.contains(s!!) }) {
+                if (filter.stream().noneMatch { s: String? -> name.contains(s!!) }) {
                     iterator.remove()
                 }
             }
@@ -596,7 +596,7 @@ object Hutool {
                 parseMethod(json)
                 try {
                     // 拿到方法的形参名称，参数类型
-                    map[k] = parseMethodFullInfo(className, ARG.methodName, ARG.paramTypes)
+                    map[k] = parseMethodFullInfo(className, ARG.methodName!!, ARG.paramTypes)
                 } catch (e: Exception) {
                     // 这里只能输出方法参数类型，无法输出形参类型
                     debugOutput("parse method param name error: %s", ExceptionUtil.stacktraceToString(e, Int.MAX_VALUE))
@@ -640,40 +640,36 @@ object Hutool {
         }
     }
 
-    private fun parseMethodFullInfo(className: String, methodName: String?, paramTypes: List<String>): String {
+    private fun parseMethodFullInfo(className: String, methodName: String, paramTypes: List<String>): String {
         var mn = methodName
         var outClassName = false
-        val pool = ClassPool.getDefault()
-        val ctClass: CtClass
+        val clazz: Class<*>
         if (isStringEmpty(className)) {
-            // 来自类方法别名
+            // 来自方法别名
             val idx = methodName!!.indexOf("#")
-            ctClass = pool[parseClassName(methodName.substring(0, idx))]
+            clazz = parseClass(methodName.substring(0, idx))
             mn = methodName.substring(idx + 1)
             outClassName = true
         } else {
-            // 来自方法别名
-            ctClass = pool[className]
+            clazz = parseClass(className)
         }
 
-        // 用javassist库解析形参类型
-        val params = arrayOfNulls<CtClass>(paramTypes.size)
+        val params = arrayOfNulls<Class<*>>(paramTypes.size)
         val defaultValueMap: MutableMap<String?, String?> = HashMap(4, 1f)
         for (i in paramTypes.indices) {
-            var paramTypeClass = paramTypes[i]
-            val idx = paramTypeClass.indexOf('=')
+            val paramType = paramTypes[i]
+            val idx = paramType.indexOf('=')
             if (idx > 0) {
-                val old = paramTypeClass
-                val typeName = old.substring(if (old[0] == '@') 1 else 0, idx)
-                paramTypeClass = parseClassName(typeName)
-                defaultValueMap[paramTypeClass + i] = old.substring(idx + 1)
+                val typeName = paramType.substring(if (paramType[0] == '@') 1 else 0, idx)
+                params[i] = parseClass(typeName)
+                defaultValueMap[params[i]!!.name + i] = paramType.substring(idx + 1)
             } else {
-                paramTypeClass = parseClassName(paramTypeClass)
+                params[i] = parseClass(paramType)
             }
-            params[i] = pool[paramTypeClass]
         }
-        val ctMethod = ctClass.getDeclaredMethod(mn, params)
-        return (if (outClassName) ctClass.name + "#" else "") + getMethodFullInfo(ctMethod, defaultValueMap)
+
+        val method = clazz.getMethod(mn, *params)
+        return (if (outClassName) clazz.name + "#" else "") + getMethodFullInfo(method, defaultValueMap)
     }
 
     private fun convertResult(): String {
