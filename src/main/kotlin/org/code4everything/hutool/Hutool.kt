@@ -195,9 +195,13 @@ object Hutool {
             if (methodJson?.containsKey(methodKey) != true) {
                 val plugin = FileUtil.file(pluginHome, "${command.removePrefix("p.")}.jar")
                 if (FileUtil.exist(plugin)) {
-                    methodJson = JSONObject().apply { put(methodKey, "$PLUGIN_NAME#run()") }
+                    methodJson = JSONObject().fluentPut(methodKey, "$PLUGIN_NAME#run()")
                     Utils.classLoader = JarClassLoader().apply { addJar(plugin) }
                     debugOutput("get command from plugin: " + plugin.name)
+                } else if (ARG.params.size > 0 && parseClass(command) != null) {
+                    val methodName = ARG.params.removeFirst()
+                    methodJson = JSONObject().fluentPut(methodKey, "$command#$methodName")
+                    debugOutput("get method name from param[0]")
                 } else {
                     result = "command[$command] not found!"
                     return

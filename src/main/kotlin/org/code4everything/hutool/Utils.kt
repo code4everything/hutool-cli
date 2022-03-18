@@ -44,6 +44,8 @@ object Utils {
     @JvmStatic
     private var mvnRepositoryHome: List<String>? = null
 
+    private val clazzCache = HashMap<String, Class<*>?>(4, 1f)
+
     /**
      * 可在别名文件中自定义输入输出转换器
      */
@@ -281,16 +283,18 @@ object Utils {
     @JvmStatic
     @IOConverter(ClassConverter::class)
     fun parseClass(className: String): Class<*>? {
-        return when (className) {
-            "bool", "boolean" -> Boolean::class.javaPrimitiveType
-            "byte" -> Byte::class.javaPrimitiveType
-            "short" -> Short::class.javaPrimitiveType
-            "char" -> Char::class.javaPrimitiveType
-            "int" -> Int::class.javaPrimitiveType
-            "long" -> Long::class.javaPrimitiveType
-            "float" -> Float::class.javaPrimitiveType
-            "double" -> Double::class.javaPrimitiveType
-            else -> parseClass0(className)
+        return clazzCache.computeIfAbsent(className) {
+            when (it) {
+                "bool", "boolean" -> Boolean::class.javaPrimitiveType
+                "byte" -> Byte::class.javaPrimitiveType
+                "short" -> Short::class.javaPrimitiveType
+                "char" -> Char::class.javaPrimitiveType
+                "int" -> Int::class.javaPrimitiveType
+                "long" -> Long::class.javaPrimitiveType
+                "float" -> Float::class.javaPrimitiveType
+                "double" -> Double::class.javaPrimitiveType
+                else -> parseClass0(className)
+            }
         }
     }
 
