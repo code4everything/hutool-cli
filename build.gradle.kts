@@ -36,6 +36,7 @@ allprojects {
         implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
         implementation("org.bouncycastle:bcprov-jdk15on:1.70")
         implementation("com.github.lalyos:jfiglet:0.0.8")
+        implementation("net.thisptr:jackson-jq:1.0.0-preview.20210928")
         testImplementation("junit:junit:4.13.2")
     }
 }
@@ -63,8 +64,10 @@ tasks.jar {
     exclude("META-INF/LICENSE.txt")
     exclude("META-INF/NOTICE.txt")
     exclude("META-INF/versions/9/module-info.class")
+    exclude("META-INF/NOTICE")
     exclude("slant.flf")
     exclude("standard.flf")
+    exclude("module-info.class")
 }
 
 val isWin = System.getProperty("os.name").toLowerCase().contains("windows")

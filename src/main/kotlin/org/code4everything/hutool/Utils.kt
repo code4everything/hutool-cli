@@ -37,16 +37,12 @@ import org.code4everything.hutool.converter.PatternConverter
 
 object Utils {
 
-    @JvmStatic
-    private var classAliasJson: JSONObject? = null
+    private val classAliasJson by lazy { Hutool.getAlias(Hutool.CLASS_JSON) }
+    private val mvnRepositoryHome by lazy { listOf("~", ".m2", "repository") }
+    private val clazzCache by lazy { HashMap<String, Class<*>>(4, 1f) }
+    private val classNameCache by lazy { HashMap<String, String>(4, 1f) }
 
-    @JvmStatic
     internal var classLoader: JarClassLoader? = null
-
-    @JvmStatic
-    private var mvnRepositoryHome: List<String>? = null
-
-    private val clazzCache = HashMap<String, Class<*>>(4, 1f)
 
     /**
      * 可在别名文件中自定义输入输出转换器
@@ -343,8 +339,7 @@ object Utils {
                 return null
             }
 
-            mvnRepositoryHome ?: run { mvnRepositoryHome = listOf("~", ".m2", "repository") }
-            val paths: MutableList<String> = ArrayList(mvnRepositoryHome!!)
+            val paths = ArrayList(mvnRepositoryHome)
             paths.addAll(coordinates[0].split('.'))
             val name = coordinates[1]
             val version = coordinates[2]
@@ -361,16 +356,18 @@ object Utils {
 
     @JvmStatic
     fun parseClassName(className: String): String {
-        return when (className) {
-            "bool", "boolean" -> "boolean"
-            "byte" -> "byte"
-            "short" -> "short"
-            "char" -> "char"
-            "int" -> "int"
-            "long" -> "long"
-            "float" -> "float"
-            "double" -> "double"
-            else -> parseClassName0(className)
+        return classNameCache.computeIfAbsent(className) {
+            when (it) {
+                "bool", "boolean" -> "boolean"
+                "byte" -> "byte"
+                "short" -> "short"
+                "char" -> "char"
+                "int" -> "int"
+                "long" -> "long"
+                "float" -> "float"
+                "double" -> "double"
+                else -> parseClassName0(className)
+            }
         }
     }
 
@@ -403,7 +400,7 @@ object Utils {
     @JvmStatic
     private fun parseClassName00(className: String): String {
         var cn = className
-        if (cn.endsWith(";") && cn.contains("[L")) {
+        if (cn.endsWith(';') && cn.contains("[L")) {
             val idx = cn.indexOf("L")
             val prefix = cn.substring(0, idx + 1)
             val name = parseClassName(cn.substring(idx + 1, cn.length - 1))
@@ -414,19 +411,20 @@ object Utils {
             return cn
         }
 
-        if (classAliasJson == null) {
-            classAliasJson = Hutool.getAlias(Hutool.CLASS_JSON)
-            classAliasJson!!.putAll(Hutool.getAlias(Hutool.CLASS_JSON))
-        }
-
-        val classJson = classAliasJson!!.getJSONObject(cn)
+        var nameFromAlias = false
+        val classJson = classAliasJson.getJSONObject(cn)
         if (classJson != null) {
             val className0 = classJson.getString(Hutool.CLAZZ_KEY)
             if (!isStringEmpty(className0)) {
                 cn = className0
+                nameFromAlias = true
             }
         }
-        return cn
+
+        if (nameFromAlias || cn.startsWith('@')) {
+            return cn.removePrefix("@")
+        }
+        return parseClassName00("@$cn")
     }
 
     @JvmStatic

@@ -40,6 +40,7 @@ import org.code4everything.hutool.Utils.isArrayEmpty
 import org.code4everything.hutool.Utils.isCollectionEmpty
 import org.code4everything.hutool.Utils.isStringEmpty
 import org.code4everything.hutool.Utils.parseClass
+import org.code4everything.hutool.Utils.parseClassName
 import org.code4everything.hutool.converter.ArrayConverter
 import org.code4everything.hutool.converter.CharsetConverter
 import org.code4everything.hutool.converter.DateConverter
@@ -53,31 +54,34 @@ import org.code4everything.hutool.converter.WeekConverter
 
 object Hutool {
 
-    const val CLASS_JSON = "class.json"
+    internal const val CLASS_JSON = "class.json"
+    internal const val CLAZZ_KEY = "clazz"
+
     private const val CONVERTER_JSON = "converter.json"
-    const val CLAZZ_KEY = "clazz"
-    private const val COMMAND_JSON = "command.json"
-    const val PLUGIN_NAME = "org.code4everything.hutool.PluginEntry"
-    val HUTOOL_USER_HOME = "${System.getProperty("user.home")}${File.separator}hutool-cli"
-    private const val ALIAS = "alias"
     private const val PARAM_KEY = "paramTypes"
     private const val VERSION = "v1.6"
-    private val ALIAS_CACHE: MutableMap<String, JSONObject> = HashMap(4, 1f)
-    private var result: Any? = null
+    private const val ALIAS = "alias"
+    private const val COMMAND_JSON = "command.json"
 
-    var homeDir: String = System.getenv("HUTOOL_PATH")
-    var pluginHome = homeDir + File.separator + "plugins"
-    private var omitParamType = true
+    const val PLUGIN_NAME = "org.code4everything.hutool.PluginEntry"
+
+    private val ALIAS_CACHE by lazy { HashMap<String, JSONObject>(4, 1f) }
+    private val resultContainer by lazy { ArrayList<String>(5) }
+
+    val homeDir: String by lazy { System.getenv("HUTOOL_PATH") }
+    val HUTOOL_USER_HOME by lazy { "${System.getProperty("user.home")}${File.separator}hutool-cli" }
+    val pluginHome by lazy { homeDir + File.separator + "plugins" }
+    val simpleDateFormat by lazy { SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS") }
+    val isDebug: Boolean get() = ARG.debug
 
     lateinit var ARG: MethodArg
     lateinit var resultString: String
     private lateinit var commander: JCommander
-    private val resultContainer: MutableList<String> by lazy { ArrayList(5) }
+
+    private var result: Any? = null
+    private var omitParamType = true
     private var outputConverterName: String? = null
     private var inputConverterNames: List<String>? = null
-
-    val isDebug: Boolean get() = ARG.debug
-    val simpleDateFormat: SimpleDateFormat by lazy { SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS") }
 
     @JvmStatic
     private fun resolveCmd(args: Array<String>): String {
@@ -198,9 +202,9 @@ object Hutool {
                     methodJson = JSONObject().fluentPut(methodKey, "$PLUGIN_NAME#run()")
                     Utils.classLoader = JarClassLoader().apply { addJar(plugin) }
                     debugOutput("get command from plugin: " + plugin.name)
-                } else if (ARG.params.size > 0 && parseClass(command) != null) {
+                } else if (ARG.params.size > 0 && parseClassName("@$command") != "@$command") {
                     val methodName = ARG.params.removeFirst()
-                    methodJson = JSONObject().fluentPut(methodKey, "$command#$methodName")
+                    methodJson = JSONObject().fluentPut(methodKey, "@$command#$methodName")
                     debugOutput("get method name from param[0]")
                     omitParamType = true
                 } else {
@@ -431,27 +435,23 @@ object Hutool {
 
     private fun autoMatchMethod(clazz: Class<*>): Method? {
         // 找到与方法名一致的方法（忽略大小写）
-        val methods = clazz.methods
-        val fuzzyList: MutableList<Method> = ArrayList()
-        for (method in methods) {
-            val modifiers = method.modifiers
-            if (!Modifier.isPublic(modifiers) || !Modifier.isStatic(modifiers)) {
-                continue
-            }
-            if (method.name.equals(ARG.methodName, ignoreCase = true)) {
-                fuzzyList.add(method)
-            }
+        var fuzzyList = clazz.methods.filter {
+            val modifiers = it.modifiers
+            Modifier.isPublic(modifiers) && Modifier.isStatic(modifiers) && it.name.equals(ARG.methodName, ignoreCase = true)
         }
+
         if (isCollectionEmpty(fuzzyList)) {
             return null
+        }
+        if (fuzzyList.size == 1) {
+            return fuzzyList.first()
         }
 
         // 找到离参数个数最相近的方法
         val paramSize = ARG.params.size
-        fuzzyList.sortWith(Comparator.comparingInt { it.parameterCount })
-        var method: Method? = null
+        fuzzyList = fuzzyList.sortedWith(Comparator.comparingInt { it.parameterCount })
+        var method = fuzzyList.first()
         for (m in fuzzyList) {
-            method = method ?: m
             if (m.parameterCount > paramSize) {
                 break
             }
@@ -459,7 +459,7 @@ object Hutool {
         }
 
         // 确定方法参数类型
-        method?.also {
+        method.also {
             ARG.paramTypes = ArrayList()
             for (paramType in it.parameterTypes) {
                 ARG.paramTypes.add(paramType.name)
@@ -554,27 +554,31 @@ object Hutool {
         commander.usage()
     }
 
-    private fun seeAlias(className: String, path: String) {
-        // 用户自定义别名会覆盖工作目录定义的别名
-        val aliasJson = getAlias(path)
-        aliasJson.putAll(getAlias(path))
-        if (!isCollectionEmpty(ARG.params)) {
-            val iterator: MutableIterator<Map.Entry<String, Any>> = aliasJson.entries.iterator()
-            val filter = ARG.params.map { it.lowercase() }
-            while (iterator.hasNext()) {
-                val entry = iterator.next()
-                val json = aliasJson.getJSONObject(entry.key)
-                val method = json?.getString("method") ?: json?.getString("clazz")
-                val name = (entry.key + (method ?: "")).lowercase()
-                if (filter.stream().noneMatch { s: String? -> name.contains(s!!) }) {
-                    iterator.remove()
-                }
-            }
+    private fun filter(aliasJson: JSONObject) {
+        if (isCollectionEmpty(ARG.params)) {
+            return
         }
 
+        // 使用用户输入的关键词过滤
+        val iterator = aliasJson.entries.iterator()
+        val filter = ARG.params.map { it.lowercase() }
+        while (iterator.hasNext()) {
+            val entry = iterator.next()
+            val json = aliasJson.getJSONObject(entry.key)
+            val method = json?.getString("method") ?: json?.getString("clazz")
+            val name = (entry.key + (method ?: "")).lowercase()
+            if (filter.stream().noneMatch { s: String? -> name.contains(s!!) }) {
+                iterator.remove()
+            }
+        }
+    }
+
+    private fun seeAlias(className: String, path: String) {
+        val aliasJson = getAlias(path)
+        filter(aliasJson)
         val joiner = StringJoiner("\n")
         val maxLength = Holder.of(0)
-        val map: MutableMap<String, String> = TreeMap()
+        val map = TreeMap<String, String>()
         aliasJson.keys.forEach(Consumer { k: String ->
             val length = k.length
             if (length > maxLength.get()) {
@@ -591,7 +595,7 @@ object Hutool {
                     methodName = json.getString("methodName")
                 }
                 ARG.methodName = methodName
-                // 清楚过滤参数，使用定义的默认方法
+                // 清除过滤参数，使用定义的默认方法
                 ARG.params.clear()
                 parseMethod(json)
                 try {

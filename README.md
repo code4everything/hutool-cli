@@ -20,6 +20,20 @@ hu uuid
 
 ## 内置命令
 
+jq命令支持（jq是一款强大的命令行json数据处理工具）
+
+```shell
+hu jq '.' '{"tutorial":"https://stedolan.github.io/jq/tutorial/"}'
+
+#output:
+{
+  "tutorial" : "https://stedolan.github.io/jq/tutorial/"
+}
+
+```
+
+> [JQ基本语法](https://stedolan.github.io/jq/manual/#Basicfilters)
+
 FigletBanner生成（ASCII艺术字）
 
 ```shell
@@ -247,40 +261,7 @@ contains(pattern:java.util.regex.Pattern, content:java.lang.CharSequence)
 contains(regex:java.lang.String, content:java.lang.CharSequence)
 count(pattern:java.util.regex.Pattern, content:java.lang.CharSequence)
 count(regex:java.lang.String, content:java.lang.CharSequence)
-delAll(pattern:java.util.regex.Pattern, content:java.lang.CharSequence)
-delAll(regex:java.lang.String, content:java.lang.CharSequence)
-delFirst(pattern:java.util.regex.Pattern, content:java.lang.CharSequence)
-delFirst(regex:java.lang.String, content:java.lang.CharSequence)
-delPre(regex:java.lang.String, content:java.lang.CharSequence)
-escape(c:char)
-escape(current:java.lang.CharSequence)
-extractMulti(group:java.util.regex.Pattern, pattern:java.lang.CharSequence, content:java.lang.String)
-extractMulti(regex:java.lang.String, content:java.lang.CharSequence, template:java.lang.String)
-extractMultiAndDelPre(group:java.util.regex.Pattern, var:cn.hutool.core.lang.Holder, pattern:java.lang.String)
-extractMultiAndDelPre(regex:java.lang.String, contentHolder:cn.hutool.core.lang.Holder, template:java.lang.String)
-findAll(pattern:java.util.regex.Pattern, content:java.lang.CharSequence, group:int)
-findAll(pattern:java.util.regex.Pattern, content:java.lang.CharSequence, group:int, collection:java.util.Collection)
-findAll(regex:java.lang.String, content:java.lang.CharSequence, group:int)
-findAll(regex:java.lang.String, content:java.lang.CharSequence, group:int, collection:java.util.Collection)
-findAllGroup0(pattern:java.util.regex.Pattern, content:java.lang.CharSequence)
-findAllGroup0(regex:java.lang.String, content:java.lang.CharSequence)
-findAllGroup1(pattern:java.util.regex.Pattern, content:java.lang.CharSequence)
-findAllGroup1(regex:java.lang.String, content:java.lang.CharSequence)
-get(pattern:java.util.regex.Pattern, content:java.lang.CharSequence, groupIndex:int)
-get(regex:java.lang.String, content:java.lang.CharSequence, groupIndex:int)
-getAllGroups(i:java.util.regex.Pattern, startGroup:java.lang.CharSequence, groupCount:boolean)
-getAllGroups(pattern:java.util.regex.Pattern, content:java.lang.CharSequence)
-getFirstNumber(StringWithNumber:java.lang.CharSequence)
-getGroup0(pattern:java.util.regex.Pattern, content:java.lang.CharSequence)
-getGroup0(regex:java.lang.String, content:java.lang.CharSequence)
-getGroup1(pattern:java.util.regex.Pattern, content:java.lang.CharSequence)
-getGroup1(regex:java.lang.String, content:java.lang.CharSequence)
-isMatch(pattern:java.util.regex.Pattern, content:java.lang.CharSequence)
-isMatch(regex:java.lang.String, content:java.lang.CharSequence)
-replaceAll(content:java.lang.CharSequence, regex:java.lang.String, replacementTemplate:java.lang.String)
-replaceAll(e:java.lang.CharSequence, str:java.util.regex.Pattern, pattern:cn.hutool.core.lang.func.Func1)
-replaceAll(group:java.lang.CharSequence, var:java.util.regex.Pattern, replacement:java.lang.String)
-replaceAll(str:java.lang.CharSequence, regex:java.lang.String, replaceFun:cn.hutool.core.lang.func.Func1)
+..........
 ```
 
 > v1.2版本已支持输出方法形参名称

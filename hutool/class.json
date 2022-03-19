@@ -145,5 +145,8 @@
     },
     "json.obj": {
         "clazz": "com.alibaba.fastjson.JSONObject"
+    },
+    "json.arr": {
+        "clazz": "com.alibaba.fastjson.JSONArray"
     }
 }

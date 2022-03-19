@@ -189,5 +189,9 @@
     },
     "figlet": {
         "method": "org.code4everything.hutool.figlet.Figlet#ascii(string,string=standard)"
+    },
+    "jq": {
+        "method": "org.code4everything.hutool.jq.JacksonJq#parse(string=,string=)",
+        "1param": "string,string"
     }
 }

@@ -6,6 +6,8 @@ import com.github.lalyos.jfiglet.FigletFont
 import java.io.File
 import org.code4everything.hutool.Hutool
 
+/// official figlet: http://www.figlet.org/
+/// java figlet implementation: https://github.com/lalyos/jfiglet
 object Figlet {
 
     @JvmStatic

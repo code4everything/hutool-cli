@@ -14,7 +14,7 @@ class JsonObjectConverter(private val type: Class<*>) : Converter<Any> {
             return JSON.parseObject(string, type)
         }
         if (string.startsWith("[")) {
-            return JSON.parseArray(string, JSONObject::class.java)
+            return JSON.parseArray(string, type)
         }
         if (string.startsWith("\"") && string.endsWith("\"")) {
             val unwrapped = ExpressRunner().execute(string, null, null, false, false).toString()
