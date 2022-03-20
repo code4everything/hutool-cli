@@ -26,7 +26,7 @@ object QLE {
         "args: the others params will map to args, and very param will map to indexed arg, like arg0 arg1...",
         "auto injected args: currDir, lineSep, fileSep, userHome",
         "auto injected methods: cmd(p1), nullto(p1,p2), clipboard(), list(p1,p2..pn), join(p1,p2)",
-        "you can use it in you expression", "",
+        "you can use it in your expression", "",
         "ql script grammar: https://github.com/alibaba/QLExpress",
     ])
     fun run(express: String, replaceArg: Boolean): Any? {
