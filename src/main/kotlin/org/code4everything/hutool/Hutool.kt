@@ -370,7 +370,7 @@ object Hutool {
             } else if (helpInfo.callbackMethodName.isNotEmpty()) {
                 method = clazz.getMethod(helpInfo.callbackMethodName)
             } else {
-                LineSepConverter().object2String(helpInfo.helps.toList())
+                result = LineSepConverter().object2String(helpInfo.helps.toList())
                 return
             }
         }
