@@ -57,6 +57,7 @@ object Utils {
     }
 
     @JvmStatic
+    @HelpInfo(helps = ["see day month year progress"])
     fun dayProcess(@IOConverter(DateConverter::class) specificDate: DateTime): String {
         val date = DateUtil.beginOfDay(specificDate)
         val todayProcess = (specificDate.time - date.time) * 100 / 24.0 / 60 / 60 / 1000
@@ -244,9 +245,6 @@ object Utils {
 
     @JvmStatic
     fun lunar(@IOConverter(DateConverter::class) date: Date?): String = ChineseDate(date).toString()
-
-    @JvmStatic
-    fun date2Millis(@IOConverter(DateConverter::class) date: Date?): Long = date?.time ?: 0
 
     @JvmStatic
     fun toUpperCase(str: String?): String = str?.uppercase() ?: ""

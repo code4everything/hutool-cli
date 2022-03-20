@@ -58,6 +58,10 @@ class MethodArg {
     @Parameter(names = ["--work-dir"], description = "current work dir", hidden = true, order = 12)
     var workDir = "."
 
+    @JvmField
+    @Parameter(names = ["-h", "--help"], description = "see help", order = 13)
+    var help = false
+
     @Parameter(names = ["--sep", "-s"], description = "separator for array, list, etc. system line sep use '%n'.", order = 13)
     var sep = ""
         get() {

@@ -1,11 +1,14 @@
 package org.code4everything.hutool
 
 import cn.hutool.core.io.FileUtil
+import cn.hutool.core.swing.clipboard.ClipboardUtil
 import cn.hutool.core.util.RuntimeUtil
 import com.alibaba.fastjson.JSONArray
 import com.alibaba.fastjson.JSONObject
 import com.ql.util.express.DefaultContext
+import com.ql.util.express.DynamicParamsUtil
 import com.ql.util.express.ExpressRunner
+import java.io.File
 import java.lang.reflect.Type
 import java.math.BigDecimal
 import java.math.BigInteger
@@ -16,12 +19,23 @@ import org.code4everything.hutool.converter.FileConverter
 object QLE {
 
     @JvmStatic
+    @HelpInfo([
+        "example: 'arg0.length()' 'false' 'some_string_to_get_length'", "",
+        "param1: the script expression",
+        "param2: if expression has '\${n}', set param2 true to replace '\${n}' to indexed arg", "",
+        "args: the others params will map to args, and very param will map to indexed arg, like arg0 arg1...",
+        "auto injected args: currDir, lineSep, fileSep, userHome",
+        "auto injected methods: cmd(p1), nullto(p1,p2), clipboard(), list(p1,p2..pn), join(p1,p2)",
+        "you can use it in you expression", "",
+        "ql script grammar: https://github.com/alibaba/QLExpress",
+    ])
     fun run(express: String, replaceArg: Boolean): Any? {
         var exp = handleExpression(express)
         if (exp.isEmpty()) {
             return null
         }
 
+        DynamicParamsUtil.supportDynamicParams = true
         val args = MethodArg.getSubParams(Hutool.ARG, 2)
         if (replaceArg) {
             for (i in args.indices) {
@@ -32,28 +46,52 @@ object QLE {
         Hutool.debugOutput("get ql script: %s", exp)
         val runner = ExpressRunner()
 
-        // 导入默认包
-        val expressPackage = runner.rootExpressPackage
-        expressPackage.addPackage("org.code4everything.hutool")
-        expressPackage.addPackage("org.code4everything.hutool.converter")
+        importPackage(runner)
+        bindMethod(runner)
 
-        // 绑定方法
-        val clz = QLE::class.java
-        runner.addFunctionOfClassMethod("cmd", clz, "cmd", arrayOf<Class<*>>(String::class.java), null)
-        runner.addFunctionOfClassMethod("nullto", clz, "nullTo", Array(2) { Any::class.java }, null)
+        val context = getContext(args)
+        return runner.execute(exp, context, null, true, false)
+    }
 
-        // 绑定上下文环境
+    private fun getContext(args: List<String>): DefaultContext<String, Any> {
         val context = DefaultContext<String, Any>()
+        context["currDir"] = Hutool.ARG.workDir
+        context["lineSep"] = FileUtil.getLineSeparator()
+        context["fileSep"] = File.separator
+        context["userHome"] = FileUtil.getUserHomePath()
         context["args"] = ArgList.of(ArrayList<Any>(args))
+
         val joiner = StringJoiner(",", "(", ")")
         for (i in args.indices) {
             context["arg$i"] = args[i]
             joiner.add(args[i])
         }
 
-        // 执行表达式
         Hutool.debugOutput("execute expression with args: %s", joiner)
-        return runner.execute(exp, context, null, true, false)
+        return context
+    }
+
+    private fun bindMethod(runner: ExpressRunner) {
+        val clz = QLE::class.java
+        runner.addFunctionOfClassMethod("cmd", clz, "cmd", arrayOf(String::class.java), null)
+        runner.addFunctionOfClassMethod("nullto", clz, "nullTo", Array(2) { Any::class.java }, null)
+        runner.addFunctionOfClassMethod("list", clz, "list", arrayOf(Array::class.java), null)
+        runner.addFunctionOfClassMethod("join", clz, "join", arrayOf(String::class.java, List::class.java), null)
+
+        runner.addFunctionOfClassMethod("clipboard", ClipboardUtil::class.java, "getStr", emptyArray(), null)
+    }
+
+
+    private fun importPackage(runner: ExpressRunner) {
+        val expressPackage = runner.rootExpressPackage
+        expressPackage.addPackage("org.code4everything.hutool")
+        expressPackage.addPackage("org.code4everything.hutool.converter")
+        expressPackage.addPackage("com.alibaba.fastjson")
+        expressPackage.addPackage("cn.hutool.core.util")
+        expressPackage.addPackage("cn.hutool.core.collection")
+        expressPackage.addPackage("cn.hutool.core.date")
+        expressPackage.addPackage("cn.hutool.core.io")
+        expressPackage.addPackage("cn.hutool.core.lang")
     }
 
     @JvmStatic
@@ -64,6 +102,12 @@ object QLE {
 
     @JvmStatic
     fun nullTo(v1: Any?, v2: Any): Any = v1 ?: v2
+
+    @JvmStatic
+    fun join(separator: String, list: List<Any?>): String = list.filterNotNull().joinToString(separator)
+
+    @JvmStatic
+    fun list(array: Array<*>): List<Any?> = array.toList()
 
     private fun handleExpression(expression: String): String {
         if (expression.startsWith("file:")) {

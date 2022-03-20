@@ -33,7 +33,10 @@
         "method": "cn.hutool.core.util.HexUtil#encodeHexStr(string)"
     },
     "idinfo": {
-        "method": "cn.hutool.core.util.IdcardUtil#getIdcardInfo(string)"
+        "method": "cn.hutool.core.util.IdcardUtil#getIdcardInfo(string)",
+        "helps": [
+            "parse personal id card info"
+        ]
     },
     "uuid": {
         "method": "cn.hutool.core.util.IdUtil#randomUUID"
@@ -48,9 +51,12 @@
         "method": "cn.hutool.core.util.RandomUtil#randomLong(long=0,long=9223372036854775807)",
         "1param": "long=0,long"
     },
-    "randompass": {
+    "randompw": {
         "method": "cn.hutool.core.util.RandomUtil#randomString(string=abcdefghijkmnpqrstuvwxyzABCDEFGHJKMNPQRSTUVWXYZ234567892345678923456789,int=16)",
-        "1param": "string=abcdefghijkmnpqrstuvwxyzABCDEFGHJKMNPQRSTUVWXYZ234567892345678923456789,int"
+        "1param": "string=abcdefghijkmnpqrstuvwxyzABCDEFGHJKMNPQRSTUVWXYZ234567892345678923456789,int",
+        "helps": [
+            "generate random password"
+        ]
     },
     "randomc": {
         "method": "cn.hutool.core.img.ImgUtil#randomColor"
@@ -159,14 +165,11 @@
     "touch": {
         "method": "cn.hutool.core.io.FileUtil#touch(file=NewFile.txt)"
     },
-    "clipboard": {
-        "method": "cn.hutool.core.swing.clipboard.ClipboardUtil#getStr()"
-    },
     "countdown": {
         "method": "org.code4everything.hutool.Countdown#countdown(string,string=sec)"
     },
     "run": {
-        "method": "qe#run(string=return args,@boolean=false)"
+        "method": "qe#run(string,@boolean=false)"
     },
     "env": {
         "method": "qe#run",
@@ -185,7 +188,6 @@
         "method": "org.code4everything.hutool.figlet.Figlet#ascii(string,string=standard)"
     },
     "jq": {
-        "method": "org.code4everything.hutool.jq.JacksonJq#parse(string=,string=)",
-        "1param": "string,string"
+        "method": "org.code4everything.hutool.jq.JacksonJq#parse(string,string)"
     }
 }

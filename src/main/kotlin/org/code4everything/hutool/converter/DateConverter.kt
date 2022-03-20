@@ -14,10 +14,6 @@ import org.code4everything.hutool.Hutool
 
 class DateConverter : Converter<DateTime> {
 
-    // 仅解析后，未经计算的时间
-    var baseDate: DateTime? = null
-        private set
-
     override fun string2Object(string: String): DateTime {
         var idx = string.indexOf("+")
         if (idx > 0) {
@@ -77,7 +73,7 @@ class DateConverter : Converter<DateTime> {
 
                 else -> string
             }.let { DateUtil.parse(it.replace('T', ' '), *patterns) }
-        }).also { baseDate = it }
+        })
     }
 
     override fun object2String(any: Any?): String {

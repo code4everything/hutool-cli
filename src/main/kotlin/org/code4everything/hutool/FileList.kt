@@ -26,7 +26,17 @@ object FileList {
 
     @JvmStatic
     @IOConverter(LineSepConverter::class)
+    @HelpInfo([
+        "example: '.' 'name' 'file'", "",
+        "param1: the source folder",
+        "param2: the filter pattern, support regex", "",
+        "option params: file dir hidden ignoreempty depth:9 ctime+3m utime+12h atime+1d",
+        "file: just find file, dir: just find dir",
+        "hidden: contains hidden file, ignoreempty: ignore empty folder or empty file",
+        "depth: the max depth to recursion, time: create time, update time, access time"
+    ])
     fun find(parent: File, name: String): List<String> {
+        val arrayOf = arrayOf("")
         val filter = FileFindFilter()
         filter.nameFilter = Pattern.compile(name, Pattern.CASE_INSENSITIVE)
 
@@ -107,6 +117,11 @@ object FileList {
 
     @JvmStatic
     @IOConverter(LineSepConverter::class)
+    @HelpInfo([
+        "example: '.' '3'", "",
+        "param1: the parent file, support zip file",
+        "param2: the max depth to recursion"
+    ])
     fun treeFile(@IOConverter(FileConverter::class) file: File, maxDepth: Int): List<String> {
         if (!FileUtil.exist(file)) {
             return emptyList()

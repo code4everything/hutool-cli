@@ -26,7 +26,7 @@ class ArrayConverter(arrayClass: Class<*>) : Converter<Any> {
     }
 
     override fun object2String(any: Any?): String {
-        return if (any is Array) convert(any) else ""
+        return if (any is kotlin.Array<*> || any is Array) convert(any) else ""
     }
 
     private fun convert(any: Any): String {

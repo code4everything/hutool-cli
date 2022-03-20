@@ -12,6 +12,7 @@ import net.thisptr.jackson.jq.internal.functions.EnvFunction
 import net.thisptr.jackson.jq.module.loaders.BuiltinModuleLoader
 import net.thisptr.jackson.jq.module.loaders.ChainedModuleLoader
 import net.thisptr.jackson.jq.module.loaders.FileSystemModuleLoader
+import org.code4everything.hutool.HelpInfo
 import org.code4everything.hutool.converter.JsonObjectConverter
 
 /// official jq: https://stedolan.github.io/jq/
@@ -19,11 +20,13 @@ import org.code4everything.hutool.converter.JsonObjectConverter
 object JacksonJq {
 
     @JvmStatic
+    @HelpInfo(helps = [
+        "example: '.name' '{\"name\":\"jq\"}'", "",
+        "param1: the jq expression",
+        "param2: the json content", "",
+        "jq grammar: https://stedolan.github.io/jq/manual/#Basicfilters",
+    ])
     fun parse(expression: String, content: String): String {
-        if (expression.isEmpty() && content.isEmpty()) {
-            return "https://stedolan.github.io/jq/manual/#Basicfilters"
-        }
-
         if (expression == "." && content.startsWith('"') && content.endsWith('"')) {
             val converter = JsonObjectConverter(com.alibaba.fastjson.JSONObject::class.java)
             val json = converter.string2Object(content)

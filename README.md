@@ -45,7 +45,7 @@ hu find . java file depth:9 utime+7d hidden # 查找当前目录下文件名包�
 hu find ~ '.*' dir ctime:9d ignoreempty # 查找用户目录下最近9天创建的，且不为空的文件夹
 ```
 
-> 说明：{}表示必传变量，[]表示可选参数，()表示枚举值，可选参数不区分位置
+> 说明：{}表示必传变量，[]表示可选参数，()表示枚举值，可选参数不区分位置，时间单位参考最后面的日期参数格式。
 
 FigletBanner生成（ASCII艺术字）
 

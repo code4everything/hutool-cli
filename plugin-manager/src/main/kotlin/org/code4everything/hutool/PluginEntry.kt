@@ -15,10 +15,14 @@ object PluginEntry {
 
     @JvmStatic
     @IOConverter(LineSepConverter::class)
+    @HelpInfo([
+        "example: 'install' 'a-hutool-plugin'",
+        "support actions: install, uninstall, list"
+    ])
     fun run(): List<String> {
         val params = Hutool.ARG.params
         if (params.isEmpty()) {
-            return listOf("actions: install, uninstall, list")
+            return listOf("missing action")
         }
 
         val action = params[0]

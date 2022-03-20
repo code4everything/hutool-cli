@@ -7,6 +7,12 @@ import org.code4everything.hutool.converter.DateConverter
 object Countdown {
 
     @JvmStatic
+    @HelpInfo(helps = [
+        "example: '1632' 'min'", "",
+        "calculate time count down", "",
+        "param1: the time expression, like '2022-03-20 16:25', or timestamp like '1647764793'",
+        "param2: the timestamp unit, if param1 is a timestamp, the unit is required"
+    ])
     fun countdown(@IOConverter deadline: String, unit: String): String {
         val dateConverter = DateConverter()
         val count: Long = if (NumberUtil.isNumber(deadline)) {
@@ -14,7 +20,7 @@ object Countdown {
             dateConverter.getOffsetDate(dateTime, deadline + unit).time
         } else {
             val dateTime = dateConverter.string2Object(deadline)
-            dateTime.time - dateConverter.baseDate!!.time
+            dateTime.time - System.currentTimeMillis()
         }
 
         if (count <= 0) {

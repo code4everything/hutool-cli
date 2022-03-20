@@ -213,6 +213,14 @@ object Hutool {
                 }
             }
 
+            if (ARG.help && methodJson.containsKey("helps")) {
+                val helps = methodJson.getJSONArray("helps")
+                if (helps.isNotEmpty()) {
+                    result = LineSepConverter().object2String(helps)
+                    return
+                }
+            }
+
             val classMethod = methodJson.getString(methodKey)
             idx = classMethod.lastIndexOf(sharp)
             if (idx < 1) {
@@ -319,7 +327,7 @@ object Hutool {
             ARG.params.add(min(ARG.params.size, ARG.paramIdxFromClipboard), getFromClipboard())
         }
 
-        val method: Method?
+        var method: Method?
         if (omitParamType && isCollectionEmpty(ARG.paramTypes)) {
             // 缺省方法参数类型，自动匹配方法
             debugOutput("getting method ignore case by method name and param count")
@@ -353,7 +361,21 @@ object Hutool {
             return
         }
 
-        val parameters = method.parameters
+        // 查看帮助
+        if (ARG.help) {
+            val helpInfo = method.getAnnotation(HelpInfo::class.java)
+            if (helpInfo == null) {
+                result = "ops, sorry, method no help info"
+                return
+            } else if (helpInfo.callbackMethodName.isNotEmpty()) {
+                method = clazz.getMethod(helpInfo.callbackMethodName)
+            } else {
+                LineSepConverter().object2String(helpInfo.helps.toList())
+                return
+            }
+        }
+
+        val parameters = method!!.parameters
         val converterClz = IOConverter::class.java
         outputConverterName = method.getAnnotation(converterClz).getConverterName(outputConverterName)
         debugOutput("get method success")

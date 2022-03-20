@@ -141,6 +141,11 @@ class HutoolCli {
         test("figlet hutool-cli")
     }
 
+    @Test
+    fun run() {
+        test("run join(\",\",list(1,2,3))")
+    }
+
     companion object {
 
         fun test(cmd: String, vararg params: String): String = Hutool.test(*(cmd.split(" ").toTypedArray() + params))
