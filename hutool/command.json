@@ -17,17 +17,8 @@
     "encode64url": {
         "method": "cn.hutool.core.codec.Base64#encodeUrlSafe(j.char.seq)"
     },
-    "now": {
-        "method": "cn.hutool.core.date.DateUtil#date"
-    },
-    "ms2date": {
-        "method": "cn.hutool.core.date.DateUtil#date(long)"
-    },
     "date": {
         "method": "cn.hutool.core.date.DateUtil#date(date=now)"
-    },
-    "date2ms": {
-        "method": "utils#date2Millis(date=now)"
     },
     "cat": {
         "method": "cn.hutool.core.io.FileUtil#readUtf8String(file)"
@@ -154,6 +145,9 @@
     },
     "ls": {
         "method": "file.list#listFiles(file=.)"
+    },
+    "find": {
+        "method": "file.list#find(file=.,string)"
     },
     "calendar": {
         "method": "org.code4everything.hutool.HuCalendar#calendar(str.arr=nil)"

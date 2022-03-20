@@ -6,6 +6,7 @@ import cn.hutool.core.date.DateTime
 import cn.hutool.core.date.DateUtil
 import cn.hutool.core.math.Calculator
 import cn.hutool.core.text.CharSequenceUtil
+import cn.hutool.core.util.ReUtil
 import cn.hutool.core.util.ReflectUtil
 import java.util.Date
 import org.code4everything.hutool.Converter
@@ -53,6 +54,10 @@ class DateConverter : Converter<DateTime> {
     }
 
     private fun parseDate(string: String): DateTime {
+        if (string.length > 2 && ReUtil.isMatch("[0-9]+", string)) {
+            return DateUtil.date(string.toLong())
+        }
+
         return (when (string) {
             "now" -> DateUtil.date()
             "today" -> DateUtil.beginOfDay(DateUtil.date())
@@ -75,7 +80,11 @@ class DateConverter : Converter<DateTime> {
         }).also { baseDate = it }
     }
 
-    override fun object2String(any: Any?): String = if (any is Date) Hutool.simpleDateFormat.format(any) else ""
+    override fun object2String(any: Any?): String {
+        return if (any is Date) {
+            Hutool.simpleDateFormat.format(any) + ", ms: " + any.time
+        } else ""
+    }
 
     companion object {
 

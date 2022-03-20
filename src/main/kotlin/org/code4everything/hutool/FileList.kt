@@ -4,16 +4,106 @@ import cn.hutool.core.comparator.ComparatorChain
 import cn.hutool.core.date.DateUtil
 import cn.hutool.core.io.FileUtil
 import cn.hutool.core.util.StrUtil
+import com.alibaba.fastjson.JSON
 import java.io.File
+import java.nio.file.Files
+import java.nio.file.attribute.BasicFileAttributes
 import java.util.Arrays
 import java.util.Date
+import java.util.regex.Pattern
 import java.util.stream.Collectors
 import java.util.zip.ZipEntry
 import java.util.zip.ZipFile
+import org.code4everything.hutool.converter.DateConverter
 import org.code4everything.hutool.converter.FileConverter
 import org.code4everything.hutool.converter.LineSepConverter
 
 object FileList {
+
+    private val dateConverter by lazy { DateConverter() }
+
+    private val now by lazy { Date() }
+
+    @JvmStatic
+    @IOConverter(LineSepConverter::class)
+    fun find(parent: File, name: String): List<String> {
+        val filter = FileFindFilter()
+        filter.nameFilter = Pattern.compile(name, Pattern.CASE_INSENSITIVE)
+
+        val params = Hutool.ARG.params.subList(2, Hutool.ARG.params.size)
+        val onlyFile = params.remove("file")
+        val onlyDir = params.remove("dir")
+
+        filter.ignoreEmpty = params.remove("ignoreempty")
+        filter.findHidden = params.remove("hidden")
+        if (onlyFile || onlyDir) {
+            filter.hasFile = onlyFile
+            filter.hasDir = onlyDir
+        }
+
+        params.forEach {
+            if (it.startsWith("ctime")) {
+                filter.createTimeFilter = it
+            } else if (it.startsWith("atime")) {
+                filter.accessTimeFilter = it
+            } else if (it.startsWith("utime")) {
+                filter.updateTimeFilter = it
+            } else if (it.startsWith("depth")) {
+                filter.depth = it.removePrefix("depth").removePrefix(":").toInt()
+            }
+        }
+
+        Hutool.debugOutput("filter condition: " + JSON.toJSONString(filter))
+        return find(parent, filter, 0)
+    }
+
+    private fun find(parent: File, filter: FileFindFilter, depth: Int): List<String> {
+        if (depth > filter.depth) {
+            return emptyList()
+        }
+        if (filter.ignoreEmpty && parent.length() == 0L) {
+            return emptyList()
+        }
+        if (parent.isHidden && !filter.findHidden) {
+            return emptyList()
+        }
+
+        if (parent.isDirectory) {
+            if (filter.ignoreEmpty && parent.listFiles()?.isEmpty() != false) {
+                return emptyList()
+            }
+            Hutool.debugOutput("find from: " + parent.absolutePath)
+        }
+
+        val matched = filter.nameFilter.matcher(parent.name).find()
+        if (matched && ((filter.hasFile && parent.isFile) || (filter.hasDir && parent.isDirectory))) {
+            val attributes by lazy { Files.readAttributes(parent.toPath(), BasicFileAttributes::class.java) }
+            val timeFilters = java.util.ArrayList<String>()
+            if (filter.createTimeFilter.startsWith("ctime")) {
+                val dateFormat = attributes.creationTime().toMillis().toString() + filter.createTimeFilter.substring(5)
+                timeFilters.add(dateFormat)
+            }
+            if (filter.accessTimeFilter.startsWith("atime")) {
+                val dateFormat = attributes.lastAccessTime().toMillis().toString() + filter.accessTimeFilter.substring(5)
+                timeFilters.add(dateFormat)
+            }
+            if (filter.updateTimeFilter.startsWith("utime")) {
+                val dateFormat = parent.lastModified().toString() + filter.updateTimeFilter.substring(5)
+                timeFilters.add(dateFormat)
+            }
+            if (timeFilters.stream().anyMatch { dateConverter.string2Object(it).before(now) }) {
+                return emptyList()
+            }
+            return listOf(parent.absolutePath)
+        }
+
+        if (!parent.isDirectory) {
+            return emptyList()
+        }
+        return parent.listFiles()?.flatMap {
+            if (!filter.hasFile && it.isFile) emptyList() else find(it, filter, depth + 1)
+        }?.toList() ?: emptyList()
+    }
 
     @JvmStatic
     @IOConverter(LineSepConverter::class)
@@ -126,6 +216,26 @@ object FileList {
         }
 
         return list
+    }
+
+    class FileFindFilter {
+        var nameFilter = Pattern.compile(".*", Pattern.CASE_INSENSITIVE)
+
+        var hasFile = true
+
+        var hasDir = true
+
+        var ignoreEmpty = false
+
+        var findHidden = false
+
+        var createTimeFilter = ""
+
+        var updateTimeFilter = ""
+
+        var accessTimeFilter = ""
+
+        var depth = Int.MAX_VALUE
     }
 
     interface FileProp {

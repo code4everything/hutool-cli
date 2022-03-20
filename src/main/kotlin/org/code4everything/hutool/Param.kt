@@ -15,4 +15,6 @@ annotation class Param(
 
     /// alias for name
     val value: String = "",
+
+    val remark: String = "",
 )

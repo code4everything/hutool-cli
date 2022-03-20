@@ -16,7 +16,6 @@ class JacksonJqTest {
             "    \"version\":6" +
             "}]"
 
-        "{\"test\":2}"
-        println(JacksonJq.parse(".", "\"{\\\"test\\\":2}\""))
+        println(JacksonJq.parse(expression, content))
     }
 }

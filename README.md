@@ -34,6 +34,19 @@ hu jq '.' '{"tutorial":"https://stedolan.github.io/jq/tutorial/"}'
 
 > [JQ基本语法](https://stedolan.github.io/jq/manual/#Basicfilters)
 
+文件查找
+
+```shell
+# 命令格式
+hu find {dir} {nameFilter} [(file|dir)] [hidden] [ignoreempty] [depth:{n}] [(c|a|u)time+{n}{timeUnit}]
+
+# 举个例子：
+hu find . java file depth:9 utime+7d hidden # 查找当前目录下文件名包含java并且最近7天修改过的文件，遍历最大深度为9层目录，hidden表示允许查找隐藏文件
+hu find ~ '.*' dir ctime:9d ignoreempty # 查找用户目录下最近9天创建的，且不为空的文件夹
+```
+
+> 说明：{}表示必传变量，[]表示可选参数，()表示枚举值，可选参数不区分位置
+
 FigletBanner生成（ASCII艺术字）
 
 ```shell
