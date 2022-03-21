@@ -250,7 +250,7 @@ object FileList {
 
         var accessTimeFilter = ""
 
-        var depth = Int.MAX_VALUE
+        var depth = 99
     }
 
     interface FileProp {

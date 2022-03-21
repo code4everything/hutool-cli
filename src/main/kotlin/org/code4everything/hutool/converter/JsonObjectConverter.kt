@@ -3,7 +3,6 @@ package org.code4everything.hutool.converter
 import cn.hutool.core.io.FileUtil
 import com.alibaba.fastjson.JSON
 import com.alibaba.fastjson.JSONObject
-import com.ql.util.express.ExpressRunner
 import org.code4everything.hutool.Converter
 import org.code4everything.hutool.Hutool
 
@@ -15,10 +14,6 @@ class JsonObjectConverter(private val type: Class<*>) : Converter<Any> {
         }
         if (string.startsWith("[")) {
             return JSON.parseArray(string, type)
-        }
-        if (string.startsWith("\"") && string.endsWith("\"")) {
-            val unwrapped = ExpressRunner().execute(string, null, null, false, false).toString()
-            return string2Object(unwrapped)
         }
 
         val file = FileConverter().string2Object(string)

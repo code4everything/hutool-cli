@@ -45,6 +45,7 @@ import org.code4everything.hutool.converter.ArrayConverter
 import org.code4everything.hutool.converter.CharsetConverter
 import org.code4everything.hutool.converter.DateConverter
 import org.code4everything.hutool.converter.FileConverter
+import org.code4everything.hutool.converter.JsonObjectConverter
 import org.code4everything.hutool.converter.LineSepConverter
 import org.code4everything.hutool.converter.ListStringConverter
 import org.code4everything.hutool.converter.MapConverter
@@ -74,17 +75,25 @@ object Hutool {
     val simpleDateFormat by lazy { SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS") }
     val isDebug: Boolean get() = ARG.debug
 
-    lateinit var ARG: MethodArg
-    lateinit var resultString: String
+    private val argLocal = ThreadLocal<MethodArg>()
+    var ARG: MethodArg
+        set(value) = argLocal.set(value)
+        get() = argLocal.get()!!
+
+    val resultString = ThreadLocal<String>()
     private lateinit var commander: JCommander
 
-    private var result: Any? = null
-    private var omitParamType = true
-    private var outputConverterName: String? = null
-    private var inputConverterNames: List<String>? = null
+    private val resultLocal = ThreadLocal<Any?>()
+    private var result: Any?
+        set(value) = resultLocal.set(value)
+        get() = resultLocal.get()
+
+    private var omitParamType = ThreadLocal<Boolean>().apply { set(true) }
+    private var outputConverterName = ThreadLocal<String?>()
+    private var inputConverterNames = ThreadLocal<List<String>?>()
 
     @JvmStatic
-    private fun resolveCmd(args: Array<String>): String {
+    internal fun resolveCmd(args: Array<String>): String {
         commander = JCommander.newBuilder().addObject(ARG).build()
         commander.programName = "hutool-cli"
 
@@ -110,12 +119,12 @@ object Hutool {
 
         resolveResult()
         debugOutput("result handled success")
-        resultString = convertResult()
+        resultString.set(convertResult())
 
         if (ARG.copy) {
             debugOutput("copying result into clipboard")
             try {
-                ClipboardUtil.setStr(resultString)
+                ClipboardUtil.setStr(resultString.get())
                 debugOutput("result copied")
             } catch (e: Exception) {
                 debugOutput("copy result failed")
@@ -126,7 +135,7 @@ object Hutool {
             println()
         }
 
-        return resultString
+        return resultString.get()
     }
 
     @JvmStatic
@@ -150,9 +159,7 @@ object Hutool {
                 }
                 resultContainer.add(res)
                 list.clear()
-                val methodArg = ARG
-                ARG = MethodArg()
-                ARG.workDir = methodArg.workDir
+                ARG = MethodArg().apply { workDir = ARG.workDir }
             } else {
                 list.add(arg)
             }
@@ -189,7 +196,7 @@ object Hutool {
                 return
             }
 
-            omitParamType = false
+            omitParamType.set(false)
             fixClassName = false
 
             // 从命令文件中找到类名和方法名以及参数类型，默认值
@@ -206,7 +213,7 @@ object Hutool {
                     val methodName = ARG.params.removeFirst()
                     methodJson = JSONObject().fluentPut(methodKey, "@$command#$methodName")
                     debugOutput("get method name from param[0]")
-                    omitParamType = true
+                    omitParamType.set(true)
                 } else {
                     result = "command[$command] not found!"
                     return
@@ -228,8 +235,8 @@ object Hutool {
                 return
             }
 
-            outputConverterName = methodJson.getString("outConverter")
-            inputConverterNames = methodJson.getJSONArray("inConverters")?.map { it.toString() }
+            outputConverterName.set(methodJson.getString("outConverter"))
+            inputConverterNames.set(methodJson.getJSONArray("inConverters")?.map { it.toString() })
             methodJson.getString("outArgs")?.also {
                 val methodArg = MethodArg()
                 JCommander.newBuilder().addObject(methodArg).build().parse(*(it.split(" ").toTypedArray()))
@@ -246,7 +253,7 @@ object Hutool {
                 val userParamTypes = tokens[1].split(',').filter { it.isNotEmpty() }
                 if (userParamTypes.isEmpty()) {
                     val filter = listOf(ARG.methodName!!.lowercase())
-                    outputConverterName = LineSepConverter::class.java.name
+                    outputConverterName.set(LineSepConverter::class.java.name)
                     result = Utils.outputPublicStaticMethods0(ARG.className!!, filter, true)
                     return
                 } else {
@@ -328,7 +335,7 @@ object Hutool {
         }
 
         var method: Method?
-        if (omitParamType && isCollectionEmpty(ARG.paramTypes)) {
+        if (omitParamType.get() && isCollectionEmpty(ARG.paramTypes)) {
             // 缺省方法参数类型，自动匹配方法
             debugOutput("getting method ignore case by method name and param count")
             method = autoMatchMethod(clazz)
@@ -377,7 +384,7 @@ object Hutool {
 
         val parameters = method!!.parameters
         val converterClz = IOConverter::class.java
-        outputConverterName = method.getAnnotation(converterClz).getConverterName(outputConverterName)
+        outputConverterName.set(method.getAnnotation(converterClz).getConverterName(outputConverterName.get()))
         debugOutput("get method success")
         if (ARG.params.size < parameters.size) {
             ARG.params.add(getFromClipboard())
@@ -401,7 +408,7 @@ object Hutool {
             val param = ARG.params[i]
             paramJoiner.add(param)
             val parameter = parameters[i]
-            val converterName = parameter.getAnnotation(converterClz).getConverterName(inputConverterNames?.getOrNull(i))
+            val converterName = parameter.getAnnotation(converterClz).getConverterName(inputConverterNames.get()?.getOrNull(i))
             params[i] = castParam2JavaType(converterName, param, parameter.type, true)
         }
 
@@ -409,10 +416,7 @@ object Hutool {
         debugOutput("invoking method: %s#%s(%s)", clazz.name, method.name, paramJoiner)
         result = if (Utils.classLoader == null) ReflectUtil.invokeStatic(method, *params) else {
             val future: FutureTask<Any> = FutureTask { ReflectUtil.invokeStatic(method, *params) }
-            val t = Thread(future)
-            t.contextClassLoader = Utils.classLoader
-            t.start()
-            future.get()
+            Utils.syncRun(future, Utils.classLoader!!)
         }
         debugOutput("invoke method success")
     }
@@ -560,7 +564,7 @@ object Hutool {
                 }
                 parseMethod(methodJson)
                 debugOutput("get method name: %s", ARG.methodName)
-                omitParamType = false
+                omitParamType.set(false)
             }
         }
     }
@@ -701,7 +705,7 @@ object Hutool {
     private fun convertResult(): String {
         debugOutput("converting result")
         try {
-            val res = convertResult(result, outputConverterName)
+            val res = convertResult(result, outputConverterName.get())
             debugOutput("result convert success")
             return res
         } catch (e: Exception) {
@@ -748,6 +752,9 @@ object Hutool {
         if (obj is Week) {
             return WeekConverter().object2String(obj)
         }
+        if (obj is JSON) {
+            return JsonObjectConverter(Any::class.java).object2String(obj)
+        }
         if (obj.javaClass.isArray) {
             return ArrayConverter(resClass).object2String(obj)
         }
@@ -783,7 +790,7 @@ object Hutool {
             if (params.isNotEmpty()) {
                 m = String.format(m, *params)
             }
-            m = "${simpleDateFormat.format(Date())} $className:$lineNumber - $m"
+            m = "${simpleDateFormat.format(Date())} [${Thread.currentThread().name}] $className:$lineNumber - $m"
             println(m)
         }
     }
@@ -803,6 +810,6 @@ object Hutool {
         newArgs[idx++] = "--work-dir"
         newArgs[idx] = Paths.get(".").toAbsolutePath().normalize().toString()
         main(newArgs)
-        return resultString
+        return resultString.get()
     }
 }

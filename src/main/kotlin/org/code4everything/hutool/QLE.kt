@@ -2,6 +2,7 @@ package org.code4everything.hutool
 
 import cn.hutool.core.io.FileUtil
 import cn.hutool.core.swing.clipboard.ClipboardUtil
+import cn.hutool.core.text.CharSequenceUtil
 import cn.hutool.core.util.RuntimeUtil
 import com.alibaba.fastjson.JSONArray
 import com.alibaba.fastjson.JSONObject
@@ -14,34 +15,36 @@ import java.math.BigDecimal
 import java.math.BigInteger
 import java.util.Date
 import java.util.StringJoiner
+import java.util.concurrent.FutureTask
 import org.code4everything.hutool.converter.FileConverter
 
 object QLE {
 
     @JvmStatic
     @HelpInfo([
-        "example: 'arg0.length()' 'false' 'some_string_to_get_length'", "",
-        "param1: the script expression",
-        "param2: if expression has '\${n}', set param2 true to replace '\${n}' to indexed arg", "",
+        "example: 'arg0.length()' 'some_string_to_get_length'", "",
+        "param1: the script expression", "",
         "args: the others params will map to args, and very param will map to indexed arg, like arg0 arg1...",
-        "auto injected args: currDir, lineSep, fileSep, userHome",
-        "auto injected methods: cmd(p1), nullto(p1,p2), clipboard(), list(p1,p2..pn), join(p1,p2)",
+        "auto injected args: currdir, linesep, filesep, userhome",
+        "auto injected methods: cmd(p1), nullto(p1,p2), clipboard(), list(p1,p2..pn), join(p1,p2), replace(p1,p2,p3), run(p1,p2..pn)",
         "you can use it in your expression", "",
+        "cmd(string): execute a command in terminal",
+        "nullto(object,object): if p1 is null return p2, else p1",
+        "clipboard(): get a string from clipboard",
+        "list(object): variable arguments, return a list",
+        "join(string,list): join a list to string, p1 is the separator, like java",
+        "replace(string,string,string): replace the given string partial chars to new chars",
+        "run(string): run hu command in ql script, like 'run(\"base64\",\"some text here\")'", "",
         "ql script grammar: https://github.com/alibaba/QLExpress",
     ])
-    fun run(express: String, replaceArg: Boolean): Any? {
-        var exp = handleExpression(express)
+    fun run(express: String): Any? {
+        val exp = handleExpression(express)
         if (exp.isEmpty()) {
             return null
         }
 
         DynamicParamsUtil.supportDynamicParams = true
-        val args = MethodArg.getSubParams(Hutool.ARG, 2)
-        if (replaceArg) {
-            for (i in args.indices) {
-                exp = exp.replace("\${$i}", args[i])
-            }
-        }
+        val args = MethodArg.getSubParams(Hutool.ARG, 1)
 
         Hutool.debugOutput("get ql script: %s", exp)
         val runner = ExpressRunner()
@@ -55,10 +58,10 @@ object QLE {
 
     private fun getContext(args: List<String>): DefaultContext<String, Any> {
         val context = DefaultContext<String, Any>()
-        context["currDir"] = Hutool.ARG.workDir
-        context["lineSep"] = FileUtil.getLineSeparator()
-        context["fileSep"] = File.separator
-        context["userHome"] = FileUtil.getUserHomePath()
+        context["currdir"] = Hutool.ARG.workDir
+        context["linesep"] = FileUtil.getLineSeparator()
+        context["filesep"] = File.separator
+        context["userhome"] = FileUtil.getUserHomePath()
         context["args"] = ArgList.of(ArrayList<Any>(args))
 
         val joiner = StringJoiner(",", "(", ")")
@@ -77,10 +80,11 @@ object QLE {
         runner.addFunctionOfClassMethod("nullto", clz, "nullTo", Array(2) { Any::class.java }, null)
         runner.addFunctionOfClassMethod("list", clz, "list", arrayOf(Array::class.java), null)
         runner.addFunctionOfClassMethod("join", clz, "join", arrayOf(String::class.java, List::class.java), null)
+        runner.addFunctionOfClassMethod("run", clz, "run", arrayOf(Array<String>::class.java), null)
 
         runner.addFunctionOfClassMethod("clipboard", ClipboardUtil::class.java, "getStr", emptyArray(), null)
+        runner.addFunctionOfClassMethod("replace", CharSequenceUtil::class.java, "replace", Array(3) { CharSequence::class.java }, null)
     }
-
 
     private fun importPackage(runner: ExpressRunner) {
         val expressPackage = runner.rootExpressPackage
@@ -92,6 +96,17 @@ object QLE {
         expressPackage.addPackage("cn.hutool.core.date")
         expressPackage.addPackage("cn.hutool.core.io")
         expressPackage.addPackage("cn.hutool.core.lang")
+    }
+
+    @JvmStatic
+    fun run(array: Array<String>): Any {
+        val workDir = Hutool.ARG.workDir
+        val future: FutureTask<Any> = FutureTask {
+            Hutool.ARG = MethodArg()
+            Hutool.ARG.workDir = workDir
+            Hutool.resolveCmd(array)
+        }
+        return Utils.syncRun(future, ClassLoader.getSystemClassLoader())
     }
 
     @JvmStatic

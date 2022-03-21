@@ -10,6 +10,7 @@ import cn.hutool.core.lang.Holder
 import cn.hutool.core.lang.JarClassLoader
 import cn.hutool.core.math.Calculator
 import cn.hutool.core.util.ClassUtil
+import cn.hutool.core.util.RandomUtil
 import cn.hutool.core.util.ReUtil
 import cn.hutool.core.util.ReflectUtil
 import com.alibaba.fastjson.JSONObject
@@ -21,6 +22,7 @@ import java.lang.reflect.Parameter
 import java.util.Arrays
 import java.util.Date
 import java.util.StringJoiner
+import java.util.concurrent.FutureTask
 import java.util.regex.Pattern
 import java.util.stream.Collectors
 import javassist.ClassPool
@@ -253,14 +255,23 @@ object Utils {
     fun toLowerCase(str: String?): String = str?.lowercase() ?: ""
 
     @JvmStatic
+    internal fun syncRun(future: FutureTask<Any>, classloader: ClassLoader): Any {
+        val t = Thread(future)
+        t.name = "thread-" + RandomUtil.randomString(3).lowercase()
+        t.contextClassLoader = classloader
+        t.start()
+        return future.get()
+    }
+
+    @JvmStatic
     @IOConverter(LineSepConverter::class)
     fun grep(
         @IOConverter(PatternConverter::class) pattern: Pattern,
         @IOConverter(ListStringConverter::class) lines: List<String>?
     ): List<String> {
         var line = lines
-        if (isCollectionEmpty(line) && !isStringEmpty(Hutool.resultString)) {
-            line = ListStringConverter().useLineSep().string2Object(Hutool.resultString)
+        if (isCollectionEmpty(line) && !isStringEmpty(Hutool.resultString.get())) {
+            line = ListStringConverter().useLineSep().string2Object(Hutool.resultString.get())
         }
         return line!!.filter { pattern.matcher(it).find() }
     }

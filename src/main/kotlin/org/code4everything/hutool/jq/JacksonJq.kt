@@ -1,5 +1,6 @@
 package org.code4everything.hutool.jq
 
+import cn.hutool.core.io.FileUtil
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.SerializationFeature
@@ -13,7 +14,7 @@ import net.thisptr.jackson.jq.module.loaders.BuiltinModuleLoader
 import net.thisptr.jackson.jq.module.loaders.ChainedModuleLoader
 import net.thisptr.jackson.jq.module.loaders.FileSystemModuleLoader
 import org.code4everything.hutool.HelpInfo
-import org.code4everything.hutool.converter.JsonObjectConverter
+import org.code4everything.hutool.converter.FileConverter
 
 /// official jq: https://stedolan.github.io/jq/
 /// java jq implementation: https://github.com/eiiches/jackson-jq
@@ -23,14 +24,13 @@ object JacksonJq {
     @HelpInfo(helps = [
         "example: '.name' '{\"name\":\"jq\"}'", "",
         "param1: the jq expression",
-        "param2: the json content", "",
+        "param2: the json content or json file", "",
         "jq grammar: https://stedolan.github.io/jq/manual/#Basicfilters",
     ])
     fun parse(expression: String, content: String): String {
-        if (expression == "." && content.startsWith('"') && content.endsWith('"')) {
-            val converter = JsonObjectConverter(com.alibaba.fastjson.JSONObject::class.java)
-            val json = converter.string2Object(content)
-            return converter.object2String(json)
+        var json = content
+        if (!json.startsWith('[') && !json.startsWith('{')) {
+            json = FileConverter().string2Object(json).let { if (it.exists()) FileUtil.readUtf8String(it) else json }
         }
 
         val mapper = ObjectMapper()
@@ -42,7 +42,7 @@ object JacksonJq {
         scope.addFunction("env", 0, EnvFunction())
         scope.moduleLoader = ChainedModuleLoader(BuiltinModuleLoader.getInstance(), FileSystemModuleLoader(scope, version, FileSystems.getDefault().getPath("").toAbsolutePath()))
 
-        val jsonNode = mapper.factory.createParser(content).readValueAsTree<JsonNode>()
+        val jsonNode = mapper.factory.createParser(json).readValueAsTree<JsonNode>()
         val jq = JsonQuery.compile(expression, version)
 
         val sb = StringBuilder()

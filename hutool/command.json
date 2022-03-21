@@ -169,13 +169,12 @@
         "method": "org.code4everything.hutool.Countdown#countdown(string,string=sec)"
     },
     "run": {
-        "method": "qe#run(string,@boolean=false)"
+        "method": "qe#run(string)"
     },
     "env": {
         "method": "qe#run",
         "paramTypes": [
-            "@string=System.getenv(nullto(arg0,\"\").toUpperCase())",
-            "@boolean=false"
+            "@string=System.getenv(nullto(arg0,\"\").toUpperCase())"
         ]
     },
     "lottery": {
