@@ -188,5 +188,8 @@
     },
     "jq": {
         "method": "org.code4everything.hutool.jq.JacksonJq#parse(string,string)"
+    },
+    "csv2json": {
+        "method": "org.code4everything.hutool.csv.CSV#toJson(string)"
     }
 }

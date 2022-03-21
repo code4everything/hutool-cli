@@ -416,9 +416,7 @@ hutool-cli 提供了很多常用的别名，参考下面文件：
 方法一，在 `HUTOOL_PATH` 对应的目录下新建external目录，将类class类文件（包含包名目录）拷贝到external文件夹中即可，如类 `com.example.Test`
 对应的路径 `external/com/example/Test.class`。
 
-方法二，推荐，在 `HUTOOL_PATH`
-对应的目录下新建external.conf文件，在文件中定义类加载路径（不包含包路径），多个用英文逗号分隔，还是用上面的类举例，假设类绝对路径是 `/home/java/com/examaple/Test.class`
-，那么文件定义路径 `/home/java` 即可。
+方法二，在 `HUTOOL_PATH` 对应的目录下新建external.conf文件，在文件中定义类加载路径（不包含包路径），使用英文逗号或换行符分隔，还是用上面的类举例，假设类绝对路径是 `/home/java/com/examaple/Test.class`，那么文件定义路径 `/home/java` 即可。
 
 external.conf文件支持mvn坐标，但前提是本地maven仓库已有对应的jar包，比如：
 
@@ -433,6 +431,42 @@ mvn:org.code4everything:wetool-plugin-support:1.6.0
 （当插件名被别名占用时，可使用此方式执行），程序将执行插件包内的 `org.code4everything.hutool.PluginEntry#run()` 方法。
 
 > 你可以基于此功能开发适用于本地的指令。
+
+## 好玩的RUN方法
+
+`hu run` 可以执行一段类Java脚本（Alibaba QLExpress），查看帮助说明 `hu run -h`
+
+```text
+example: 'arg0.length()' 'some_string_to_get_length'
+
+param1: the script expression
+
+args: the others params will map to args, and very param will map to indexed arg, like arg0 arg1...
+auto injected args: currdir, linesep, filesep, userhome
+auto injected methods: cmd(p1), nullto(p1,p2), clipboard(), list(p1,p2..pn), join(p1), run(p1,p2..pn), lower(), upper()
+you can use it in your expression
+
+cmd(string): execute a command in terminal
+nullto(object,object): if p1 is null return p2, else p1
+clipboard(): get a string from clipboard
+list(object): variable arguments, return a list
+list.join(string): join a list to string, like 'list(1,2,3).join("<")'
+string.lower() & string.upper(): transfer string to lower case or upper case
+run(string): run hu command in ql script, like 'run("base64","some text here")'
+
+ql script grammar: https://github.com/alibaba/QLExpress
+```
+
+处理字符串
+
+`hu run 'clipboard().trim().lower().replace(".","#")'`
+
+在脚本中运行hu命令
+
+```shell
+hu run 'run("base64","1234")'
+hu run 'run("csv2json","some.csv").getRawResult().getJSONObject(0).getString("key")'
+```
 
 ## 最后
 

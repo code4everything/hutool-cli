@@ -84,7 +84,7 @@ object Hutool {
     private lateinit var commander: JCommander
 
     private val resultLocal = ThreadLocal<Any?>()
-    private var result: Any?
+    internal var result: Any?
         set(value) = resultLocal.set(value)
         get() = resultLocal.get()
 
@@ -734,8 +734,8 @@ object Hutool {
         if (obj is Date) {
             return DateConverter().object2String(obj)
         }
-        if (obj is Map<*, *>) {
-            return MapConverter().object2String(obj)
+        if (obj is JSON) {
+            return JsonObjectConverter(Any::class.java).object2String(obj)
         }
         if (obj is Double) {
             return String.format("%.2f", obj)
@@ -743,17 +743,17 @@ object Hutool {
         if (obj is Charset) {
             return CharsetConverter().object2String(obj)
         }
-        if (obj is Collection<*>) {
-            return ListStringConverter().object2String(obj)
-        }
         if (obj is Pattern) {
             return PatternConverter().object2String(obj)
         }
         if (obj is Week) {
             return WeekConverter().object2String(obj)
         }
-        if (obj is JSON) {
-            return JsonObjectConverter(Any::class.java).object2String(obj)
+        if (obj is Map<*, *>) {
+            return MapConverter().object2String(obj)
+        }
+        if (obj is Collection<*>) {
+            return ListStringConverter().object2String(obj)
         }
         if (obj.javaClass.isArray) {
             return ArrayConverter(resClass).object2String(obj)
