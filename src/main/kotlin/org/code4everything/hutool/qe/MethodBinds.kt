@@ -1,9 +1,12 @@
 package org.code4everything.hutool.qe
 
 import cn.hutool.core.swing.clipboard.ClipboardUtil
+import cn.hutool.core.util.StrUtil
+import com.alibaba.fastjson.JSONObject
 import com.ql.util.express.ExpressRunner
 import com.ql.util.express.Operator
 import org.code4everything.hutool.QLE
+import org.code4everything.hutool.converter.JsonObjectConverter
 
 class MethodBinds(private val runner: ExpressRunner) {
 
@@ -48,6 +51,19 @@ class MethodBinds(private val runner: ExpressRunner) {
         runner.addClassMethod("upper", CharSequence::class.java, object : Operator() {
             override fun executeInner(list: Array<out Any>?): Any {
                 return (list?.first() as CharSequence?)?.toString()?.uppercase() ?: ""
+            }
+        })
+        runner.addClassMethod("tojson", CharSequence::class.java, object : Operator() {
+            override fun executeInner(list: Array<out Any>?): Any {
+                val value = (list?.first() as CharSequence?)?.toString() ?: ""
+                return JsonObjectConverter(JSONObject::class.java).string2Object(value) ?: JSONObject()
+            }
+        })
+        runner.addClassMethod("strip", CharSequence::class.java, object : Operator() {
+            override fun executeInner(list: Array<out Any>?): Any {
+                val value = (list?.first() as String?) ?: ""
+                val fix = (list?.last() as CharSequence?) ?: ""
+                return StrUtil.strip(value, fix)
             }
         })
     }

@@ -311,7 +311,7 @@ object Hutool {
         }
 
         debugOutput("load class success")
-        resolveResultByClassMethod(clazz!!, innerFixName, methodAliasPaths)
+        resolveResultByClassMethod(clazz, innerFixName, methodAliasPaths)
     }
 
     private fun resolveResultByClassMethod(clazz: Class<*>, fixName: Boolean, methodAliasPath: String) {
@@ -548,7 +548,7 @@ object Hutool {
             return ArrayConverter(type)
         }
         val converterName0: String? = getAlias(CONVERTER_JSON).getString(type.name)
-        return converterName0?.let { newConverter(parseClass(it) as Class<Converter<*>>?, type) }
+        return converterName0?.let { newConverter(parseClass(it) as Class<Converter<*>>, type) }
     }
 
     private fun fixMethodName(fixName: Boolean, methodAliasPath: String) {
@@ -676,7 +676,7 @@ object Hutool {
         val clazz: Class<*>
         if (isStringEmpty(className)) {
             // 来自方法别名
-            val idx = methodName!!.indexOf("#")
+            val idx = methodName.indexOf("#")
             clazz = parseClass(methodName.substring(0, idx))
             mn = methodName.substring(idx + 1)
             outClassName = true
@@ -764,7 +764,7 @@ object Hutool {
         val converterName0 = converterJson.getString(name)
         return if (isStringEmpty(converterName0)) {
             ObjectUtil.toString(obj)
-        } else newConverter(parseClass(converterName0) as Class<out Converter<*>>?, resClass)!!.object2String(obj)
+        } else newConverter(parseClass(converterName0) as Class<out Converter<*>>, resClass)!!.object2String(obj)
     }
 
     fun getAlias(filename: String): JSONObject {

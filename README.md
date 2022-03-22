@@ -30,6 +30,8 @@ hu jq '.' '{"tutorial":"https://stedolan.github.io/jq/tutorial/"}'
   "tutorial" : "https://stedolan.github.io/jq/tutorial/"
 }
 
+# 其他示例：
+hu jq 'to_entries|map(.key+"="+.value.clazz)|.[]' hutool/class.json strip
 ```
 
 > [JQ基本语法](https://stedolan.github.io/jq/manual/#Basicfilters)
@@ -465,7 +467,7 @@ ql script grammar: https://github.com/alibaba/QLExpress
 
 ```shell
 hu run 'run("base64","1234")'
-hu run 'run("csv2json","some.csv").getRawResult().getJSONObject(0).getString("key")'
+hu run 'run("csv2json","some.csv").raw().getJSONObject(0).getString("key")'
 ```
 
 ## 最后

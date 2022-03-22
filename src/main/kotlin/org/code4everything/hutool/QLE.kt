@@ -25,7 +25,7 @@ object QLE {
         "param1: the script expression", "",
         "args: the others params will map to args, and very param will map to indexed arg, like arg0 arg1...",
         "auto injected args: currdir, linesep, filesep, userhome",
-        "auto injected methods: cmd(p1), nullto(p1,p2), clipboard(), list(p1,p2..pn), join(p1), run(p1,p2..pn), lower(), upper()",
+        "auto injected methods: cmd(p1), nullto(p1,p2), clipboard(), list(p1,p2..pn), join(p1), run(p1,p2..pn), lower(), upper(), strip(p1), tojson()",
         "you can use it in your expression", "",
         "cmd(string): execute a command in terminal",
         "nullto(object,object): if p1 is null return p2, else p1",
@@ -33,6 +33,8 @@ object QLE {
         "list(object): variable arguments, return a list",
         "list.join(string): join a list to string, like 'list(1,2,3).join(\"<\")'",
         "string.lower() & string.upper(): transfer string to lower case or upper case",
+        "string.strip(string): remove prefix and suffix, like '\"@abc@\".strip(\"@\")'",
+        "string.tojson(): convert string or file to json",
         "run(string): run hu command in ql script, like 'run(\"base64\",\"some text here\")'", "",
         "ql script grammar: https://github.com/alibaba/QLExpress",
     ])
@@ -111,7 +113,7 @@ object QLE {
         return expression
     }
 
-    class RunResult(var finalResult: String, var rawResult: Any?) : CharSequence {
+    class RunResult(var finalResult: String, private var rawResult: Any?) : CharSequence {
         override val length: Int
             get() = finalResult.length
 
@@ -124,6 +126,8 @@ object QLE {
         override fun equals(other: Any?): Boolean = other?.toString() == finalResult
 
         override fun hashCode(): Int = finalResult.hashCode()
+
+        fun raw(): Any? = rawResult
     }
 
     private class ArgList(list: List<Any>) : JSONArray(list) {

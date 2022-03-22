@@ -30,17 +30,16 @@ object FileList {
         "example: '.' 'name' 'file'", "",
         "param1: the source folder",
         "param2: the filter pattern, support regex", "",
-        "option params: file dir hidden ignoreempty depth:9 ctime+3m utime+12h atime+1d",
+        "optional args: file dir hidden ignoreempty depth:9 ctime+3m utime+12h atime+1d",
         "file: just find file, dir: just find dir",
         "hidden: contains hidden file, ignoreempty: ignore empty folder or empty file",
         "depth: the max depth to recursion, time: create time, update time, access time"
     ])
     fun findFile(parent: File, name: String): List<String> {
-        val arrayOf = arrayOf("")
         val filter = FileFindFilter()
         filter.nameFilter = Pattern.compile(name, Pattern.CASE_INSENSITIVE)
 
-        val params = Hutool.ARG.params.subList(2, Hutool.ARG.params.size)
+        val params = MethodArg.getSubParams(Hutool.ARG, 2)
         val onlyFile = params.remove("file")
         val onlyDir = params.remove("dir")
 
@@ -152,7 +151,8 @@ object FileList {
         }
 
         val fileList = files.filter { !it.isHidden() && (!it.isDirectory() || !it.getName().startsWith(".")) }.stream()
-            .sorted(Comparator.comparing { obj: FileProp -> obj.isDirectory() }.reversed()).collect(Collectors.toList())
+            .sorted(Comparator.comparing { obj: FileProp -> obj.isDirectory() }.reversed())
+            .sorted(Comparator.comparing { obj: FileProp -> obj.getName() }).collect(Collectors.toList())
         if (fileList.isEmpty()) {
             return emptyList()
         }

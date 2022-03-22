@@ -9,6 +9,9 @@ import org.code4everything.hutool.Hutool
 class JsonObjectConverter(private val type: Class<*>) : Converter<Any> {
 
     override fun string2Object(string: String): Any? {
+        if (string.isEmpty()) {
+            return JSONObject()
+        }
         if (string.startsWith("{")) {
             return JSON.parseObject(string, type)
         }

@@ -101,8 +101,8 @@ class MethodArg {
             private set
 
         @JvmStatic
-        fun getSubParams(methodArg: MethodArg?, fromIdx: Int): List<String> {
-            return methodArg?.params?.subList(fromIdx, methodArg.params.size) ?: emptyList()
+        fun getSubParams(methodArg: MethodArg?, fromIdx: Int): MutableList<String> {
+            return methodArg?.params?.subList(fromIdx, methodArg.params.size) ?: arrayListOf()
         }
     }
 }
