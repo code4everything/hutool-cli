@@ -13,7 +13,7 @@ object Countdown {
         "param1: the time expression, like '2022-03-20 16:25', or timestamp like '1647764793'",
         "param2: the timestamp unit, if param1 is a timestamp, the unit is required"
     ])
-    fun countdown(@IOConverter deadline: String, unit: String): String {
+    fun datetime(@IOConverter deadline: String, unit: String): String {
         val dateConverter = DateConverter()
         val count: Long = if (NumberUtil.isNumber(deadline)) {
             val dateTime = DateTime(0)

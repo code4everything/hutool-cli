@@ -153,7 +153,7 @@
         "method": "file.list#listFiles(file=.)"
     },
     "find": {
-        "method": "file.list#find(file=.,string)"
+        "method": "file.list#findFile(file=.,string)"
     },
     "calendar": {
         "method": "org.code4everything.hutool.HuCalendar#calendar(str.arr=nil)"
@@ -166,7 +166,7 @@
         "method": "cn.hutool.core.io.FileUtil#touch(file=NewFile.txt)"
     },
     "countdown": {
-        "method": "org.code4everything.hutool.Countdown#countdown(string,string=sec)"
+        "method": "org.code4everything.hutool.Countdown#datetime(string,string=sec)"
     },
     "run": {
         "method": "qe#run(string)"
@@ -187,7 +187,7 @@
         "method": "org.code4everything.hutool.figlet.Figlet#ascii(string,string=standard)"
     },
     "jq": {
-        "method": "org.code4everything.hutool.jq.JacksonJq#parse(string,string)"
+        "method": "org.code4everything.hutool.jq.JacksonJq#queryJson(string,string)"
     },
     "csv2json": {
         "method": "org.code4everything.hutool.csv.CSV#toJson(string)"

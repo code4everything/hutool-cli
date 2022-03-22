@@ -27,7 +27,7 @@ object JacksonJq {
         "param2: the json content or json file", "",
         "jq grammar: https://stedolan.github.io/jq/manual/#Basicfilters",
     ])
-    fun parse(expression: String, content: String): String {
+    fun queryJson(expression: String, content: String): String {
         var json = content
         if (!json.startsWith('[') && !json.startsWith('{')) {
             json = FileConverter().string2Object(json).let { if (it.exists()) FileUtil.readUtf8String(it) else json }

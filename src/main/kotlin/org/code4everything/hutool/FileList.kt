@@ -35,7 +35,7 @@ object FileList {
         "hidden: contains hidden file, ignoreempty: ignore empty folder or empty file",
         "depth: the max depth to recursion, time: create time, update time, access time"
     ])
-    fun find(parent: File, name: String): List<String> {
+    fun findFile(parent: File, name: String): List<String> {
         val arrayOf = arrayOf("")
         val filter = FileFindFilter()
         filter.nameFilter = Pattern.compile(name, Pattern.CASE_INSENSITIVE)
@@ -64,10 +64,10 @@ object FileList {
         }
 
         Hutool.debugOutput("filter condition: " + JSON.toJSONString(filter))
-        return find(parent, filter, 0)
+        return findFile(parent, filter, 0)
     }
 
-    private fun find(parent: File, filter: FileFindFilter, depth: Int): List<String> {
+    private fun findFile(parent: File, filter: FileFindFilter, depth: Int): List<String> {
         if (depth > filter.depth) {
             return emptyList()
         }
@@ -111,7 +111,7 @@ object FileList {
             return emptyList()
         }
         return parent.listFiles()?.flatMap {
-            if (!filter.hasFile && it.isFile) emptyList() else find(it, filter, depth + 1)
+            if (!filter.hasFile && it.isFile) emptyList() else findFile(it, filter, depth + 1)
         }?.toList() ?: emptyList()
     }
 
