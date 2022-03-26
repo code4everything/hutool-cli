@@ -415,7 +415,7 @@ object Hutool {
         debugOutput("cast parameter success")
         debugOutput("invoking method: %s#%s(%s)", clazz.name, method.name, paramJoiner)
         result = if (Utils.classLoader == null) ReflectUtil.invokeStatic(method, *params) else {
-            val future: FutureTask<Any> = FutureTask { ReflectUtil.invokeStatic(method, *params) }
+            val future: FutureTask<Any?> = FutureTask { ReflectUtil.invokeStatic(method, *params) }
             Utils.syncRun(future, Utils.classLoader!!)
         }
         debugOutput("invoke method success")

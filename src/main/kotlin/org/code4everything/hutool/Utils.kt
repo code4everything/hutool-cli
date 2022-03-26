@@ -255,7 +255,7 @@ object Utils {
     fun toLowerCase(str: String?): String = str?.lowercase() ?: ""
 
     @JvmStatic
-    internal fun syncRun(future: FutureTask<Any>, classloader: ClassLoader): Any {
+    internal fun syncRun(future: FutureTask<Any?>, classloader: ClassLoader): Any? {
         val t = Thread(future)
         t.name = "thread-" + RandomUtil.randomString(3).lowercase()
         t.contextClassLoader = classloader

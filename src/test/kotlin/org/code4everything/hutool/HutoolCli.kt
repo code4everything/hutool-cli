@@ -146,6 +146,11 @@ class HutoolCli {
         test("run join(\",\",list(1,2,3))")
     }
 
+    @Test
+    fun open(){
+        test("open src")
+    }
+
     companion object {
 
         fun test(cmd: String, vararg params: String): String = Hutool.test(*(cmd.split(" ").toTypedArray() + params))

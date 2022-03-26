@@ -81,13 +81,13 @@ object QLE {
     @JvmStatic
     fun run(array: Array<String>): Any {
         val workDir = Hutool.ARG.workDir
-        val future: FutureTask<Any> = FutureTask {
+        val future: FutureTask<Any?> = FutureTask {
             Hutool.ARG = MethodArg()
             Hutool.ARG.workDir = workDir
             val result = Hutool.resolveCmd(array)
             RunResult(result, Hutool.result)
         }
-        return Utils.syncRun(future, ClassLoader.getSystemClassLoader())
+        return Utils.syncRun(future, ClassLoader.getSystemClassLoader())!!
     }
 
     @JvmStatic
