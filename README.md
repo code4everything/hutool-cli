@@ -459,14 +459,16 @@ run(string): run hu command in ql script, like 'run("base64","some text here")'
 ql script grammar: https://github.com/alibaba/QLExpress
 ```
 
-处理字符串
-
-`hu run 'clipboard().trim().lower().replace(".","#")'`
+处理字符串：`hu run 'clipboard().trim().lower().replace(".","#")'`
+求最大值：`hu run 'list(clipboard().split(linesep)).max()'`
+求平均值：`hu run 'list(clipboard().split(linesep)).avg()'`
 
 在脚本中运行hu命令
 
 ```shell
+# BASE64编码
 hu run 'run("base64","1234")'
+# CSV文件转JSON
 hu run 'run("csv2json","some.csv").raw().getJSONObject(0).getString("key")'
 ```
 
