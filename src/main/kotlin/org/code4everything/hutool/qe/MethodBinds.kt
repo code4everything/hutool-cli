@@ -76,6 +76,21 @@ class MethodBinds(private val runner: ExpressRunner) {
                 return (list?.first() as CharSequence?)?.toString()?.uppercase() ?: ""
             }
         })
+        runner.addClassMethod("int", CharSequence::class.java, object : Operator() {
+            override fun executeInner(list: Array<*>?): Any {
+                return (list?.first() as CharSequence?)?.toString()?.toInt() ?: 0
+            }
+        })
+        runner.addClassMethod("long", CharSequence::class.java, object : Operator() {
+            override fun executeInner(list: Array<*>?): Any {
+                return (list?.first() as CharSequence?)?.toString()?.toLong() ?: 0
+            }
+        })
+        runner.addClassMethod("double", CharSequence::class.java, object : Operator() {
+            override fun executeInner(list: Array<*>?): Any {
+                return (list?.first() as CharSequence?)?.toString()?.toDouble() ?: 0.0
+            }
+        })
         runner.addClassMethod("tojson", CharSequence::class.java, object : Operator() {
             override fun executeInner(list: Array<*>?): Any {
                 val value = (list?.first() as CharSequence?)?.toString() ?: ""
@@ -92,30 +107,29 @@ class MethodBinds(private val runner: ExpressRunner) {
     }
 
     private fun sumList(list: List<*>): Double {
-        return list.stream().map {
+        return list.stream().mapToDouble {
             if (it == null) {
-                return@map 0
+                return@mapToDouble 0.0
             }
             if (it is Number) {
-                return@map it.toDouble()
+                return@mapToDouble it.toDouble()
             }
             try {
-                return@map it.toString().toDouble()
+                return@mapToDouble it.toString().toDouble()
             } catch (e: Exception) {
-                return@map 0
+                return@mapToDouble 0.0
             }
-        }.collect(Collectors.summingDouble { (it as Number).toDouble() })
+        }.sum()
     }
 
     @Suppress("UNCHECKED_CAST")
     private fun reduceList(list: Array<*>?, compare: (Comparable<Any>, Comparable<Any>) -> Comparable<Any>): Any? {
         val holdList = (list?.first() as List<*>?) ?: emptyList<Any>()
-        val canCompare = holdList.stream().allMatch { it is Comparable<*> }
-        if (canCompare && holdList.isNotEmpty()) {
-            var result = holdList.getOrNull(0) as Comparable<Any>
-            holdList.stream().skip(1).forEach {
-                val test = it as Comparable<Any>
-                result = compare(result, test)
+        val compareList = holdList.stream().map { if (it is Comparable<*>) it as Comparable<Any> else null }.filter { it != null }.collect(Collectors.toList())
+        if (compareList.isNotEmpty()) {
+            var result = compareList.first()
+            compareList.stream().skip(1).forEach {
+                result = compare(result!!, it!!)
             }
             return result
         }

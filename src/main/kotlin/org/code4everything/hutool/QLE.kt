@@ -32,11 +32,13 @@ object QLE {
         "list(object): variable arguments, return a list",
         "list.join(string): join a list to string, like 'list(1,2,3).join(\"<\")'",
         "string.lower() & string.upper(): transfer string to lower case or upper case",
+        "string.int() & string.long() & string.double(): convert string to number",
         "string.strip(string): remove prefix and suffix, like '\"@abc@\".strip(\"@\")'",
         "string.tojson(): convert string or file to json",
         "list.min() & list.max(): get the min or max item, require every item is instance of comparable",
-        "list.sum() & list.avg(): calculate sum or avg value for a list, require every list item is a number, return a double",
-        "run(string): run hu command in ql script, like 'run(\"base64\",\"some text here\")'", "",
+        "list.sum() & list.avg(): calculate sum or avg value for a list, require every list item is a number, return a double", "",
+        "run(string): run hu command in ql script, like 'run(\"base64\",\"some text here\")'",
+        "it return a object which implements 'CharSequence', result available methods: str(), raw().", "",
         "ql script grammar: https://github.com/alibaba/QLExpress",
     ])
     fun run(express: String): Any? {
@@ -129,6 +131,8 @@ object QLE {
         override fun hashCode(): Int = finalResult.hashCode()
 
         fun raw(): Any? = rawResult
+
+        fun str(): String = finalResult
     }
 
     private class ArgList(list: List<Any>) : JSONArray(list) {
