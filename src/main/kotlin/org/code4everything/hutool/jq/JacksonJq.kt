@@ -18,8 +18,11 @@ import org.code4everything.hutool.Hutool
 import org.code4everything.hutool.MethodArg
 import org.code4everything.hutool.converter.FileConverter
 
-/// official jq: https://stedolan.github.io/jq/
-/// java jq implementation: https://github.com/eiiches/jackson-jq
+/**
+ * official jq: https://stedolan.github.io/jq/
+ * java jq implementation: https://github.com/eiiches/jackson-jq
+ *
+ */
 object JacksonJq {
 
     @JvmStatic
@@ -47,7 +50,8 @@ object JacksonJq {
         val scope = Scope.newEmptyScope()
         BuiltinFunctionLoader.getInstance().loadFunctions(version, scope)
         scope.addFunction("env", 0, EnvFunction())
-        scope.moduleLoader = ChainedModuleLoader(BuiltinModuleLoader.getInstance(), FileSystemModuleLoader(scope, version, FileSystems.getDefault().getPath("").toAbsolutePath()))
+        val loader = FileSystemModuleLoader(scope, version, FileSystems.getDefault().getPath("").toAbsolutePath())
+        scope.moduleLoader = ChainedModuleLoader(BuiltinModuleLoader.getInstance(), loader)
 
         val jsonNode = mapper.factory.createParser(json).readValueAsTree<JsonNode>()
         val jq = JsonQuery.compile(expression, version)

@@ -1,6 +1,8 @@
 package org.code4everything.hutool.dart
 
-/// utilities for flutter dart lang
+/**
+ * utilities for flutter dart lang
+ */
 object Darts {
 
     @JvmStatic

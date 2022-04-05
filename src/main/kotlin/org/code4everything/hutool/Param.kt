@@ -10,10 +10,14 @@ import java.lang.annotation.Inherited
 )
 annotation class Param(
 
-    /// alias for value
+    /**
+     * alias for value
+     */
     val name: String = "param",
 
-    /// alias for name
+    /**
+     * alias for name
+     */
     val value: String = "",
 
     val remark: String = "",

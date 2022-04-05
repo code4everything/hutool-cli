@@ -9,8 +9,10 @@ import org.code4everything.hutool.Hutool
 import org.code4everything.hutool.IOConverter
 import org.code4everything.hutool.converter.LineSepConverter
 
-/// official figlet: http://www.figlet.org/
-/// java figlet implementation: https://github.com/lalyos/jfiglet
+/**
+ * official figlet: http://www.figlet.org/
+ * java figlet implementation: https://github.com/lalyos/jfiglet
+ */
 object Figlet {
 
     private val fontHome by lazy { listOf(Hutool.HUTOOL_USER_HOME, "fonts", "figlet").joinToString(File.separator) }
