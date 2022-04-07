@@ -264,19 +264,6 @@ object Utils {
     }
 
     @JvmStatic
-    @IOConverter(LineSepConverter::class)
-    fun grep(
-        @IOConverter(PatternConverter::class) pattern: Pattern,
-        @IOConverter(ListStringConverter::class) lines: List<String>?
-    ): List<String> {
-        var line = lines
-        if (isCollectionEmpty(line) && !isStringEmpty(Hutool.resultString.get())) {
-            line = ListStringConverter().useLineSep().string2Object(Hutool.resultString.get())
-        }
-        return line!!.filter { pattern.matcher(it).find() }
-    }
-
-    @JvmStatic
     fun <T> isArrayEmpty(arr: Array<T>?): Boolean = arr?.isEmpty() ?: true
 
     @JvmStatic

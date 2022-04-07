@@ -70,9 +70,6 @@
     "suppers": {
         "method": "utils#getSupperClass(class)"
     },
-    "grep": {
-        "method": "utils#grep(reg.pattern,list=nil)"
-    },
     "match": {
         "method": "utils#getMatchedItems(reg.pattern,string)"
     },
@@ -174,7 +171,7 @@
     "env": {
         "method": "qe#run",
         "paramTypes": [
-            "@string=System.getenv(nullto(arg0,\"\").toUpperCase())"
+            "@string=System.getenv(nullto(arg0,'').upper())"
         ]
     },
     "lottery": {
