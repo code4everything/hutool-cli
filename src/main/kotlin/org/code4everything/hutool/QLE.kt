@@ -1,7 +1,7 @@
 package org.code4everything.hutool
 
 import cn.hutool.core.io.FileUtil
-import cn.hutool.core.util.RuntimeUtil
+import cn.hutool.core.swing.clipboard.ClipboardUtil
 import com.alibaba.fastjson.JSONArray
 import com.alibaba.fastjson.JSONObject
 import com.ql.util.express.DefaultContext
@@ -13,30 +13,36 @@ import java.math.BigDecimal
 import java.math.BigInteger
 import java.util.Date
 import java.util.StringJoiner
-import java.util.concurrent.FutureTask
 import org.code4everything.hutool.converter.FileConverter
 import org.code4everything.hutool.qe.MethodBinds
+import org.code4everything.hutool.qe.UnixCmdBinds
 
 object QLE {
+
+    @JvmStatic
+    private lateinit var runner: ExpressRunner
 
     @JvmStatic
     @HelpInfo([
         "example: 'arg0.length()' 'some_string_to_get_length'", "",
         "param1: the script expression", "",
         "args: the others params will map to args, and very param will map to indexed arg, like arg0 arg1...",
-        "auto injected args: currdir, linesep, filesep, userhome", "",
-        "auto injected methods: ",
+        "auto injected args: currdir, linesep, filesep, userhome, clipboard/c, unix/cmd/u", "",
+        "auto injected fields/methods: ",
         "cmd(string): execute a command in terminal",
         "nullto(object,object): if p1 is null return p2, else p1",
-        "clipboard(): get a string from clipboard",
         "list(object): variable arguments, return a list",
         "list.join(string): join a list to string, like \"list(1,2,3).join('<')\"",
-        "string.lower() & string.upper(): transfer string to lower case or upper case",
-        "string.int() & string.long() & string.double(): convert string to number",
+        "string.lower & string.upper: transfer string to lower case or upper case",
+        "string.int & string.long & string.double: convert string to number",
         "string.strip(string): remove prefix and suffix, like \"'@abc@'.strip('@')'\"",
-        "string.tojson(): convert string or file to json",
-        "list.min() & list.max(): get the min or max item, require every item is an instance of comparable",
-        "list.sum() & list.avg(): calculate sum or avg value for a list, require every item is a number, and return a double", "",
+        "string.json: convert string or file to json",
+        "string.file: convert this string to file",
+        "string.date: convert this string to date",
+        "list.sort: sort the list, require every item is comparable",
+        "list.min & list.max: get the min or max item, require every item is an instance of comparable",
+        "list.sum & list.avg: calculate sum or avg value for a list, require every item is a number, and return a double", "",
+        "object.str: call toString() method",
         "run(string): run hu command in ql script, like \"run('base64','some text here')\"",
         "it return a object which implements 'CharSequence', result available methods: str(), raw().", "",
         "ql script grammar: https://github.com/alibaba/QLExpress",
@@ -51,20 +57,21 @@ object QLE {
         val args = MethodArg.getSubParams(Hutool.ARG, 1)
 
         Hutool.debugOutput("get ql script: %s", exp)
-        val runner = ExpressRunner()
+        runner = ExpressRunner()
 
         val binds = MethodBinds(runner)
         binds.importPackage()
         binds.bindStaticMethods()
-        binds.bindListMethods()
-        binds.bindStringMethods()
+        binds.bind4List()
+        binds.bind4String()
+        binds.bind4Object()
 
         val context = getContext(args)
         return runner.execute(exp, context, null, true, false)
     }
 
     private fun getContext(args: List<String>): DefaultContext<String, Any> {
-        val context = DefaultContext<String, Any>()
+        val context = QeContext()
         context["currdir"] = Hutool.ARG.workDir
         context["linesep"] = FileUtil.getLineSeparator()
         context["filesep"] = File.separator
@@ -80,30 +87,6 @@ object QLE {
         Hutool.debugOutput("execute expression with args: %s", joiner)
         return context
     }
-
-    @JvmStatic
-    fun run(array: Array<String>): Any {
-        val workDir = Hutool.ARG.workDir
-        val future: FutureTask<Any?> = FutureTask {
-            Hutool.ARG = MethodArg()
-            Hutool.ARG.workDir = workDir
-            val result = Hutool.resolveCmd(array)
-            RunResult(result, Hutool.result)
-        }
-        return Utils.syncRun(future, ClassLoader.getSystemClassLoader())!!
-    }
-
-    @JvmStatic
-    fun cmd(cmd: String?): String {
-        val result = RuntimeUtil.execForStr(cmd)
-        return if (result?.isNotEmpty() == true) result.trim() else ""
-    }
-
-    @JvmStatic
-    fun nullTo(v1: Any?, v2: Any): Any = v1 ?: v2
-
-    @JvmStatic
-    fun list(array: Array<*>): List<Any?> = array.toList()
 
     private fun handleExpression(expression: String): String {
         if (expression.startsWith("file:")) {
@@ -133,6 +116,25 @@ object QLE {
         fun raw(): Any? = rawResult
 
         fun str(): String = finalResult
+    }
+
+    private class QeContext : DefaultContext<String, Any>() {
+        override fun get(key: String?): Any? {
+            val value = super.get(key)
+            if (value != null) {
+                return value
+            }
+
+            // for lazy loading
+            if (key == "u" || key == "unix" || key == "cmd") {
+                return UnixCmdBinds.getCmdBuilder(runner)
+            }
+            if (key == "c" || key == "clipboard") {
+                return ClipboardUtil.getStr()
+            }
+
+            return null
+        }
     }
 
     private class ArgList(list: List<Any>) : JSONArray(list) {

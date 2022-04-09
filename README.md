@@ -444,24 +444,34 @@ example: 'arg0.length()' 'some_string_to_get_length'
 param1: the script expression
 
 args: the others params will map to args, and very param will map to indexed arg, like arg0 arg1...
-auto injected args: currdir, linesep, filesep, userhome
-auto injected methods: cmd(p1), nullto(p1,p2), clipboard(), list(p1,p2..pn), join(p1), run(p1,p2..pn), lower(), upper()
-you can use it in your expression
+auto injected args: currdir, linesep, filesep, userhome, clipboard/c, unix/cmd/u
 
+auto injected fields/methods: 
 cmd(string): execute a command in terminal
 nullto(object,object): if p1 is null return p2, else p1
-clipboard(): get a string from clipboard
 list(object): variable arguments, return a list
-list.join(string): join a list to string, like 'list(1,2,3).join("<")'
-string.lower() & string.upper(): transfer string to lower case or upper case
-run(string): run hu command in ql script, like 'run("base64","some text here")'
+list.join(string): join a list to string, like "list(1,2,3).join('<')"
+string.lower & string.upper: transfer string to lower case or upper case
+string.int & string.long & string.double: convert string to number
+string.strip(string): remove prefix and suffix, like "'@abc@'.strip('@')'"
+string.json: convert string or file to json
+string.file: convert this string to file
+string.date: convert this string to date
+list.min & list.max: get the min or max item, require every item is an instance of comparable
+list.sum & list.avg: calculate sum or avg value for a list, require every item is a number, and return a double
+
+object.str: call toString() method
+run(string): run hu command in ql script, like "run('base64','some text here')"
+it return a object which implements 'CharSequence', result available methods: str(), raw().
 
 ql script grammar: https://github.com/alibaba/QLExpress
 ```
 
-处理字符串：`hu run 'clipboard().trim().lower().replace(".","#")'`
-求最大值：`hu run 'list(clipboard().split(linesep)).max()'`
-求平均值：`hu run 'list(clipboard().split(linesep)).avg()'`
+参考用例
+
+处理字符串：`hu run 'clipboard.trim.lower.replace(".","#")'`
+求最大值：`hu run 'list(clipboard.split(linesep)).max'`
+求平均值：`hu run 'list(clipboard.split(linesep)).avg'`
 
 在脚本中运行hu命令
 
@@ -470,6 +480,13 @@ ql script grammar: https://github.com/alibaba/QLExpress
 hu run 'run("base64","1234")'
 # CSV文件转JSON
 hu run 'run("csv2json","some.csv").raw().getJSONObject(0).getString("key")'
+```
+
+使用unix命令
+
+```shell
+hu run "u.cat('*.kts').grep('implementation','i').cat('n')"
+hu run "u.from(clipboard).sed('cat','head')"
 ```
 
 ## 最后

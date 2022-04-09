@@ -1,12 +1,13 @@
 package org.code4everything.hutool.qe
 
-import cn.hutool.core.swing.clipboard.ClipboardUtil
 import cn.hutool.core.util.StrUtil
 import com.alibaba.fastjson.JSONObject
 import com.ql.util.express.ExpressRunner
 import com.ql.util.express.Operator
+import java.util.regex.Pattern
 import java.util.stream.Collectors
-import org.code4everything.hutool.QLE
+import org.code4everything.hutool.converter.DateConverter
+import org.code4everything.hutool.converter.FileConverter
 import org.code4everything.hutool.converter.JsonObjectConverter
 
 class MethodBinds(private val runner: ExpressRunner) {
@@ -24,40 +25,45 @@ class MethodBinds(private val runner: ExpressRunner) {
     }
 
     fun bindStaticMethods() {
-        val clz = QLE::class.java
+        val clz = Helper::class.java
         runner.addFunctionOfClassMethod("cmd", clz, "cmd", arrayOf(String::class.java), null)
         runner.addFunctionOfClassMethod("nullto", clz, "nullTo", Array(2) { Any::class.java }, null)
         runner.addFunctionOfClassMethod("list", clz, "list", arrayOf(Array::class.java), null)
         runner.addFunctionOfClassMethod("run", clz, "run", arrayOf(Array<String>::class.java), null)
-
-        runner.addFunctionOfClassMethod("clipboard", ClipboardUtil::class.java, "getStr", emptyArray(), null)
     }
 
-    fun bindListMethods() {
+    @Suppress("UNCHECKED_CAST")
+    fun bind4List() {
         runner.addClassMethod("join", List::class.java, object : Operator() {
             override fun executeInner(list: Array<*>?): Any {
                 val vars = (list?.first() as List<*>?) ?: emptyList<Any>()
-                val sep = (list?.last() as CharSequence?) ?: ""
+                val sep = list?.last()?.toString() ?: ""
                 return vars.joinToString(sep)
             }
         })
-        runner.addClassMethod("min", List::class.java, object : Operator() {
+        runner.addClassField("sort", List::class.java, object : Operator() {
+            override fun executeInner(list: Array<*>?): Any? {
+                val holdList = (list?.first() as List<*>?) ?: emptyList<Any>()
+                return holdList.stream().map { if (it is Comparable<*>) it as Comparable<Any> else null }.filter { it != null }.sorted().collect(Collectors.toList())
+            }
+        })
+        runner.addClassField("min", List::class.java, object : Operator() {
             override fun executeInner(list: Array<*>?): Any? {
                 return reduceList(list) { t1, t2 -> if (t2 < t1) t2 else t1 }
             }
         })
-        runner.addClassMethod("max", List::class.java, object : Operator() {
+        runner.addClassField("max", List::class.java, object : Operator() {
             override fun executeInner(list: Array<*>?): Any? {
                 return reduceList(list) { t1, t2 -> if (t2 > t1) t2 else t1 }
             }
         })
-        runner.addClassMethod("sum", List::class.java, object : Operator() {
+        runner.addClassField("sum", List::class.java, object : Operator() {
             override fun executeInner(list: Array<*>?): Any {
                 val holdList = (list?.first() as List<*>?) ?: emptyList<Any>()
                 return sumList(holdList)
             }
         })
-        runner.addClassMethod("avg", List::class.java, object : Operator() {
+        runner.addClassField("avg", List::class.java, object : Operator() {
             override fun executeInner(list: Array<*>?): Any {
                 val holdList = (list?.first() as List<*>?) ?: emptyList<Any>()
                 return sumList(holdList) / holdList.size
@@ -65,42 +71,73 @@ class MethodBinds(private val runner: ExpressRunner) {
         })
     }
 
-    fun bindStringMethods() {
-        runner.addClassMethod("lower", CharSequence::class.java, object : Operator() {
+    fun bind4Object() {
+        runner.addClassField("str", Any::class.java, object : Operator() {
             override fun executeInner(list: Array<*>?): Any {
-                return (list?.first() as CharSequence?)?.toString()?.lowercase() ?: ""
+                return list?.first()?.toString() ?: ""
             }
         })
-        runner.addClassMethod("upper", CharSequence::class.java, object : Operator() {
+    }
+
+    fun bind4String() {
+        runner.addClassField("lower", CharSequence::class.java, object : Operator() {
             override fun executeInner(list: Array<*>?): Any {
-                return (list?.first() as CharSequence?)?.toString()?.uppercase() ?: ""
+                return list?.first()?.toString()?.lowercase() ?: ""
             }
         })
-        runner.addClassMethod("int", CharSequence::class.java, object : Operator() {
+        runner.addClassField("upper", CharSequence::class.java, object : Operator() {
             override fun executeInner(list: Array<*>?): Any {
-                return (list?.first() as CharSequence?)?.toString()?.toInt() ?: 0
+                return list?.first()?.toString()?.uppercase() ?: ""
             }
         })
-        runner.addClassMethod("long", CharSequence::class.java, object : Operator() {
+        runner.addClassField("trim", CharSequence::class.java, object : Operator() {
             override fun executeInner(list: Array<*>?): Any {
-                return (list?.first() as CharSequence?)?.toString()?.toLong() ?: 0
+                return list?.first()?.toString()?.trim() ?: ""
             }
         })
-        runner.addClassMethod("double", CharSequence::class.java, object : Operator() {
+        runner.addClassField("int", CharSequence::class.java, object : Operator() {
             override fun executeInner(list: Array<*>?): Any {
-                return (list?.first() as CharSequence?)?.toString()?.toDouble() ?: 0.0
+                return list?.first()?.toString()?.toInt() ?: 0
             }
         })
-        runner.addClassMethod("tojson", CharSequence::class.java, object : Operator() {
+        runner.addClassField("long", CharSequence::class.java, object : Operator() {
             override fun executeInner(list: Array<*>?): Any {
-                val value = (list?.first() as CharSequence?)?.toString() ?: ""
+                return list?.first()?.toString()?.toLong() ?: 0L
+            }
+        })
+        runner.addClassField("double", CharSequence::class.java, object : Operator() {
+            override fun executeInner(list: Array<*>?): Any {
+                return list?.first()?.toString()?.toDouble() ?: 0.0
+            }
+        })
+        runner.addClassField("file", CharSequence::class.java, object : Operator() {
+            override fun executeInner(list: Array<*>?): Any {
+                val value = list?.first()?.toString() ?: ""
+                return FileConverter().string2Object(value)
+            }
+        })
+        runner.addClassField("date", CharSequence::class.java, object : Operator() {
+            override fun executeInner(list: Array<*>?): Any {
+                val value = list?.first()?.toString() ?: ""
+                return DateConverter().string2Object(value)
+            }
+        })
+        runner.addClassField("json", CharSequence::class.java, object : Operator() {
+            override fun executeInner(list: Array<*>?): Any {
+                val value = list?.first()?.toString() ?: ""
                 return JsonObjectConverter(JSONObject::class.java).string2Object(value) ?: JSONObject()
+            }
+        })
+        runner.addClassField("pattern", CharSequence::class.java, object : Operator() {
+            override fun executeInner(list: Array<*>?): Any {
+                val value = list?.first()?.toString() ?: ""
+                return Pattern.compile(value)
             }
         })
         runner.addClassMethod("strip", CharSequence::class.java, object : Operator() {
             override fun executeInner(list: Array<*>?): Any {
                 val value = (list?.first() as String?) ?: ""
-                val fix = (list?.last() as CharSequence?) ?: ""
+                val fix = list?.last()?.toString() ?: ""
                 return StrUtil.strip(value, fix)
             }
         })

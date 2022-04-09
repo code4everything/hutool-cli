@@ -121,12 +121,6 @@ class HutoolCli {
     }
 
     @Test
-    fun tojson() {
-        test("tojson -a:0")
-        test("tojson {\"key\":\"value\"}")
-    }
-
-    @Test
     fun md5() {
         test("md5 test")
     }
@@ -143,12 +137,19 @@ class HutoolCli {
 
     @Test
     fun run() {
-        test("run join(\",\",list(1,2,3))")
+        test("run list(1,2,3).join('->')")
+        test("run '2022-04-09'.date")
     }
 
     @Test
-    fun open(){
+    fun open() {
         test("open src")
+    }
+
+    @Test
+    fun unix() {
+        test("unix cat *.kts grep i implementation cat n wc l")
+        test("unix settings.gradle.kts sed include exclude")
     }
 
     companion object {

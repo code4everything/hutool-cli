@@ -29,7 +29,7 @@ allprojects {
         implementation("com.vdurmont:emoji-java:5.1.1")
         implementation("com.google.zxing:core:3.4.1")
         implementation("com.belerweb:pinyin4j:2.5.1")
-        implementation("com.alibaba:fastjson:1.2.79")
+        implementation("com.alibaba:fastjson:1.2.80")
         implementation("org.javassist:javassist:3.28.0-GA")
         implementation("com.github.tomas-langer:chalk:1.0.2")
         implementation("com.alibaba:QLExpress:3.2.7")
@@ -37,6 +37,7 @@ allprojects {
         implementation("org.bouncycastle:bcprov-jdk15on:1.70")
         implementation("com.github.lalyos:jfiglet:0.0.8")
         implementation("net.thisptr:jackson-jq:1.0.0-preview.20210928")
+        implementation("org.unix4j:unix4j-command:0.6")
         testImplementation("junit:junit:4.13.2")
     }
 }

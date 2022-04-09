@@ -1,6 +1,8 @@
 package org.code4everything.hutool
 
 import org.junit.Test
+import org.unix4j.Unix4j
+import org.unix4j.unix.sed.SedOptions
 
 class Tester {
 
@@ -23,11 +25,6 @@ class Tester {
 
     @Test
     fun kotlin() {
-        Array(5) { i -> i }.forEach {
-            if (it == 3) {
-                return@forEach
-            }
-            println(it)
-        }
+        println(Unix4j.fromString("hutool").sed(SedOptions.EMPTY, "hu", "our ").toStringResult())
     }
 }
