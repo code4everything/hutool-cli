@@ -28,7 +28,7 @@ class ColorConverter : Converter<Color> {
     override fun object2String(any: Any?): String {
         return if (any is Color) any.run {
             val hex = String.format("#%02X%02X%02X", red, green, blue)
-            "HEX: $hex, RGB($red,$green,$blue)"
+            "HEX:$hex  RGB($red,$green,$blue)"
         } else ""
     }
 
