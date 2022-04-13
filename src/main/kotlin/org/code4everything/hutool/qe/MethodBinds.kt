@@ -1,9 +1,11 @@
 package org.code4everything.hutool.qe
 
+import cn.hutool.core.date.DateTime
 import cn.hutool.core.util.StrUtil
 import com.alibaba.fastjson.JSONObject
 import com.ql.util.express.ExpressRunner
 import com.ql.util.express.Operator
+import java.io.File
 import java.util.regex.Pattern
 import java.util.stream.Collectors
 import org.code4everything.hutool.converter.DateConverter
@@ -35,14 +37,14 @@ class MethodBinds(private val runner: ExpressRunner) {
     @Suppress("UNCHECKED_CAST")
     fun bind4List() {
         runner.addClassMethod("join", List::class.java, object : Operator() {
-            override fun executeInner(list: Array<*>?): Any {
+            override fun executeInner(list: Array<*>?): String {
                 val vars = (list?.first() as List<*>?) ?: emptyList<Any>()
                 val sep = list?.last()?.toString() ?: ""
                 return vars.joinToString(sep)
             }
         })
         runner.addClassField("sort", List::class.java, object : Operator() {
-            override fun executeInner(list: Array<*>?): Any? {
+            override fun executeInner(list: Array<*>?): List<*> {
                 val holdList = (list?.first() as List<*>?) ?: emptyList<Any>()
                 return holdList.stream().map { if (it is Comparable<*>) it as Comparable<Any> else null }.filter { it != null }.sorted().collect(Collectors.toList())
             }
@@ -58,13 +60,13 @@ class MethodBinds(private val runner: ExpressRunner) {
             }
         })
         runner.addClassField("sum", List::class.java, object : Operator() {
-            override fun executeInner(list: Array<*>?): Any {
+            override fun executeInner(list: Array<*>?): Double {
                 val holdList = (list?.first() as List<*>?) ?: emptyList<Any>()
                 return sumList(holdList)
             }
         })
         runner.addClassField("avg", List::class.java, object : Operator() {
-            override fun executeInner(list: Array<*>?): Any {
+            override fun executeInner(list: Array<*>?): Double {
                 val holdList = (list?.first() as List<*>?) ?: emptyList<Any>()
                 return sumList(holdList) / holdList.size
             }
@@ -73,7 +75,7 @@ class MethodBinds(private val runner: ExpressRunner) {
 
     fun bind4Object() {
         runner.addClassField("str", Any::class.java, object : Operator() {
-            override fun executeInner(list: Array<*>?): Any {
+            override fun executeInner(list: Array<*>?): String {
                 return list?.first()?.toString() ?: ""
             }
         })
@@ -81,43 +83,43 @@ class MethodBinds(private val runner: ExpressRunner) {
 
     fun bind4String() {
         runner.addClassField("lower", CharSequence::class.java, object : Operator() {
-            override fun executeInner(list: Array<*>?): Any {
+            override fun executeInner(list: Array<*>?): String {
                 return list?.first()?.toString()?.lowercase() ?: ""
             }
         })
         runner.addClassField("upper", CharSequence::class.java, object : Operator() {
-            override fun executeInner(list: Array<*>?): Any {
+            override fun executeInner(list: Array<*>?): String {
                 return list?.first()?.toString()?.uppercase() ?: ""
             }
         })
         runner.addClassField("trim", CharSequence::class.java, object : Operator() {
-            override fun executeInner(list: Array<*>?): Any {
+            override fun executeInner(list: Array<*>?): String {
                 return list?.first()?.toString()?.trim() ?: ""
             }
         })
         runner.addClassField("int", CharSequence::class.java, object : Operator() {
-            override fun executeInner(list: Array<*>?): Any {
+            override fun executeInner(list: Array<*>?): Int {
                 return list?.first()?.toString()?.toInt() ?: 0
             }
         })
         runner.addClassField("long", CharSequence::class.java, object : Operator() {
-            override fun executeInner(list: Array<*>?): Any {
+            override fun executeInner(list: Array<*>?): Long {
                 return list?.first()?.toString()?.toLong() ?: 0L
             }
         })
         runner.addClassField("double", CharSequence::class.java, object : Operator() {
-            override fun executeInner(list: Array<*>?): Any {
+            override fun executeInner(list: Array<*>?): Double {
                 return list?.first()?.toString()?.toDouble() ?: 0.0
             }
         })
         runner.addClassField("file", CharSequence::class.java, object : Operator() {
-            override fun executeInner(list: Array<*>?): Any {
+            override fun executeInner(list: Array<*>?): File {
                 val value = list?.first()?.toString() ?: ""
                 return FileConverter().string2Object(value)
             }
         })
         runner.addClassField("date", CharSequence::class.java, object : Operator() {
-            override fun executeInner(list: Array<*>?): Any {
+            override fun executeInner(list: Array<*>?): DateTime {
                 val value = list?.first()?.toString() ?: ""
                 return DateConverter().string2Object(value)
             }
@@ -129,16 +131,23 @@ class MethodBinds(private val runner: ExpressRunner) {
             }
         })
         runner.addClassField("pattern", CharSequence::class.java, object : Operator() {
-            override fun executeInner(list: Array<*>?): Any {
+            override fun executeInner(list: Array<*>?): Pattern {
                 val value = list?.first()?.toString() ?: ""
                 return Pattern.compile(value)
             }
         })
         runner.addClassMethod("strip", CharSequence::class.java, object : Operator() {
-            override fun executeInner(list: Array<*>?): Any {
+            override fun executeInner(list: Array<*>?): String {
                 val value = (list?.first() as String?) ?: ""
                 val fix = list?.last()?.toString() ?: ""
                 return StrUtil.strip(value, fix)
+            }
+        })
+        runner.addClassMethod("split", CharSequence::class.java, object : Operator() {
+            override fun executeInner(list: Array<*>?): List<String> {
+                val value = (list?.first() as String?) ?: ""
+                val regex = list?.last()?.toString() ?: ""
+                return value.split(regex)
             }
         })
     }

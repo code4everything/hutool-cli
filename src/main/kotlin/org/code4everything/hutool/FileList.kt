@@ -181,58 +181,6 @@ object FileList {
         return list
     }
 
-    @JvmStatic
-    @IOConverter(LineSepConverter::class)
-    fun listFiles(@IOConverter(FileConverter::class) file: File): List<String> {
-        if (!FileUtil.exist(file)) {
-            return listOf("file not found!")
-        }
-
-        if (FileUtil.isFile(file)) {
-            val date = DateUtil.formatDateTime(Date(file.lastModified()))
-            val size = FileUtil.readableFileSize(file)
-            return listOf("$date  $size  ${file.name}")
-        }
-
-        val filter = MethodArg.getSubParams(Hutool.ARG, 1)
-        val files = file.listFiles { _, name ->
-            Utils.isCollectionEmpty(filter) || filter.stream().anyMatch { name.lowercase().contains(it) }
-        }
-
-        if (Utils.isArrayEmpty(files)) {
-            return emptyList()
-        }
-
-        Arrays.sort(
-            files!!, ComparatorChain.of(Comparator.comparingInt { if (it.isDirectory) 0 else 1 },
-            Comparator.comparing { it.name },
-            Comparator.comparingLong { it.lastModified() })
-        )
-
-        val list = arrayListOf<String>()
-        var maxLen = 0
-        val size = Array(files.size) { "" }
-        for (i in files.indices) {
-            size[i] = Utils.addSuffixIfNot(FileUtil.readableFileSize(files[i]).replace(" ", ""), "B")
-            val last = size[i].length - 2
-            if (!Character.isDigit(size[i][last])) {
-                // remove 'B' if has K,M...
-                size[i] = size[i].substring(0, size[i].length - 1)
-            }
-            if (size[i].length > maxLen) {
-                maxLen = size[i].length
-            }
-        }
-
-        for (i in files.indices) {
-            val date = DateUtil.formatDateTime(Date(files[i].lastModified()))
-            val fmtSize = size[i].padStart(maxLen, ' ')
-            list.add("$date  $fmtSize  ${files[i].name}")
-        }
-
-        return list
-    }
-
     class FileFindFilter {
         var nameFilter = Pattern.compile(".*", Pattern.CASE_INSENSITIVE)
 

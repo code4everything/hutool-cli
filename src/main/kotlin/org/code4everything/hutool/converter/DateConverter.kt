@@ -8,7 +8,6 @@ import cn.hutool.core.math.Calculator
 import cn.hutool.core.util.ReUtil
 import cn.hutool.core.util.ReflectUtil
 import java.util.Date
-import java.util.concurrent.TimeUnit
 import org.code4everything.hutool.Converter
 import org.code4everything.hutool.Hutool
 
@@ -43,15 +42,18 @@ class DateConverter : Converter<DateTime> {
         for ((k, v) in offsetMap) {
             if (offsetStr.endsWith(k)) {
                 val offset = Calculator.conversion(offsetStr.removeSuffix(k)).toInt()
-                return dateTime.offset(v.dateField, offset)
+                return dateTime.offset(v, offset)
             }
         }
         return dateTime.offset(DateField.MILLISECOND, Calculator.conversion(offsetStr).toInt())
     }
 
     private fun parseDate(string: String): DateTime {
-        if (string.length > 2 && ReUtil.isMatch("[0-9]+", string)) {
-            return DateUtil.date(string.toLong())
+        if (string.length > 2) {
+            val timestamp = string.removeSuffix("ms")
+            if (ReUtil.isMatch("[0-9]+", timestamp)) {
+                return DateUtil.date(timestamp.toLong())
+            }
         }
 
         return (when (string) {
@@ -61,7 +63,7 @@ class DateConverter : Converter<DateTime> {
         } ?: run {
             for ((k, v) in offsetMap) {
                 if (string.endsWith(k)) {
-                    return DateUtil.date(string.removeSuffix(k).toLong() * v.unit.toMillis(v.base))
+                    return DateTime(0).offset(v, string.removeSuffix(k).toInt())
                 }
             }
 
@@ -96,23 +98,23 @@ class DateConverter : Converter<DateTime> {
         }
 
         @JvmStatic
-        private val offsetMap: MutableMap<String, DateUnit> by lazy {
-            HashMap<String, DateUnit>(16).apply {
-                put("ms", DateUnit.MILLISECOND)
-                put("s", DateUnit.SECOND)
-                put("sec", DateUnit.SECOND)
-                put("min", DateUnit.MINUTE)
-                put("h", DateUnit.HOUR)
-                put("hour", DateUnit.HOUR)
-                put("d", DateUnit.DAY_OF_YEAR)
-                put("day", DateUnit.DAY_OF_YEAR)
-                put("w", DateUnit.WEEK_OF_YEAR)
-                put("week", DateUnit.WEEK_OF_YEAR)
-                put("m", DateUnit.MONTH)
-                put("mon", DateUnit.MONTH)
-                put("month", DateUnit.MONTH)
-                put("y", DateUnit.YEAR)
-                put("year", DateUnit.YEAR)
+        private val offsetMap: MutableMap<String, DateField> by lazy {
+            HashMap<String, DateField>(16).apply {
+                put("ms", DateField.MILLISECOND)
+                put("s", DateField.SECOND)
+                put("sec", DateField.SECOND)
+                put("min", DateField.MINUTE)
+                put("h", DateField.HOUR)
+                put("hour", DateField.HOUR)
+                put("d", DateField.DAY_OF_YEAR)
+                put("day", DateField.DAY_OF_YEAR)
+                put("w", DateField.WEEK_OF_YEAR)
+                put("week", DateField.WEEK_OF_YEAR)
+                put("m", DateField.MONTH)
+                put("mon", DateField.MONTH)
+                put("month", DateField.MONTH)
+                put("y", DateField.YEAR)
+                put("year", DateField.YEAR)
             }
         }
 
@@ -155,24 +157,5 @@ class DateConverter : Converter<DateTime> {
                 put("year", "beginOfYear")
             }
         }
-    }
-
-    private enum class DateUnit(val dateField: DateField, val unit: TimeUnit, val base: Long) {
-
-        MILLISECOND(DateField.MILLISECOND, TimeUnit.MILLISECONDS, 1),
-
-        SECOND(DateField.SECOND, TimeUnit.SECONDS, 1),
-
-        MINUTE(DateField.MINUTE, TimeUnit.MINUTES, 1),
-
-        HOUR(DateField.HOUR, TimeUnit.HOURS, 1),
-
-        DAY_OF_YEAR(DateField.DAY_OF_YEAR, TimeUnit.DAYS, 1),
-
-        WEEK_OF_YEAR(DateField.WEEK_OF_YEAR, TimeUnit.DAYS, 7),
-
-        MONTH(DateField.MONTH, TimeUnit.DAYS, 30),
-
-        YEAR(DateField.YEAR, TimeUnit.DAYS, 365)
     }
 }

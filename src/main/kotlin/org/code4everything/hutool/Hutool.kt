@@ -40,7 +40,6 @@ import org.code4everything.hutool.Utils.isArrayEmpty
 import org.code4everything.hutool.Utils.isCollectionEmpty
 import org.code4everything.hutool.Utils.isStringEmpty
 import org.code4everything.hutool.Utils.parseClass
-import org.code4everything.hutool.Utils.parseClassName
 import org.code4everything.hutool.converter.ArrayConverter
 import org.code4everything.hutool.converter.CharsetConverter
 import org.code4everything.hutool.converter.DateConverter
@@ -80,7 +79,7 @@ object Hutool {
         set(value) = argLocal.set(value)
         get() = argLocal.get()!!
 
-    val resultString = ThreadLocal<String>()
+    val resultString = ThreadLocal<String?>()
     private lateinit var commander: JCommander
 
     private val resultLocal = ThreadLocal<Any?>()
@@ -116,6 +115,10 @@ object Hutool {
         debugOutput("received arguments: %s", ArrayUtil.toString(args))
         debugOutput("starting resolve")
         ARG.command.addAll(ARG.main)
+        val previousRes = resultString.get()
+        if (previousRes != null) {
+            ARG.params.add(previousRes)
+        }
 
         resolveResult()
         debugOutput("result handled success")
@@ -135,7 +138,7 @@ object Hutool {
             println()
         }
 
-        return resultString.get()
+        return resultString.get() ?: ""
     }
 
     @JvmStatic
@@ -206,14 +209,14 @@ object Hutool {
             if (methodJson?.containsKey(methodKey) != true) {
                 val plugin = FileUtil.file(pluginHome, "${command.removePrefix("p.")}.jar")
                 if (FileUtil.exist(plugin)) {
+                    // 插件
                     methodJson = JSONObject().fluentPut(methodKey, "$PLUGIN_NAME#run()")
                     Utils.classLoader = JarClassLoader().apply { addJar(plugin) }
                     debugOutput("get command from plugin: " + plugin.name)
-                } else if (ARG.params.size > 0 && parseClassName("@$command") != "@$command") {
-                    val methodName = ARG.params.removeFirst()
-                    methodJson = JSONObject().fluentPut(methodKey, "@$command#$methodName")
-                    debugOutput("get method name from param[0]")
-                    omitParamType.set(true)
+                } else if (aliasJson.containsKey("default")) {
+                    // 默认方法
+                    methodJson = aliasJson.getJSONObject("default")
+                    ARG.params.add(0, command)
                 } else {
                     result = "command[$command] not found!"
                     return
@@ -810,6 +813,6 @@ object Hutool {
         newArgs[idx++] = "--work-dir"
         newArgs[idx] = Paths.get(".").toAbsolutePath().normalize().toString()
         main(newArgs)
-        return resultString.get()
+        return resultString.get() ?: ""
     }
 }

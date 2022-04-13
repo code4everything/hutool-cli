@@ -1,4 +1,7 @@
 {
+    "default": {
+        "method": "org.code4everything.hutool.unix.Unix4j#unix"
+    },
     "encode32": {
         "method": "cn.hutool.core.codec.Base32#encode(string)"
     },
@@ -19,9 +22,6 @@
     },
     "date": {
         "method": "cn.hutool.core.date.DateUtil#date(date=now)"
-    },
-    "cat": {
-        "method": "cn.hutool.core.io.FileUtil#readUtf8String(file)"
     },
     "unicode2str": {
         "method": "cn.hutool.core.text.UnicodeUtil#toString(string)"
@@ -142,12 +142,6 @@
     },
     "repeat": {
         "method": "csu#repeat(j.char.seq,int=2)"
-    },
-    "ll": {
-        "method": "file.list#listFiles(file=.)"
-    },
-    "ls": {
-        "method": "file.list#listFiles(file=.)"
     },
     "find": {
         "method": "file.list#findFile(file=.,string)"
