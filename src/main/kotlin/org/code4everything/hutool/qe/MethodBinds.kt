@@ -97,17 +97,7 @@ class MethodBinds(private val runner: ExpressRunner) {
                 return list?.first()?.toString()?.trim() ?: ""
             }
         })
-        runner.addClassField("int", CharSequence::class.java, object : Operator() {
-            override fun executeInner(list: Array<*>?): Int {
-                return list?.first()?.toString()?.toInt() ?: 0
-            }
-        })
-        runner.addClassField("long", CharSequence::class.java, object : Operator() {
-            override fun executeInner(list: Array<*>?): Long {
-                return list?.first()?.toString()?.toLong() ?: 0L
-            }
-        })
-        runner.addClassField("double", CharSequence::class.java, object : Operator() {
+        runner.addClassField("num", CharSequence::class.java, object : Operator() {
             override fun executeInner(list: Array<*>?): Double {
                 return list?.first()?.toString()?.toDouble() ?: 0.0
             }
