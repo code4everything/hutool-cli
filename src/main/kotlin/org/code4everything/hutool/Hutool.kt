@@ -741,7 +741,7 @@ object Hutool {
             return JsonObjectConverter(Any::class.java).object2String(obj)
         }
         if (obj is Double) {
-            return String.format("%.2f", obj)
+            return String.format("%.9f", obj)
         }
         if (obj is Charset) {
             return CharsetConverter().object2String(obj)
