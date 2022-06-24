@@ -152,6 +152,11 @@ class HutoolCli {
         test("unix settings.gradle.kts sed include exclude")
     }
 
+    @Test
+    fun countFile() {
+        test("fcnt . suffix=kt")
+    }
+
     companion object {
 
         fun test(cmd: String, vararg params: String): String = Hutool.test(*(cmd.split(" ").toTypedArray() + params))

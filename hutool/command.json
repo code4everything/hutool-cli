@@ -185,5 +185,8 @@
     },
     "unix": {
         "method": "org.code4everything.hutool.unix.Unix4j#unix"
+    },
+    "fcnt": {
+        "method": "org.code4everything.hutool.FileList#countFile(file=.)"
     }
 }

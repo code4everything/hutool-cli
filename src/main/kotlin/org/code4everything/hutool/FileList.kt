@@ -1,14 +1,11 @@
 package org.code4everything.hutool
 
-import cn.hutool.core.comparator.ComparatorChain
-import cn.hutool.core.date.DateUtil
 import cn.hutool.core.io.FileUtil
 import cn.hutool.core.util.StrUtil
 import com.alibaba.fastjson.JSON
 import java.io.File
 import java.nio.file.Files
 import java.nio.file.attribute.BasicFileAttributes
-import java.util.Arrays
 import java.util.Date
 import java.util.regex.Pattern
 import java.util.stream.Collectors
@@ -25,16 +22,57 @@ object FileList {
     private val now by lazy { Date() }
 
     @JvmStatic
+    @HelpInfo(
+        [
+            "example: '.' 'suffix=jpg,png' 'name=xxx'", "",
+            "optional args: suffix name"
+        ]
+    )
+    fun countFile(parent: File): Int {
+        val map = MethodArg.getArgMap(Hutool.ARG)
+        val suffixFilter = map.getOrDefault("suffix", emptyList())
+        val nameFilter = map.getOrDefault("name", emptyList())
+        if (parent.name.endsWith(".jar") || parent.name.endsWith(".zip")) {
+            return countFile(ZipProp(ZipFile(parent)), suffixFilter, nameFilter)
+        }
+        return countFile(DocFileProp(parent), suffixFilter, nameFilter)
+    }
+
+    private fun countFile(file: FileProp, suffixFilter: List<String>, nameFilter: List<String>): Int {
+        if (file.isHidden()) {
+            return 0
+        }
+        if (file.isFile()) {
+            val filename = file.getName()
+            if (nameFilter.isNotEmpty() && nameFilter.stream().noneMatch { filename.contains(it) }) {
+                return 0
+            }
+            if (suffixFilter.isNotEmpty() && !suffixFilter.contains(file.suffix())) {
+                return 0
+            }
+            return 1
+        }
+
+        var sum = 0
+        file.listEntries().forEach {
+            sum += countFile(it, suffixFilter, nameFilter)
+        }
+        return sum
+    }
+
+    @JvmStatic
     @IOConverter(LineSepConverter::class)
-    @HelpInfo([
-        "example: '.' 'name' 'file'", "",
-        "param1: the source folder",
-        "param2: the filter pattern, support regex", "",
-        "optional args: file dir hidden ignoreempty depth:9 ctime+3m utime+12h atime+1d",
-        "file: just find file, dir: just find dir",
-        "hidden: contains hidden file, ignoreempty: ignore empty folder or empty file",
-        "depth: the max depth to recursion, time: create time, update time, access time"
-    ])
+    @HelpInfo(
+        [
+            "example: '.' 'name' 'file'", "",
+            "param1: the source folder",
+            "param2: the filter pattern, support regex", "",
+            "optional args: file dir hidden ignoreempty depth:9 ctime+3m utime+12h atime+1d",
+            "file: just find file, dir: just find dir",
+            "hidden: contains hidden file, ignoreempty: ignore empty folder or empty file",
+            "depth: the max depth to recursion, time: create time, update time, access time"
+        ]
+    )
     fun findFile(parent: File, name: String): List<String> {
         val filter = FileFindFilter()
         filter.nameFilter = Pattern.compile(name, Pattern.CASE_INSENSITIVE)
@@ -116,31 +154,46 @@ object FileList {
 
     @JvmStatic
     @IOConverter(LineSepConverter::class)
-    @HelpInfo([
-        "example: '.' '3'", "",
-        "param1: the parent file, support zip file",
-        "param2: the max depth to recursion"
-    ])
+    @HelpInfo(
+        [
+            "example: '.' '3'", "",
+            "param1: the parent file, support zip file",
+            "param2: the max depth to recursion", "",
+            "optional args: dir",
+            "dir: only print folder",
+        ]
+    )
     fun treeFile(@IOConverter(FileConverter::class) file: File, maxDepth: Int): List<String> {
         if (!FileUtil.exist(file)) {
             return emptyList()
         }
+
+        val params = MethodArg.getSubParams(Hutool.ARG, 2)
+        val outFile = !params.remove("dir")
+
         if (FileUtil.isDirectory(file)) {
-            return treeFile(DocFileProp(file), 1, maxDepth, true)
+            return treeFile(DocFileProp(file), 1, maxDepth, true, outFile)
         }
         if (file.name.endsWith(".jar") || file.name.endsWith(".zip")) {
             val zip = ZipFile(file)
-            return treeFile(ZipProp(zip), 1, maxDepth, true)
+            return treeFile(ZipProp(zip), 1, maxDepth, true, outFile)
         }
-        return listOf(file.name)
+
+        return if (outFile) listOf(file.name) else emptyList()
     }
 
-    private fun treeFile(file: FileProp, currDepth: Int, maxDepth: Int, isLast: Boolean): List<String> {
+    private fun treeFile(
+        file: FileProp,
+        currDepth: Int,
+        maxDepth: Int,
+        isLast: Boolean,
+        outFile: Boolean,
+    ): List<String> {
         if (maxDepth > -1 && currDepth > maxDepth) {
             return emptyList()
         }
 
-        if (file.isFile()) {
+        if (outFile && file.isFile()) {
             val prefix = if (isLast) "└─" else "├─"
             return listOf("$prefix${file.getName()}")
         }
@@ -150,7 +203,8 @@ object FileList {
             return emptyList()
         }
 
-        val fileList = files.filter { !it.isHidden() && (!it.isDirectory() || !it.getName().startsWith(".")) }.stream()
+        val fileList = files.filter { !it.isHidden() && (!it.isDirectory() || !it.getName().startsWith(".")) }
+            .filter { outFile || it.isDirectory() }.stream()
             .sorted(Comparator.comparing { obj: FileProp -> obj.isDirectory() }.reversed())
             .sorted(Comparator.comparing { obj: FileProp -> obj.getName() }).collect(Collectors.toList())
         if (fileList.isEmpty()) {
@@ -168,7 +222,7 @@ object FileList {
                 list.add("$prefix${f.getName()}")
             }
 
-            val innerList = treeFile(f, if (directory) currDepth + 1 else currDepth, maxDepth, isLastInner)
+            val innerList = treeFile(f, if (directory) currDepth + 1 else currDepth, maxDepth, isLastInner, outFile)
             if (directory) {
                 list.addAll(innerList.stream().map { e ->
                     "${if (isLastInner) " " else "│"} $e"
@@ -181,7 +235,14 @@ object FileList {
         return list
     }
 
+    private fun FileProp.suffix(): String {
+        val filename = this.getName()
+        val idx = filename.lastIndexOf('.')
+        return if (idx > 0) filename.substring(idx + 1) else "unknown"
+    }
+
     class FileFindFilter {
+
         var nameFilter = Pattern.compile(".*", Pattern.CASE_INSENSITIVE)
 
         var hasFile = true
@@ -202,14 +263,20 @@ object FileList {
     }
 
     interface FileProp {
+
         fun isFile(): Boolean
+
         fun getName(): String
+
         fun isHidden(): Boolean
+
         fun isDirectory(): Boolean
+
         fun listEntries(): List<FileProp>
     }
 
     class DocFileProp(private val file: File) : FileProp {
+
         override fun isFile(): Boolean = file.isFile
 
         override fun getName(): String = file.name
@@ -222,6 +289,7 @@ object FileList {
     }
 
     open class ZipProp(private val zip: ZipFile) : FileProp {
+
         override fun isFile(): Boolean = false
 
         override fun getName(): String = zip.name

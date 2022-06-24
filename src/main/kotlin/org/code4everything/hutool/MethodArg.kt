@@ -104,5 +104,22 @@ class MethodArg {
         fun getSubParams(methodArg: MethodArg?, fromIdx: Int): MutableList<String> {
             return methodArg?.params?.subList(fromIdx, methodArg.params.size) ?: arrayListOf()
         }
+
+        @JvmStatic
+        fun getArgMap(methodArg: MethodArg?): Map<String, List<String>> {
+            if (methodArg == null) {
+                return emptyMap()
+            }
+
+            val subParams = getSubParams(methodArg, methodArg.paramTypes.size)
+            val pairs = subParams.map {
+                val tokens = it.split("=")
+                val values = tokens.getOrNull(1).orEmpty()
+                values.split(",").filter { v -> v.isNotEmpty() }
+                tokens[0] to values.split(",").filter { v -> v.isNotEmpty() }
+            }
+
+            return mapOf(*pairs.toTypedArray())
+        }
     }
 }
