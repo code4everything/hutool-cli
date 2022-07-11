@@ -102,24 +102,26 @@ tasks.register("install") {
     description = "Execute pack task, then build './src/main/go/hutool.go'."
     dependsOn("pack")
 
-    exec {
-        workingDir("./src/main/go")
-        if (isWin) {
-            commandLine("cmd", "/c", "go build hutool.go")
-        } else {
-            commandLine("bash", "-c", "go build hutool.go")
+    doFirst {
+        exec {
+            workingDir("./src/main/go")
+            if (isWin) {
+                commandLine("cmd", "/c", "go build hutool.go")
+            } else {
+                commandLine("bash", "-c", "go build hutool.go")
+            }
         }
-    }
 
-    copy {
-        from("./src/main/go")
-        into("./hutool/bin")
-        exclude("hutool.go")
-        rename("hutool", "hu")
-    }
+        copy {
+            from("./src/main/go")
+            into("./hutool/bin")
+            exclude("hutool.go")
+            rename("hutool", "hu")
+        }
 
-    delete("./src/main/go/hutool.exe")
-    delete("./src/main/go/hutool")
+        delete("./src/main/go/hutool.exe")
+        delete("./src/main/go/hutool")
+    }
 }
 
 val platforms = listOf("windows", "linux", "darwin")
@@ -133,21 +135,23 @@ for (i in platforms.indices) {
             return@register
         }
 
-        exec {
-            workingDir("./src/main/go")
-            commandLine("bash", "-c", "CGO_ENABLED=0 GOOS=${osName} GOARCH=amd64 go build hutool.go")
-        }
+        doFirst {
+            exec {
+                workingDir("./src/main/go")
+                commandLine("bash", "-c", "CGO_ENABLED=0 GOOS=${osName} GOARCH=amd64 go build hutool.go")
+            }
 
-        copy {
-            from("./src/main/go")
-            into("./hutool/bin/")
-            exclude("hutool.go")
-            val newName = if (osName == "darwin") "hu-mac" else "hu"
-            rename("hutool", newName)
-        }
+            copy {
+                from("./src/main/go")
+                into("./hutool/bin/")
+                exclude("hutool.go")
+                val newName = if (osName == "darwin") "hu-mac" else "hu"
+                rename("hutool", newName)
+            }
 
-        delete("./src/main/go/hutool.exe")
-        delete("./src/main/go/hutool")
+            delete("./src/main/go/hutool.exe")
+            delete("./src/main/go/hutool")
+        }
     }
 }
 
@@ -155,13 +159,16 @@ tasks.register("release", type = Zip::class) {
     group = "build"
     description = "Build jar and go, and zip it to a publishable zip."
     dependsOn("pack", "release0", "release1", "release2")
-    archiveFileName.set("hu-${hutoolCliVersion}.zip")
-    destinationDirectory.set(File("."))
-    from("./hutool")
-    exclude("method")
-    exclude("*.json")
-    exclude("plugins")
-    include("plugins/plugin.jar")
+
+    doFirst {
+        archiveFileName.set("hu-${hutoolCliVersion}.zip")
+        destinationDirectory.set(File("."))
+        from("./hutool")
+        exclude("method")
+        exclude("*.json")
+        exclude("plugins")
+        include("plugins/plugin.jar")
+    }
 }
 
 tasks.compileKotlin {
