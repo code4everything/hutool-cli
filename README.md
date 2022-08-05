@@ -125,7 +125,7 @@ hu tree
 
 # output:
 ├─bin
-│ └─hu.exe
+│ └─hu.bat
 ├─external
 ├─method
 ├─class.json

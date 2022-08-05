@@ -1,4 +1,6 @@
+@if "%DEBUG%" == "" @echo off
 if "%OS%"=="Windows_NT" setlocal
+if "%HUTOOL_PATH%"=="" goto envFail
 
 set DIRNAME=%~dp0
 if "%DIRNAME%" == "" set DIRNAME=.
@@ -36,17 +38,20 @@ echo location of your Java installation.
 goto fail
 
 :execute
+chcp 936 > nul
 set CLASSPATH=%APP_HOME%\hutool.jar
-"%JAVA_EXE%" %DEFAULT_JVM_OPTS% %JAVA_OPTS% %HUTOOL_OPTS%  -classpath "%CLASSPATH%" org.code4everything.hutool.Hutool %*
+"%JAVA_EXE%" %DEFAULT_JVM_OPTS% %JAVA_OPTS% %HUTOOL_OPTS%  -classpath "%CLASSPATH%" org.code4everything.hutool.Hutool "--work-dir" %cd% %*
 
 :end
 if "%ERRORLEVEL%"=="0" goto mainEnd
 
 :fail
-rem Set variable HUTOOL_EXIT_CONSOLE if you need the _script_ return code instead of
-rem the _cmd.exe /c_ return code!
 if  not "" == "%HUTOOL_EXIT_CONSOLE%" exit 1
 exit /b 1
+
+:envFail
+echo environment 'HUTOOL_PATH' not found!
+goto fail
 
 :mainEnd
 if "%OS%"=="Windows_NT" endlocal
