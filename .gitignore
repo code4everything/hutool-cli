@@ -4,7 +4,6 @@ target
 dependency-reduced-pom.xml
 *.exe
 *.jar
-hutool/bin
 .gradle
 build
 *.zip

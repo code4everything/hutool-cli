@@ -1,5 +1,3 @@
-import org.jetbrains.kotlin.konan.file.bufferedReader
-
 plugins {
     id("org.jetbrains.kotlin.jvm") version "1.6.0-RC"
 }
@@ -7,9 +5,6 @@ plugins {
 allprojects {
     repositories {
         mavenLocal()
-        maven {
-            url = uri("https://repo.maven.apache.org/maven2/")
-        }
         mavenCentral()
     }
 
@@ -44,7 +39,6 @@ allprojects {
 
 val group = "org.code4everything"
 val version = "1.6"
-val hutoolCliVersion = version
 val description = "hutool-cli"
 
 tasks.jar {
@@ -71,103 +65,12 @@ tasks.jar {
     exclude("module-info.class")
 }
 
-val isWin = System.getProperty("os.name").toLowerCase().contains("windows")
-
 tasks.build {
-    doFirst {
-        val stream = Runtime.getRuntime().exec("git pull").inputStream
-        val reader = bufferedReader(stream)
-        while (true) {
-            val line: String? = reader.readLine()
-            if (line == null) break else println(line)
-        }
-    }
-
     doLast {
         copy {
             from("./build/libs/hutool.jar")
             into("./hutool")
         }
-    }
-}
-
-tasks.register("pack") {
-    group = "build"
-    description = "Clean and build a executable jar, then move to './hutool' folder."
-    dependsOn("clean", "build")
-}
-
-tasks.register("install") {
-    group = "build"
-    description = "Execute pack task, then build './src/main/go/hutool.go'."
-    dependsOn("pack")
-
-    doFirst {
-        exec {
-            workingDir("./src/main/go")
-            if (isWin) {
-                commandLine("cmd", "/c", "go build hutool.go")
-            } else {
-                commandLine("bash", "-c", "go build hutool.go")
-            }
-        }
-
-        copy {
-            from("./src/main/go")
-            into("./hutool/bin")
-            exclude("hutool.go")
-            rename("hutool", "hu")
-        }
-
-        delete("./src/main/go/hutool.exe")
-        delete("./src/main/go/hutool")
-    }
-}
-
-val platforms = listOf("windows", "linux", "darwin")
-
-for (i in platforms.indices) {
-    tasks.register("release$i") {
-        val osName = platforms[i]
-        group = "build"
-        description = "Only build go for $osName platform."
-        if (isWin) {
-            return@register
-        }
-
-        doFirst {
-            exec {
-                workingDir("./src/main/go")
-                commandLine("bash", "-c", "CGO_ENABLED=0 GOOS=${osName} GOARCH=amd64 go build hutool.go")
-            }
-
-            copy {
-                from("./src/main/go")
-                into("./hutool/bin/")
-                exclude("hutool.go")
-                val newName = if (osName == "darwin") "hu-mac" else "hu"
-                rename("hutool", newName)
-            }
-
-            delete("./src/main/go/hutool.exe")
-            delete("./src/main/go/hutool")
-        }
-    }
-}
-
-tasks.register("release", type = Zip::class) {
-    group = "build"
-    description = "Build jar and go, and zip it to a publishable zip."
-    dependsOn("pack", "release0", "release1", "release2")
-
-    doFirst {
-        archiveFileName.set("hu-${hutoolCliVersion}.zip")
-        destinationDirectory.set(File("."))
-        from("./hutool")
-        exclude("method")
-        exclude("*.json")
-        exclude("plugins")
-        include("plugins/plugin.jar")
     }
 }
 

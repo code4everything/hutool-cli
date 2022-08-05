@@ -156,8 +156,8 @@
     "touch": {
         "method": "cn.hutool.core.io.FileUtil#touch(file=NewFile.txt)"
     },
-    "countdown": {
-        "method": "org.code4everything.hutool.Countdown#datetime(string,string=sec)"
+    "cntd": {
+        "method": "org.code4everything.hutool.Countdown#datetime(string=$sysin,string=sec)"
     },
     "run": {
         "method": "qe#run(string)"

@@ -14,7 +14,9 @@ import cn.hutool.core.util.RandomUtil
 import cn.hutool.core.util.ReUtil
 import cn.hutool.core.util.ReflectUtil
 import com.alibaba.fastjson.JSONObject
+import java.io.BufferedReader
 import java.io.File
+import java.io.InputStreamReader
 import java.lang.reflect.Field
 import java.lang.reflect.Method
 import java.lang.reflect.Modifier
@@ -51,6 +53,23 @@ object Utils {
      */
     @JvmStatic
     fun power(any: Any?): Any? = any
+
+    @JvmStatic
+    fun readSysIn(): String {
+        Hutool.debugOutput("read from pipe input")
+        val sb = StringBuilder()
+        BufferedReader(InputStreamReader(System.`in`)).use { reader ->
+            while (true) {
+                val start = System.currentTimeMillis()
+                val line = reader.readLine().also { sb.appendLine(it) } ?: break
+                if (line.isBlank() && sb.endsWith("\n\n") && System.currentTimeMillis() - start > 500) {
+                    sb.trimEnd()
+                    break
+                }
+            }
+        }
+        return sb.toString()
+    }
 
     @JvmStatic
     @IOConverter(LineSepConverter::class)

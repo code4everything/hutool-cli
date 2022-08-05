@@ -86,7 +86,7 @@ class DateConverter : Converter<DateTime> {
 
     override fun object2String(any: Any?): String {
         return if (any is Date) {
-            Hutool.simpleDateFormat.format(any) + "  ms:" + any.time
+            Hutool.simpleDateFormat.format(any) + "  ms: " + any.time
         } else ""
     }
 

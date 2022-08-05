@@ -169,7 +169,6 @@ object Hutool {
         }
 
         if (list.isNotEmpty()) {
-            println()
             println(resolveCmd(list.toTypedArray()))
         }
     }
@@ -390,9 +389,6 @@ object Hutool {
         outputConverterName.set(method.getAnnotation(converterClz).getConverterName(outputConverterName.get()))
         debugOutput("get method success")
         if (ARG.params.size < parameters.size) {
-            ARG.params.add(getFromClipboard())
-        }
-        if (ARG.params.size < parameters.size) {
             result = try {
                 val methodFullInfo = parseMethodFullInfo(clazz.name, method.name, ARG.paramTypes)
                 "parameter error, method request: $methodFullInfo"
@@ -456,7 +452,12 @@ object Hutool {
 
         // 解析默认值
         if (innerParse) {
-            val param = paramType.substring(idx + 1)
+            var param = paramType.substring(idx + 1)
+            param = when (param) {
+                "\$clipboard" -> getFromClipboard()
+                "\$sysin" -> Utils.readSysIn()
+                else -> param
+            }
             ARG.params.add(min(index, ARG.params.size), param)
         }
         return type
@@ -573,7 +574,6 @@ object Hutool {
     }
 
     private fun seeUsage() {
-        println()
         if (Objects.isNull(ARG)) {
             ARG = MethodArg()
         }

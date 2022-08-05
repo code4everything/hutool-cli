@@ -21,11 +21,6 @@ tasks.build {
     }
 }
 
-tasks.register("pack") {
-    description = "Clean and build jar, then move to '../hutool/plugins/' folder."
-    dependsOn("clean", "build")
-}
-
 tasks.compileKotlin {
     kotlinOptions.jvmTarget = "1.8"
 }
