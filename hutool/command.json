@@ -3,37 +3,37 @@
         "method": "org.code4everything.hutool.unix.Unix4j#unix"
     },
     "encode32": {
-        "method": "cn.hutool.core.codec.Base32#encode(string)"
+        "method": "cn.hutool.core.codec.Base32#encode(string=$sysin)"
     },
     "decode32": {
-        "method": "cn.hutool.core.codec.Base32#decodeStr(string)"
+        "method": "cn.hutool.core.codec.Base32#decodeStr(string=$sysin)"
     },
     "encode64": {
-        "method": "cn.hutool.core.codec.Base64#encode(j.char.seq)"
+        "method": "cn.hutool.core.codec.Base64#encode(j.char.seq=$sysin)"
     },
     "base64": {
-        "method": "cn.hutool.core.codec.Base64#encode(j.char.seq)"
+        "method": "cn.hutool.core.codec.Base64#encode(j.char.seq=$sysin)"
     },
     "decode64": {
-        "method": "cn.hutool.core.codec.Base64#decodeStr(j.char.seq)"
+        "method": "cn.hutool.core.codec.Base64#decodeStr(j.char.seq=$sysin)"
     },
     "encode64url": {
-        "method": "cn.hutool.core.codec.Base64#encodeUrlSafe(j.char.seq)"
+        "method": "cn.hutool.core.codec.Base64#encodeUrlSafe(j.char.seq=$sysin)"
     },
     "date": {
         "method": "cn.hutool.core.date.DateUtil#date(date=now)"
     },
     "unicode2str": {
-        "method": "cn.hutool.core.text.UnicodeUtil#toString(string)"
+        "method": "cn.hutool.core.text.UnicodeUtil#toString(string=$sysin)"
     },
     "str2unicode": {
-        "method": "cn.hutool.core.text.UnicodeUtil#toUnicode(string)"
+        "method": "cn.hutool.core.text.UnicodeUtil#toUnicode(string=$sysin)"
     },
     "hex": {
-        "method": "cn.hutool.core.util.HexUtil#encodeHexStr(string)"
+        "method": "cn.hutool.core.util.HexUtil#encodeHexStr(string=$sysin)"
     },
     "idinfo": {
-        "method": "cn.hutool.core.util.IdcardUtil#getIdcardInfo(string)",
+        "method": "cn.hutool.core.util.IdcardUtil#getIdcardInfo(string=$sysin)",
         "helps": [
             "parse personal id card info"
         ]
@@ -62,53 +62,53 @@
         "method": "cn.hutool.core.img.ImgUtil#randomColor"
     },
     "methods": {
-        "method": "utils#outputPublicStaticMethods(string)"
+        "method": "utils#outputPublicStaticMethods(string=$sysin)"
     },
     "class": {
-        "method": "utils#parseClassName(string)"
+        "method": "utils#parseClassName(string=$sysin)"
     },
     "suppers": {
-        "method": "utils#getSupperClass(class)"
+        "method": "utils#getSupperClass(class=$sysin)"
     },
     "match": {
-        "method": "utils#getMatchedItems(reg.pattern,string)"
+        "method": "utils#getMatchedItems(reg.pattern,string=$sysin)"
     },
     "regex": {
-        "method": "cn.hutool.core.util.ReUtil#isMatch(reg.pattern,j.char.seq)"
+        "method": "cn.hutool.core.util.ReUtil#isMatch(reg.pattern,j.char.seq=$sysin)"
     },
     "upper": {
-        "method": "utils#toUpperCase(string)"
+        "method": "utils#toUpperCase(string=$sysin)"
     },
     "lower": {
-        "method": "utils#toLowerCase(string)"
+        "method": "utils#toLowerCase(string=$sysin)"
     },
     "jinfo": {
         "method": "cn.hutool.core.util.SystemPropsUtil#getProps"
     },
     "md5": {
-        "method": "cn.hutool.crypto.SecureUtil#md5(string)"
+        "method": "cn.hutool.crypto.SecureUtil#md5(string=$sysin)"
     },
     "sha1": {
-        "method": "cn.hutool.crypto.SecureUtil#sha1(string)"
+        "method": "cn.hutool.crypto.SecureUtil#sha1(string=$sysin)"
     },
     "sha256": {
-        "method": "cn.hutool.crypto.SecureUtil#sha256(string)"
+        "method": "cn.hutool.crypto.SecureUtil#sha256(string=$sysin)"
     },
     "get": {
-        "method": "cn.hutool.http.HttpUtil#get(string)"
+        "method": "cn.hutool.http.HttpUtil#get(string=$sysin)"
     },
     "post": {
-        "method": "cn.hutool.http.HttpUtil#post(string,string={})"
+        "method": "cn.hutool.http.HttpUtil#post(string=$sysin,string={})"
     },
     "download": {
-        "method": "cn.hutool.http.HttpUtil#downloadFileFromUrl(string,file=.)"
+        "method": "cn.hutool.http.HttpUtil#downloadFileFromUrl(string=$sysin,file=.)"
     },
     "pinyin": {
-        "method": "cn.hutool.extra.pinyin.PinyinUtil#getPinyin(string)"
+        "method": "cn.hutool.extra.pinyin.PinyinUtil#getPinyin(string=$sysin)"
     },
     "qrcode": {
-        "method": "cn.hutool.extra.qrcode.QrCodeUtil#generate(string,int=1000,int=1000,file=qrcode.png)",
-        "2param": "string,int=1000,int=1000,file"
+        "method": "cn.hutool.extra.qrcode.QrCodeUtil#generate(string=$sysin,int=1000,int=1000,file=qrcode.png)",
+        "2param": "string=$sysin,int=1000,int=1000,file"
     },
     "decodeqr": {
         "method": "cn.hutool.extra.qrcode.QrCodeUtil#decode(file)"
@@ -120,7 +120,7 @@
         "method": "cn.hutool.core.io.FileUtil#mkdir(file)"
     },
     "calc": {
-        "method": "utils#calc(string,int=0)"
+        "method": "utils#calc(string=$sysin,int=6)"
     },
     "open": {
         "method": "cn.hutool.core.swing.DesktopUtil#open(file=.)"
@@ -160,7 +160,7 @@
         "method": "org.code4everything.hutool.Countdown#datetime(string=$sysin,string=sec)"
     },
     "run": {
-        "method": "qe#run(string)"
+        "method": "qe#run(string=$sysin)"
     },
     "env": {
         "method": "qe#run",
@@ -175,13 +175,13 @@
         "method": "utils#getConverters()"
     },
     "figlet": {
-        "method": "org.code4everything.hutool.figlet.Figlet#ascii(string,string=standard)"
+        "method": "org.code4everything.hutool.figlet.Figlet#ascii(string=$sysin,string=standard)"
     },
     "jq": {
-        "method": "org.code4everything.hutool.jq.JacksonJq#queryJson(string,string)"
+        "method": "org.code4everything.hutool.jq.JacksonJq#queryJson(string,string=$sysin)"
     },
     "csv2json": {
-        "method": "org.code4everything.hutool.csv.CSV#toJson(string)"
+        "method": "org.code4everything.hutool.csv.CSV#toJson(string=$sysin)"
     },
     "unix": {
         "method": "org.code4everything.hutool.unix.Unix4j#unix"

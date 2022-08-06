@@ -38,9 +38,12 @@ echo location of your Java installation.
 goto fail
 
 :execute
+@REM for /f "tokens=*" %%i in ('chcp') do set code=%%i
+@REM for %%a in (%code%) do set code=%%a
 chcp 936 > nul
 set CLASSPATH=%APP_HOME%\hutool.jar
 "%JAVA_EXE%" %DEFAULT_JVM_OPTS% %JAVA_OPTS% %HUTOOL_OPTS%  -classpath "%CLASSPATH%" org.code4everything.hutool.Hutool "--work-dir" %cd% %*
+@REM chcp %code% > nul
 
 :end
 if "%ERRORLEVEL%"=="0" goto mainEnd

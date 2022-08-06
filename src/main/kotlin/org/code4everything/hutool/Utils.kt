@@ -61,14 +61,14 @@ object Utils {
         BufferedReader(InputStreamReader(System.`in`)).use { reader ->
             while (true) {
                 val start = System.currentTimeMillis()
-                val line = reader.readLine().also { sb.appendLine(it) } ?: break
-                if (line.isBlank() && sb.endsWith("\n\n") && System.currentTimeMillis() - start > 500) {
-                    sb.trimEnd()
-                    break
+                val line = reader.readLine() ?: break
+                if (line.isBlank() && System.currentTimeMillis() - start > 500) {
+                    return sb.trimEnd('\n').toString()
                 }
+                sb.appendLine(line)
             }
         }
-        return sb.toString()
+        return sb.removeSuffix("\n").toString()
     }
 
     @JvmStatic

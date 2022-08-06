@@ -79,7 +79,7 @@ object Hutool {
         set(value) = argLocal.set(value)
         get() = argLocal.get()!!
 
-    val resultString = ThreadLocal<String?>()
+    private val resultString = ThreadLocal<String?>()
     private lateinit var commander: JCommander
 
     private val resultLocal = ThreadLocal<Any?>()
@@ -87,9 +87,10 @@ object Hutool {
         set(value) = resultLocal.set(value)
         get() = resultLocal.get()
 
-    private var omitParamType = ThreadLocal<Boolean>().apply { set(true) }
-    private var outputConverterName = ThreadLocal<String?>()
-    private var inputConverterNames = ThreadLocal<List<String>?>()
+    private val omitParamType = ThreadLocal<Boolean>().apply { set(true) }
+    private val outputConverterName = ThreadLocal<String?>()
+    private val inputConverterNames = ThreadLocal<List<String>?>()
+    private val injectMode = ThreadLocal<Pair<Int, String>?>()
 
     @JvmStatic
     internal fun resolveCmd(args: Array<String>): String {
@@ -389,6 +390,17 @@ object Hutool {
         outputConverterName.set(method.getAnnotation(converterClz).getConverterName(outputConverterName.get()))
         debugOutput("get method success")
         if (ARG.params.size < parameters.size) {
+            injectMode.get()?.also {
+                val element = when (it.second) {
+                    "\$clipboard" -> getFromClipboard()
+                    "\$sysin" -> Utils.readSysIn()
+                    else -> it.second
+                }
+                ARG.params.add(min(it.first, ARG.params.size), element)
+            }
+
+        }
+        if (ARG.params.size < parameters.size) {
             result = try {
                 val methodFullInfo = parseMethodFullInfo(clazz.name, method.name, ARG.paramTypes)
                 "parameter error, method request: $methodFullInfo"
@@ -452,13 +464,12 @@ object Hutool {
 
         // 解析默认值
         if (innerParse) {
-            var param = paramType.substring(idx + 1)
-            param = when (param) {
-                "\$clipboard" -> getFromClipboard()
-                "\$sysin" -> Utils.readSysIn()
-                else -> param
+            val param = paramType.substring(idx + 1)
+            if (param.startsWith("$")) {
+                injectMode.set(index to param)
+            } else {
+                ARG.params.add(min(index, ARG.params.size), param)
             }
-            ARG.params.add(min(index, ARG.params.size), param)
         }
         return type
     }
@@ -656,8 +667,7 @@ object Hutool {
             ARG.paramTypes = Arrays.stream(split).filter { it?.isNotEmpty() ?: false }.collect(Collectors.toList())
             ARG.methodName = ARG.methodName!!.substring(0, idx)
         } else if (Objects.nonNull(json)) {
-            val paramTypes =
-                json.getObject<ArrayList<String>>(PARAM_KEY, object : TypeReference<ArrayList<String>?>() {})
+            val paramTypes = json.getObject<ArrayList<String>>(PARAM_KEY, object : TypeReference<ArrayList<String>?>() {})
             ARG.paramTypes = paramTypes ?: Collections.emptyList()
         }
         if (Objects.isNull(json)) {
