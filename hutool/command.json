@@ -188,5 +188,8 @@
     },
     "fcnt": {
         "method": "org.code4everything.hutool.FileList#countFile(file=.)"
+    },
+    "ll": {
+        "method": "file.list#listFiles(file=.)"
     }
 }
